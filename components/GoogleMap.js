@@ -19,7 +19,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 
-import {  mapDarkStyle, mapStandardStyle } from '../model/mapData';
+import { mapDarkStyle, mapStandardStyle } from '../model/mapData';
 // import StarRating from '../components/StarRating';
 
 import { useTheme } from '@react-navigation/native';
@@ -48,17 +48,20 @@ const GoogleMap = ({ route, navigation }) => {
   const latitudeDelta = 0.08;
   const longitudeDelta = 0.08;
   useEffect(() => {
-  {region &&  EmergencyService.nearestEmergencyRequest(region.longitude, region.latitude, route.params.serviceName).then((res) => {
+    {
+      region && EmergencyService.nearestEmergencyRequest(region.longitude, region.latitude, route.params.serviceName).then((res) => {
 
-    setShowMap(true);
-    console.log('##################')
-    console.log(res[0].geometry.coordinates)
-    setRequestData(res)
-    // [0].geometry.coordinates
-    }, error => {
-      console.error('onRejected function called: ' + error.message);
-      return;
-    })}
+        setShowMap(true);
+        console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&')
+        console.log(res)
+        console.log(res[0].geometry.coordinates)
+        setRequestData(res)
+        // [0].geometry.coordinates
+      }, error => {
+        console.error('onRejected function called: ' + error.message);
+        return;
+      })
+    }
   }, [region]);
   // useEffect(() => {
   //   const requestLocationPermission = async () => {
@@ -111,9 +114,9 @@ const GoogleMap = ({ route, navigation }) => {
           latitudeDelta: latitudeDelta,
           longitudeDelta: longitudeDelta
         };
-    
+
         setRegion(regionCord);
-        
+
       },
       (error) => {
         setLocationStatus(error.message);
@@ -161,6 +164,7 @@ const GoogleMap = ({ route, navigation }) => {
 
   useEffect(() => {
     mapAnimation.addListener(({ value }) => {
+
       let index = Math.floor(value / CARD_WIDTH + 0.3); // animate 30% away from landing on the next item
       if (requestData && index >= requestData.length) {
         index = requestData.length - 1;
@@ -172,12 +176,18 @@ const GoogleMap = ({ route, navigation }) => {
       clearTimeout(regionTimeout);
 
       const regionTimeout = setTimeout(() => {
+
         if (mapIndex !== index) {
           mapIndex = index;
-          const { coordinate } = requestData[index];
+
+          const  coordinate  = requestData[index].geometry.coordinates;
+          console.log(index)
+          console.log(coordinate)
+
           _map.current.animateToRegion(
             {
-              ...coordinate,
+              latitude: parseFloat(coordinate[0]),
+              longitude: parseFloat(coordinate[1]),
               latitudeDelta: latitudeDelta,
               longitudeDelta: longitudeDelta,
             },
@@ -275,17 +285,19 @@ const GoogleMap = ({ route, navigation }) => {
             ],
           };
           return (
-            <MapView.Marker key={index} coordinate={{latitude:  marker.geometry.coordinates[0],
-              longitude: marker.geometry.coordinates[1]}} onPress={(e) => onMarkerPress(e)}>
+            <MapView.Marker key={index} coordinate={{
+              latitude: marker.geometry.coordinates[0],
+              longitude: marker.geometry.coordinates[1]
+            }} onPress={(e) => onMarkerPress(e)}>
               <Animated.View style={[styles.markerWrap]}>
                 <Animated.Image
                   source={require('../assets/map_marker.png')}
                   style={[styles.marker, scaleStyle]}
                   resizeMode="cover"
                 />
-                   <View style={styles.markerNumber}>
-                            <Text style={{ color: "#000" }}>{index + 1}</Text>
-                        </View>
+                <View style={styles.markerNumber}>
+                  <Text style={{ color: "#000" }}>{index + 1}</Text>
+                </View>
               </Animated.View>
             </MapView.Marker>
           );
@@ -297,7 +309,7 @@ const GoogleMap = ({ route, navigation }) => {
         horizontal
         pagingEnabled
         scrollEventThrottle={1}
-        showsHorizontalScrollIndicator={false}
+        showsHorizontalScrollIndicator={true}
         snapToInterval={CARD_WIDTH + 20}
         snapToAlignment="center"
         style={styles.scrollView}
@@ -325,9 +337,9 @@ const GoogleMap = ({ route, navigation }) => {
       >
         {requestData && requestData.map((marker, index) => (
           <View style={[styles.card]} key={index}>
-             <View style={styles.requestNumber}>
-                            <Text style={{ color: "#fff" }}>{index + 1}</Text>
-                        </View>
+            <View style={styles.requestNumber}>
+              <Text style={{ color: "#fff" }}>{index + 1}</Text>
+            </View>
             <View style={{
               flex: 1,
               flexDirection: 'column',
@@ -336,7 +348,7 @@ const GoogleMap = ({ route, navigation }) => {
             }}>
               <View style={{ flex: 1, flexDirection: 'row' }}>
                 <Image
-                 source={require('../assets/defaultProfile.png')}
+                  source={require('../assets/defaultProfile.png')}
                   style={styles.cardImage}
                   resizeMode="cover"
                 />
@@ -393,12 +405,12 @@ const styles = StyleSheet.create({
     color: "#d21036", position: 'absolute', top: 5, right: 6,
     backgroundColor: '#d21036', width: 20, height: 20, borderRadius: 50,
     alignItems: "center", alignContent: "center", justifyContent: 'center'
-},
-markerNumber:{
-  color: "#d21036", position: 'absolute', top: 10, right: 15,
-  backgroundColor: '#fff', width: 20, height: 20, borderRadius: 50,
-  alignItems: "center", alignContent: "center", justifyContent: 'center'
-},
+  },
+  markerNumber: {
+    color: "#d21036", position: 'absolute', top: 10, right: 15,
+    backgroundColor: '#fff', width: 20, height: 20, borderRadius: 50,
+    alignItems: "center", alignContent: "center", justifyContent: 'center'
+  },
   searchBox: {
     position: 'absolute',
     marginTop: Platform.OS === 'ios' ? 40 : 20,
