@@ -20,7 +20,6 @@ const MyRequests = ({route, navigation }) => {
  
   const requestData = () => {
     EmergencyService.myEmergencyRequest(route.params.userDetails.id).then((res) => {
-      console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
       setMyRequestData(res)
     }, error => {
         console.error('onRejected function called: ' + error.message);

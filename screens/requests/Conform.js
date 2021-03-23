@@ -45,16 +45,23 @@ const ConfirmRequest = (props) => {
       "landmark": data.landmark,
       "helpFor": data
     }
-    console.log(updateData);
     Keyboard.dismiss()
 
     EmergencyService.emergencyRequest(updateData).then((res) => {
-      // navigation.navigate('Welcome', { userDetails: data })
-      console.log('%%%%%%%%%%%%%')
-      console.log(res)
       Alert.alert('Request Success!', 'Your emergency request added, soon you will get help', [
         {
           text: 'Done',
+          onPress: async () => {
+            try {
+              navigation.navigate('MyRequests',
+                            {
+                                userDetails: props.data.userDetails,
+                            })
+            } catch (e) {
+                console.log(e);
+            }
+           
+        }
         }
       ]);
     }, error => {
@@ -137,7 +144,6 @@ const ConfirmRequest = (props) => {
           </Dialog.Content>
           <Dialog.Actions>
             <Button mode={'contained'} color={'#ea3a3a'} onPress={() => { props.closeOption() }} style={{ marginRight: 30 }}>Cancel</Button>
-            {/* <Button mode={'contained'} color={'#17841c'} onPress={() => { setVisible(false); navigation.navigate('EmergencyReport', { itemData: { service_name: "Ambulance Request" } }); }}>Submit</Button> */}
             <Button mode={'contained'} color={'#17841c'} onPress={() => submitRequest()}>Submit</Button>
           </Dialog.Actions>
         </Dialog>

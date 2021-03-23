@@ -34,7 +34,6 @@ const longitudeDelta = 0.02;
 
 const EmergencyReport = ({ route, navigation }) => {
     // const userDetails = route.params.userDetails;
-    //    console.log(route.params)
     const userDetails = route.params.userDetails;
     const theme = useTheme();
     const { coordinates } = useSelector(state => state.currentLocationReducer);
@@ -44,14 +43,7 @@ const EmergencyReport = ({ route, navigation }) => {
     // const [coordinates, setCoordinates] = useState();
     const onRegionChange = updateRegion => {
         if(updateRegion.latitude.toFixed(6) === region.latitude.toFixed(6)
-        && updateRegion.longitude.toFixed(6) === region.longitude.toFixed(6)){
-            // console.log(updateRegion)
-            // console.log(region)
-             return;
-      }
-    //   console.log(coordinates)
-    
-    //     console.log(updateRegion)
+        && updateRegion.longitude.toFixed(6) === region.longitude.toFixed(6)){ return;}
          setRegion(updateRegion)
     }
 

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
     View,
     Text,
-    
+
     TouchableOpacity,
     Dimensions,
     TextInput,
@@ -15,20 +15,19 @@ import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
-import { RadioButton, Button} from 'react-native-paper';
+import { RadioButton, Button } from 'react-native-paper';
 import DateCalendar from '../../components/Calendar';
 import SelectBloodGroup from '../../components/BloodGroup';
 
 const FamilyFriends = ({ route, navigation }) => {
     let dateFormat = require("dateformat");
-    console.log(route.params)
     const [data, setData] = React.useState({
         ...route.params.userDetails,
-        emergencyContacts:emergencyContacts
+        emergencyContacts: emergencyContacts
     });
-   
+
     const [tab, setTab] = useState('family');
-  
+
     const emergencyContactsDetails = {
         "family": [
             { "name": "", "contact": "", "edit": false },
@@ -41,19 +40,19 @@ const FamilyFriends = ({ route, navigation }) => {
             { "name": "", "contact": "", "edit": false },
         ]
     }
-  
+
     const [emergencyContacts, setEmergencyContacts] = React.useState(emergencyContactsDetails)
-  
-    const textInputChange = (val,contactType,type,index) => {
-        
+
+    const textInputChange = (val, contactType, type, index) => {
+
         emergencyContactsDetails[contactType][index][type] = val
         const temp = JSON.parse(JSON.stringify(emergencyContacts))
-        
+
         temp[contactType][index][type] = val
         setEmergencyContacts(temp)
-       
+
     }
-       
+
     return (
         <View style={styles.container}>
             <StatusBar backgroundColor='#FF6347' barStyle="light-content" />
@@ -72,14 +71,14 @@ const FamilyFriends = ({ route, navigation }) => {
                         justifyContent: 'space-between',
                         marginBottom: 20
                     }]}>
-                        <TouchableOpacity style={[styles.tabs, tab == 'family' && { backgroundColor: '#FF6347', borderWidth: 0 }]} onPress={() => { console.log('family'), setTab('family') }}>
+                        <TouchableOpacity style={[styles.tabs, tab == 'family' && { backgroundColor: '#FF6347', borderWidth: 0 }]} onPress={() => setTab('family')}>
                             <Text style={[styles.text_footer, tab == 'family' ? { color: '#fff' } : { color: '#05375a' }]}>Family</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={[styles.tabs, tab == 'friends' && { backgroundColor: '#FF6347', borderWidth: 0 }]} onPress={() => { console.log('friends'), setTab('friends') }}>
+                        <TouchableOpacity style={[styles.tabs, tab == 'friends' && { backgroundColor: '#FF6347', borderWidth: 0 }]} onPress={() => setTab('friends')}>
                             <Text style={[styles.text_footer, tab == 'friends' ? { color: '#fff' } : { color: '#05375a' }]}>Friends</Text>
                         </TouchableOpacity>
                     </View>
-                    
+
                     {tab === 'family' && emergencyContacts['family'].map((e, index) => (
                         <React.Fragment key={index}>
                             <View style={styles.action} >
@@ -92,7 +91,7 @@ const FamilyFriends = ({ route, navigation }) => {
                                     // value={e.name}
                                     defaultValue={e.name}
                                     // editable={e.edit}
-                                    onChangeText={(val) => textInputChange(val,'family',"name",index)}
+                                    onChangeText={(val) => textInputChange(val, 'family', "name", index)}
                                 />
                                 {/* {!e.edit && <FontAwesome
                                     name="pencil"
@@ -101,7 +100,7 @@ const FamilyFriends = ({ route, navigation }) => {
                                     style={{ marginRight: 10 }}
                                     onPress={() => updateData(true,'family',"edit",index)}
                                 />} */}
-       
+
                                 {data.check_textInputChange ?
                                     <Animatable.View
                                         animation="bounceIn"
@@ -127,7 +126,7 @@ const FamilyFriends = ({ route, navigation }) => {
                                     autoCapitalize="none"
                                     defaultValue={e.contact}
                                     keyboardType="decimal-pad"
-                                    onChangeText={(val) => textInputChange(val,'family',"contact",index)}
+                                    onChangeText={(val) => textInputChange(val, 'family', "contact", index)}
                                 />
 
                                 {data.check_textInputChange ?
@@ -158,7 +157,7 @@ const FamilyFriends = ({ route, navigation }) => {
                                     editable={e.edit}
                                     onChangeText={(val) => textInputChange(val)}
                                 />
-                                 {e.edit && <FontAwesome
+                                {e.edit && <FontAwesome
                                     name="pencil"
                                     color="#05375a"
                                     size={20}
@@ -222,9 +221,7 @@ const FamilyFriends = ({ route, navigation }) => {
 
                         <TouchableOpacity
                             style={styles.signIn, styles.signButton}
-                          //  onPress={() => { console.log(emergencyContacts) }}
-                            onPress={() => {console.log(data), navigation.navigate('EmergencyDetails', { userDetails: data }) }}
-                           
+                            onPress={() => { navigation.navigate('EmergencyDetails', { userDetails: data }) }}
                         >
                             <LinearGradient
                                 colors={['#FFA07A', '#FF6347']}

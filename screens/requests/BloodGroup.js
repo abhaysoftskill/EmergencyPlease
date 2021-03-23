@@ -15,10 +15,6 @@ const BloodGroup = (props) => {
   const containerStyle = { backgroundColor: 'white', padding: 20 };
   const [paidService, setPaidService] = useState(false);
   const [freeService, setFreeService] = useState(true);
-  // const submitService = () => {
-  //   setVisible(false);
-  //   navigation.navigate('Map', { itemData: '' });
-  // }
   const [showDropDown, setShowDropDown] = useState(false);
   const [showTypeDropDown, setShowTypeDropDown] = useState(false);
   const [bloodGroup, setBloodGroup] = useState('A');
@@ -38,7 +34,6 @@ const BloodGroup = (props) => {
   const [checked, setChecked] = React.useState('first');
   return (
     <Provider>
-      {/* <Button onPress={showDialog}>Show Dialog</Button> */}
       <Portal>
         <Dialog visible={visible} onDismiss={hideDialog}  dismissable={false}>
           <Dialog.Title>Select Blood Group</Dialog.Title>

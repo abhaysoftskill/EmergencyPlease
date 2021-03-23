@@ -2,17 +2,8 @@ import React from 'react';
 
 import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
 import {createStackNavigator} from '@react-navigation/stack';
-
 import Icon from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-
-// import HomeScreen from './HomeScreen';
-// import NotificationScreen from './NotificationScreen';
-// import ExploreScreen from './ExploreScreen';
-// import ProfileScreen from './ProfileScreen';
-// import MapTestScreen from './MapTestScreen';
-// import EditProfileScreen from './EditProfileScreen';
-
 import {useTheme, Avatar} from 'react-native-paper';
 import {View} from 'react-native-animatable';
 import {TouchableOpacity} from 'react-native-gesture-handler';
@@ -28,9 +19,6 @@ import Details from '../update/Details';
 import FamilyFriendsDetails from '../update/FamilyFriendsDetails';
 import MyRequests from '../MyRequests';
 import ChatRoom from '../../components/chat/ChatRoom';
-// import CardListScreen from './CardListScreen';
-// import CardItemDetails from './CardItemDetails';
-// import NeedHelp from './NeedHelp';
 
 const HomeStack = createStackNavigator();
 const NotificationStack = createStackNavigator();
@@ -189,6 +177,15 @@ const HomeStackScreen = ({navigation}) => {
           // headerBackTitleVisible: false
         })}
       />
+      <HomeStack.Screen 
+        name="MyRequests"
+        component={MyRequests}
+        options={({route}) => ({
+          title: 'My Requests',
+          // headerBackTitleVisible: false
+        })}
+      />
+      
         <HomeStack.Screen 
         name="ChatRoom"
         component={ChatRoom}

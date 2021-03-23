@@ -46,9 +46,7 @@ const Home = ({ navigation }) => {
         })
     }
     useEffect(() => {
-        console.log(coordinates)
         if (coordinates.length == 0) {
-            console.log('test')
             dispatch(readCurrentLocation())
         }
         else if (coordinates) {
@@ -192,10 +190,10 @@ const Home = ({ navigation }) => {
                         </Card>
                     </TouchableOpacity>}
                     {!loading && <TouchableOpacity
-                        onPress={() => navigation.navigate('ChatRoom',
+                        onPress={() => navigation.navigate('MyRequests',
                             {
-                                roomId:'abhayTest'
-                                // userDetails: userDetails,
+                                // roomId:'abhayTest'
+                                userDetails: userDetails,
                             })}
 
                     >

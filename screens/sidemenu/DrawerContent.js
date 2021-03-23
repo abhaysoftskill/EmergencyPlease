@@ -66,50 +66,6 @@ export function DrawerContent(props) {
                             <Title style={{ fontSize: 14 }}>{userDetails.email}</Title>
                             <Caption style={[userDetails.emailverify ? styles.verifiedCaption : styles.notVerifiedCaption]}>({userDetails.emailverify ? 'Verified' : 'Not Verified'})</Caption>
                         </View>
-                        {/* <DrawerItem 
-                            icon={({color, size}) => (
-                                <Icon 
-                                name="account-outline" 
-                                color={color}
-                                size={size}phonenumber
-                                />
-                            )}
-                            label="Profile"
-                            onPress={() => {props.navigation.navigate('Profile')}}
-                        />
-                        <DrawerItem 
-                            icon={({color, size}) => (
-                                <Icon 
-                                name="bookmark-outline" 
-                                color={color}
-                                size={size}
-                                />
-                            )}
-                            label="Bookmarks"
-                            onPress={() => {props.navigation.navigate('BookmarkScreen')}}
-                        />
-                        <DrawerItem 
-                            icon={({color, size}) => (
-                                <Icon 
-                                name="settings-outline" 
-                                color={color}
-                                size={size}
-                                />
-                            )}
-                            label="Settings"
-                            onPress={() => {props.navigation.navigate('SettingScreen')}}
-                        />
-                        <DrawerItem 
-                            icon={({color, size}) => (
-                                <Icon 
-                                name="account-check-outline" 
-                                color={color}
-                                size={size}
-                                />
-                            )}
-                            label="Support"
-                            onPress={() => {props.navigation.navigate('SupportScreen')}}
-                        /> */}
                     </Drawer.Section>
                     <Drawer.Section title="Emergency Contacts">
 

@@ -7,15 +7,12 @@ import { service } from '../model/data';
 import AmbulanceRequest from './requests/Ambulance';
 
 export const EmergencyCall = ({ route, navigation }) => {
-    console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
     const [RequestDataCount, setRequestDataCount] = useState(route.params.RequestDataCount)
-    console.log(RequestDataCount)
     const [serviceName, setServiceName] = useState('')
     const callService = (service_name) => {
         setServiceName(service_name);
     }
     const renderItem = ({ item }) => {
-        console.log(item)
         return (
             // <Card 
             //     itemData={item}

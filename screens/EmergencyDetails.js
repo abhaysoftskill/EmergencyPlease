@@ -30,7 +30,6 @@ const googleApiKey = 'AIzaSyCGLgQXcqtOT_DzZI4gavScYkaqFc5EuTw';
 const EmergencyDetails = ({ route, navigation }) => {
     // const userDetails = route.params.userDetails;
     const userDetails = route.params.userDetails;
-    console.log(route.params)
     const theme = useTheme();
     let instance, defaultSelectedApp, defaultLaunchMode, launchModes;
 
