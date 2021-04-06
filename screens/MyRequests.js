@@ -13,7 +13,7 @@ const MyRequests = ({route, navigation }) => {
     return (
       <MyRequestsCard
         itemData={item}
-        onPress={() => callService(item.name)}
+        keyExtractor={item => item.id}
       />
     );
   };
@@ -35,7 +35,7 @@ useEffect(() => {
         <FlatList
           data={myRequestData}
           renderItem={renderItem}
-          keyExtractor={item => item.id}
+          keyExtractor={(item,index) => index}
         />
       </View>
     </>

@@ -17,6 +17,7 @@ const longitudeDelta = 0.02;
 
 export const readCurrentLocation = () => {
     try {
+
         return dispatch => {
             const getOneTimeLocation = async () => {
                 const position = await new Promise((resolve, reject) => {
@@ -25,7 +26,9 @@ export const readCurrentLocation = () => {
                         timeout: 30000,
                         maximumAge: 1000
                     });
+
                 });
+       
                 return {
                     latitude: parseFloat(position.coords.latitude),
                     longitude: parseFloat(position.coords.longitude),
@@ -36,6 +39,7 @@ export const readCurrentLocation = () => {
             const requestLocationPermission = async () => {
                 if (Platform.OS === 'ios') {
                     const coordinates = await getOneTimeLocation()
+                    
                     return coordinates;
                     // subscribeLocationLocation();
                 } else {
@@ -50,7 +54,7 @@ export const readCurrentLocation = () => {
                         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
                             //To Check, If Permission is granted
                             const coordinates = await getOneTimeLocation()
-                            return coordinates;
+                    return coordinates;
                             // subscribeLocationLocation();
                         } else {
                             // setLocationStatus('Permission Denied');

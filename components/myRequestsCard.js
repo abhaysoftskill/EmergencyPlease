@@ -4,7 +4,7 @@ import Moment from 'moment'; // Import momentjs
 import StarRating from './StarRating';
 import LinearGradient from 'react-native-linear-gradient';
 import Fontisto from 'react-native-vector-icons/Fontisto';
-const MyRequestsCard = ({itemData, onPress}) => {
+const MyRequestsCard = ({itemData}) => {
   Moment.locale('en');
   const EmergencyType = {
     "accident_reported": "Accident",
@@ -13,7 +13,7 @@ const MyRequestsCard = ({itemData, onPress}) => {
     "blood_donor": "Blood Donor"
   }
   return (
-    <TouchableOpacity onPress={onPress}>
+    <TouchableOpacity>
       <View style={styles.card}>
         <View style={styles.cardImgWrapper}>
           <Image
@@ -24,25 +24,10 @@ const MyRequestsCard = ({itemData, onPress}) => {
         </View>
         <View style={styles.cardInfo}>
         <Text style={styles.time}>{Moment(itemData.requestdate).format('DD-MM-YYYY hh:mma')}</Text>
-        <Text style={styles.cardTitle}>{EmergencyType[itemData.emergencyType]}</Text>
+        <Text style={styles.cardTitle}>{EmergencyType[itemData.requestType]}</Text>
           <Text style={[styles.status],[itemData.requestStatus == 'closed'? styles.closeStatus:styles.activeStatus]}>
             {itemData.requestStatus == 'new' ? 'Active' : 'Closed'}</Text>
-            <TouchableOpacity
-                    style={styles.signIn}
-                    
-                >
-                    <LinearGradient
-                        colors={['#f17c93', '#d21036']}
-                        style={styles.signIn}
-                    >
-
-
-                        <Text style={[styles.textSign, {
-                            color: '#fff'
-                        }]}>
-                            <Fontisto name="first-aid-alt" size={25} color="#fff" />View Details</Text>
-                    </LinearGradient>
-                </TouchableOpacity>
+       
         </View>
       </View>
     </TouchableOpacity>
@@ -101,7 +86,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   cardTitle: {
-    fontSize: 20,
+    fontSize: 15,
   },
   cardDetails: {
     fontSize: 12,

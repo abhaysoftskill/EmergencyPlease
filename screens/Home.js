@@ -46,7 +46,7 @@ const Home = ({ navigation }) => {
         })
     }
     useEffect(() => {
-        if (coordinates.length == 0) {
+        if (coordinates?.length == 0) {
             dispatch(readCurrentLocation())
         }
         else if (coordinates) {
@@ -109,7 +109,7 @@ const Home = ({ navigation }) => {
                 resizeMode: "contain",
                 // // height: 200, // the image height
                 // top: undefined
-                bottom: 0
+                bottom: -300
             }}
         >
 
@@ -135,7 +135,6 @@ const Home = ({ navigation }) => {
                         />
                         <Text>{RequestCount}Loading....</Text>
                     </View>}
-                    {/* <Paragraph style={{ position: 'absolute', bottom: 0, left: 0, right: 0, textAlign: 'center', color: 'red', }}>Pull down to see Refresh</Paragraph> */}
 
                     {!RequestCount && !loading && <Text style={styles.noReported}>Today's Great day No Emergency Yet Reported</Text>}
 
@@ -147,14 +146,13 @@ const Home = ({ navigation }) => {
                         disabled={RequestCount == 0}
 
                     >
-
                         <Card style={styles.Card}>
                             <Card.Content>
                                 <View style={styles.innerContainer}>
-                                    <Ionicons name="md-people-sharp" size={55} color="#05375a" />
+                                {RequestCount <= 1 ? <Ionicons name="md-person" size={55} color="#05375a" />: <Ionicons name="md-people-sharp" size={55} color="#05375a" /> }
 
                                     <View style={styles.contentTitle}>
-                                        <Title style={{ color: '#05375a' }}>{RequestCount} People's</Title>
+                                        <Title style={{ color: '#05375a' }}>{RequestCount <= 1 ? `${RequestCount} Person` :`${RequestCount} Person's`}</Title>
                                         <Paragraph>Requested for Help in <Text style={{ fontWeight: "bold", color: "#ae1302" }}>{coveredArea}km</Text></Paragraph>
                                     </View>
                                     <View style={styles.navigate} >
@@ -200,68 +198,20 @@ const Home = ({ navigation }) => {
                         <Card style={[styles.myRequest]}>
                             <Card.Content>
                                 <View style={styles.innerContainer}>
-                                    <Ionicons name="md-help" size={55} color="#fff" />
+                                    <Ionicons name="ios-person-circle-outline" size={55} color="#fff" />
 
                                     <View style={{ color: '#fff' }}>
                                         <Title style={{ color: '#fff' }}>My Request</Title>
-                                        <Paragraph style={{ color: '#fff' }}>Request to Emergency Team</Paragraph>
+                                        <Paragraph style={{ color: '#fff' }}>Requested for Emergency     </Paragraph>
                                     </View>
                                     <View style={styles.navigate} >
-                                        <Ionicons name="md-radio" size={40} color="#fff" />
+                                        <Ionicons name="md-walk" size={40} color="#fff" />
                                     </View>
                                 </View>
                             </Card.Content>
 
                         </Card>
                     </TouchableOpacity>}
-
-                    {/*  <Animated.ScrollView
-                    ref={_scrollView}
-                    horizontal
-                    pagingEnabled
-                    scrollEventThrottle={1}
-                    showsHorizontalScrollIndicator={false}
-                    snapToInterval={CARD_WIDTH + 20}
-                    snapToAlignment="center"
-                    style={styles.scrollView}
-                    contentInset={{
-                        top: 0,
-                        left: SPACING_FOR_CARD_INSET,
-                        bottom: 0,
-                        right: SPACING_FOR_CARD_INSET
-                    }}
-                    contentContainerStyle={{
-                        paddingHorizontal: Platform.OS === 'android' ? SPACING_FOR_CARD_INSET : 0
-                    }}
-
-                >
-                    {false && [1, 2, 3].map((marker, index) => (
-                        <Card key={index} style={[styles.needHelp, styles.card, showBlink ? styles.blink : styles.noblink]}>
-                            <Card.Content>
-                                <View style={styles.innerContainer}>
-                                    <View style={[styles.friendsCount]}>
-                                        <Text style={{ color: "#fff" }}>family</Text>
-                                    </View>
-                                    <View style={{ color: '#fff' }}>
-                                        <Title style={{ color: '#fff' }}>I'm in Accident Emergency</Title>
-                                        <Paragraph style={{ color: '#fff' }}>Abhay Narnaware</Paragraph>
-                                    </View>
-
-                                </View>
-                            </Card.Content>
-
-                        </Card>
-                    ))}
-                </Animated.ScrollView>
-*/}
-                    {/* <View style={styles.banner}>
-                    <Image
-                        source={require('../assets/banners/banner1.png')}
-                        resizeMode="cover"
-                        style={{ width: '100%', height: '100%' }}
-                    />
-                </View> */}
-
                 </View>
             </ScrollView>
         </ImageBackground>
@@ -296,7 +246,6 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-start'
     },
     innerContainer: {
-        // flex: 0.5,
         // flexDirection: 'row'
         flexDirection: 'row',
         alignSelf: 'center',

@@ -14,23 +14,19 @@ export const EmergencyCall = ({ route, navigation }) => {
     }
     const renderItem = ({ item }) => {
         return (
-            // <Card 
-            //     itemData={item}
-            //     onPress={()=> navigation.navigate('EmergencyConnect', {itemData: ''})}
-            // />
             <TouchableOpacity onPress={() => navigation.navigate('Map', {title: item.title, serviceName:item.name})}
             disabled={RequestDataCount[item.name] > 0 ? false : true}
             >
-                <View style={styles.card}>
+                <View style={[styles.card, RequestDataCount[item.name] > 0 ? styles.active : styles.inActive]}>
                     <View style={styles.cardImgWrapper}>
-                        <View style={styles.categoryIcon}>
-                            <Text style={styles.count} color="green">{RequestDataCount[item.name]}</Text>
+                        <View style={[styles.categoryIcon, RequestDataCount[item.name] > 0 ? styles.active : styles.inActive]}>
+                            <Text style={[styles.count,  RequestDataCount[item.name] > 0 ? styles.active : styles.inActive]} color="green">{RequestDataCount[item.name]}</Text>
                         </View>
                     </View>
                     <View style={styles.cardInfo}>
-                        <Text style={styles.cardTitle}>{item.title}</Text>
+                        <Text style={[styles.cardTitle,RequestDataCount[item.name] > 0 ? styles.active : styles.inActive]}>{item.title}</Text>
                         {/* <StarRating ratings={item.ratings} reviews={item.reviews} /> */}
-                        <Text numberOfLines={1} style={styles.cardDetails}>{item.description}</Text>
+                        <Text numberOfLines={1} style={[styles.cardDetails,RequestDataCount[item.name] > 0 ? styles.active : styles.inActive]}>{item.description}</Text>
 
                     </View>
                     <View style={styles.cardImgWrapper}>
@@ -100,10 +96,13 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         borderColor: '#ccc',
         borderWidth: 1,
-        borderBottomColor: 'green',
         borderBottomWidth: 2,
 
     },
+    active:{ borderBottomColor: 'green',color: 'green',
+    borderColor: 'green'},
+    inActive:{ borderBottomColor: '#e5e5e5',color: '#e5e5e5',
+    borderColor: '#e5e5e5'},
     categoryIcon: {
         borderWidth: 3,
         alignItems: 'center',
@@ -113,7 +112,7 @@ const styles = StyleSheet.create({
         height: 70,
         // backgroundColor: 'green' /* '#FF6347' */,
         borderRadius: 50,
-        borderColor: 'green'
+       
     },
     cardImgWrapper: {
         flex: 1,
@@ -141,7 +140,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
     },
     count: {
-        color: 'green',
+        
         fontSize: 20,
 
     },

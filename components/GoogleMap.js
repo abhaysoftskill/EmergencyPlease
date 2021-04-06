@@ -14,7 +14,7 @@ import {
   PermissionsAndroid
 } from "react-native";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
-
+import Moment from 'moment'; // Import momentjs
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Fontisto from 'react-native-vector-icons/Fontisto';
@@ -38,6 +38,7 @@ const CARD_WIDTH = width * 0.8;
 const SPACING_FOR_CARD_INSET = width * 0.1 - 10;
 
 const GoogleMap = ({ route, navigation }) => {
+  Moment.locale('IST');
   const theme = useTheme();
   const { coordinates } = useSelector(state => state.currentLocationReducer);
 
@@ -47,117 +48,24 @@ const GoogleMap = ({ route, navigation }) => {
   const [locationStatus, setLocationStatus] = useState('');
   const latitudeDelta = 0.08;
   const longitudeDelta = 0.08;
+  const [expand, setExpand] = useState(0)
+  const EmergencyType = {
+    "accident_reported": "Accident",
+    "ambulance_request": "Call for Ambulance",
+    "heart_attack": "Heart Attack",
+    "blood_donor": "Blood Required"
+  }
   useEffect(() => {
     {
       region && EmergencyService.nearestEmergencyRequest(region.longitude, region.latitude, route.params.serviceName).then((res) => {
-
         setShowMap(true);
-        console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&')
-        console.log(res)
-        console.log(res[0].geometry.coordinates)
         setRequestData(res)
-        // [0].geometry.coordinates
       }, error => {
         console.error('onRejected function called: ' + error.message);
         return;
       })
     }
   }, [region]);
-  // useEffect(() => {
-  //   const requestLocationPermission = async () => {
-  //     if (Platform.OS === 'ios') {
-  //       getOneTimeLocation();
-  //       subscribeLocationLocation();
-  //     } else {
-  //       try {
-  //         const granted = await PermissionsAndroid.request(
-  //           PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-  //           {
-  //             title: 'Location Access Required',
-  //             message: 'This App needs to Access your location',
-  //           },
-  //         );
-  //         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-  //           //To Check, If Permission is granted
-  //           getOneTimeLocation();
-  //           subscribeLocationLocation();
-  //         } else {
-  //           // setLocationStatus('Permission Denied');
-  //         }
-  //       } catch (err) {
-  //         console.warn('err' + err);
-  //       }
-  //     }
-  //   };
-  //   check(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION)
-  //     .then(result => {
-  //       requestLocationPermission();
-
-  //     })
-  //     .catch(error => {
-  //       //console.log('error' + error)
-  //     });
-  //   return () => {
-  //     Geolocation.clearWatch(watchID);
-  //   };
-  // }, []);
-
-
-  const getOneTimeLocation = () => {
-    setLocationStatus('Getting Location ...');
-    Geolocation.getCurrentPosition(
-      //Will give you the current location
-      (position) => {
-        let regionCord = {
-          latitude: parseFloat(position.coords.latitude),
-          longitude: parseFloat(position.coords.longitude),
-          latitudeDelta: latitudeDelta,
-          longitudeDelta: longitudeDelta
-        };
-
-        setRegion(regionCord);
-
-      },
-      (error) => {
-        setLocationStatus(error.message);
-      },
-      {
-        enableHighAccuracy: false,
-        timeout: 30000,
-        maximumAge: 1000
-      },
-    );
-  }
-  const subscribeLocationLocation = () => {
-    watchID = Geolocation.watchPosition(
-      (position) => {
-        //Will give you the location on location change
-
-        setLocationStatus('You are Here');
-        //console.log(position);
-        let regionCord = {
-          latitude: parseFloat(position.coords.latitude),
-          longitude: parseFloat(position.coords.longitude),
-          latitudeDelta: latitudeDelta,
-          longitudeDelta: longitudeDelta
-        };
-        setRegion(regionCord);
-      },
-      (error) => {
-        setLocationStatus(error.message);
-      },
-      {
-        enableHighAccuracy: false,
-        maximumAge: 1000
-      },
-    );
-  };
-  // const initialMapState = {
-  //   markers,
-
-  // };
-
-  // const [state, setState] = React.useState(initialMapState);
 
   let mapIndex = 0;
   let mapAnimation = new Animated.Value(0);
@@ -180,9 +88,7 @@ const GoogleMap = ({ route, navigation }) => {
         if (mapIndex !== index) {
           mapIndex = index;
 
-          const  coordinate  = requestData[index].geometry.coordinates;
-          console.log(index)
-          console.log(coordinate)
+          const coordinate = requestData[index].geometry.coordinates;
 
           _map.current.animateToRegion(
             {
@@ -275,8 +181,6 @@ const GoogleMap = ({ route, navigation }) => {
         />
 
         {requestData && requestData.map((marker, index) => {
-          console.log('************************')
-          console.log(marker.geometry.coordinates[0])
           const scaleStyle = {
             transform: [
               {
@@ -340,6 +244,11 @@ const GoogleMap = ({ route, navigation }) => {
             <View style={styles.requestNumber}>
               <Text style={{ color: "#fff" }}>{index + 1}</Text>
             </View>
+            <View style={styles.expand}>
+              {expand != index + 1 && <Ionicons name="md-chevron-down-sharp" size={35} color="#8e8e8e" onPress={() => setExpand(index + 1)} />}
+              {expand == index + 1 && <Ionicons name="md-chevron-up" size={35} color="#8e8e8e" onPress={() => setExpand(0)} />}
+
+            </View>
             <View style={{
               flex: 1,
               flexDirection: 'column',
@@ -353,13 +262,26 @@ const GoogleMap = ({ route, navigation }) => {
                   resizeMode="cover"
                 />
                 <View style={[styles.textContent]}>
-                  <Text numberOfLines={1} style={styles.cardtitle}>{marker.userName}</Text>
-                  <Text numberOfLines={1} style={[styles.cardDescription, { color: '#1a8434' }]}>{marker.bloodGrp}</Text>
-                  <Text numberOfLines={1} style={[styles.cardDescription, { fontSize: 14, color: '#d21036' }]}>Before {marker.reqTime}</Text>
-                  <Text numberOfLines={1} style={styles.cardDescription}>{marker.helpingUser} Users ready to help</Text>
-
+                  <Text numberOfLines={1} style={styles.cardtitle}>{marker.userDetails[0].firstname} {marker.userDetails[0].lastname}</Text>
+                  <Text style={{ backgroundColor: '#1a8434', color: '#fff', paddingHorizontal: 5, borderRadius: 50, textAlign: 'center', marginBottom: 5, marginTop: 5 }}>{EmergencyType[marker.requestType]}</Text>
+                  {expand == index + 1 && <View>{marker.requestType == 'ambulance_request' && <Text numberOfLines={1} style={[styles.cardDescription, { color: '#1a8434' }]}>Request for {marker.requestDetails.freeAmbulance && 'Free Ambulance'}</Text>}
+                    {marker.requestType == 'ambulance_request' && marker.requestDetails.paidAmbulance && <Text numberOfLines={1} style={[styles.cardDescription, { color: '#1a8434' }]}> {marker.requestDetails.paidAmbulance == true && ' / Paid Ambulance'} </Text>}
+                    {marker.userDetails[0].bloodGroup != '' && <Text numberOfLines={1} style={[styles.cardDescription, { color: '#1a8434' }]}>Blood Group <Text style={{ color: '#d21036' }}>{marker.userDetails[0].bloodGroup}</Text></Text>}
+                    {marker.requestDetails.bloodGroup != '' && <Text numberOfLines={1} style={[styles.cardDescription, { color: '#1a8434' }]}>Requested BloodGroup <Text style={{ color: '#d21036' }}>{marker.requestDetails.bloodGroup} {marker.requestDetails.bloodGroupType} </Text></Text>}
+                    {/* <Text numberOfLines={1} style={styles.cardDescription}>{marker.helpingUser} Users ready to help</Text> */}
+                  </View>}
                 </View>
               </View>
+              {expand == index + 1 && <View style={{ flex: 1, flexDirection: 'row' }}>
+
+                <View style={{ flex: 1, padding: 10 }}>
+                  <Text numberOfLines={1} style={[styles.cardDescription, { fontSize: 14, color: '#d21036' }]}>Request Before</Text>
+                  <Text style={styles.time}>{Moment(marker.requestDate).startOf('minutes').fromNow()} (<Text style={styles.time}>{Moment(marker.requestDate).local().calendar()}</Text>)</Text>
+                  {/* <Text numberOfLines={1} style={styles.cardDescription}>{marker.helpingUser} Users ready to help</Text> */}
+
+                </View>
+
+              </View>}
               <View style={{ flex: 1 }}>
                 <View style={styles.button}>
                   <TouchableOpacity
@@ -371,7 +293,7 @@ const GoogleMap = ({ route, navigation }) => {
                       })}
                   >
                     <LinearGradient
-                      colors={['#f17c93', '#d21036']}
+                      colors={['#d21036', '#d21036']}
                       style={styles.signIn}
                     >
 
@@ -402,8 +324,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   requestNumber: {
-    color: "#d21036", position: 'absolute', top: 5, right: 6,
+    color: "#d21036", position: 'absolute', top: 5, left: 6,
     backgroundColor: '#d21036', width: 20, height: 20, borderRadius: 50,
+    alignItems: "center", alignContent: "center", justifyContent: 'center'
+  },
+  expand: {
+    color: "#d21036", position: 'absolute', top: 0, right: 10,
     alignItems: "center", alignContent: "center", justifyContent: 'center'
   },
   markerNumber: {
@@ -475,12 +401,6 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   cardImage: {
-    // flex: 1,
-    // width: 80,
-    // height: 80,
-    // borderRadius:100,
-    // alignSelf: "center",
-
     borderWidth: 0,
     // alignItems: 'center',
     // justifyContent: 'center',
@@ -516,7 +436,6 @@ const styles = StyleSheet.create({
   },
   button: {
     alignItems: 'center',
-    marginTop: 5
   },
   signIn: {
     width: '100%',

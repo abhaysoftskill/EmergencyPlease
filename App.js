@@ -13,9 +13,9 @@ import {
   ScrollView,
   View,
   Text,
-  StatusBar,
+  StatusBar
 } from 'react-native';
-
+import NetInfo from "@react-native-community/netinfo";
 import {
   NavigationContainer,
   DefaultTheme as NavigationDefaultTheme,
@@ -55,11 +55,28 @@ import Welcome from './screens/auth/Welcome';
 import { Provider } from 'react-redux';
 // import { PersistGate } from 'redux-persist/integration/react';
 import store from './Redux/store';
+import CheckConnection from './utils/CheckConnection';
+import { Image } from 'react-native-animatable';
 
 const RootStack = createStackNavigator();
+const ErrorCard = () => {
+  return (
+    <View style={styles.errorContainer}>
+      <View>
+        <Image source={require('./assets/error.png')} style={styles.img} />
+      </View>
+      <View style={styles.textContainer}>
+        <Text style={styles.errorHead}>Connection Error</Text>
+        <Text style={styles.subText}>
+          Please check your network connectivity and try again
+        </Text>
+      </View>
+    </View>
+  );
+};
 const App = () => {
   // const persistedStore = persistStore(store);
-
+ 
   const [isLoading, setIsLoading] = useState(true);
   const [userToken, setUserToken] = useState(null);
   const [isDarkTheme, setIsDarkTheme] = useState(false);
@@ -134,7 +151,7 @@ const App = () => {
       const userToken = String(foundUser.userToken.token);
       const userName = foundUser.userDetails.firstname + " " + foundUser.userDetails.lastname;
       const userDetails = JSON.stringify(foundUser.userDetails);
-
+      console.log(userDetails)
 
       try {
         await AsyncStorage.setItem('userToken', userToken);
@@ -164,7 +181,7 @@ const App = () => {
       setIsDarkTheme(isDarkTheme => !isDarkTheme);
     }
   }), []);
-
+  
   useEffect(() => {
     setTimeout(async () => {
       // setIsLoading(false);
@@ -182,7 +199,10 @@ const App = () => {
       dispatch({ type: 'RETRIEVE_TOKEN', token: userToken });
     }, 1000);
   }, []);
-
+  let network = CheckConnection();
+  if (network === false) {
+    return <ErrorCard />;
+  }
   return (
     <Provider store={store}>
     {/* <PersistGate loading={null} persistor={persistedStore}> */}
@@ -241,6 +261,29 @@ const App = () => {
 };
 
 const styles = StyleSheet.create({
+  errorContainer: {
+    flex: 1,
+    alignSelf: 'center',
+    alignItems: 'center',
+    paddingBottom: 30,
+    justifyContent: 'center',
+  },
+  rootContainer: {justifyContent: 'flex-start', padding: 10},
+  img: {height: 120, width: 120},
+  textContainer: {
+    alignItems: 'center',
+  },
+  title: {marginBottom: 10, fontSize: 20, fontWeight: 'bold'},
+  errorHead: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  subText: {
+    fontSize: 16,
+    fontWeight: '500',
+    paddingHorizontal: 50,
+    textAlign: 'center',
+  },
   scrollView: {
     backgroundColor: Colors.lighter,
   },

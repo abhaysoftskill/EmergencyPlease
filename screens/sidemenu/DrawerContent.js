@@ -34,6 +34,7 @@ export function DrawerContent(props) {
 
             try {
                 let userDetailsData = await AsyncStorage.getItem('userDetails');
+                console.log(JSON.parse(userDetailsData))
                 setUserDetails(JSON.parse(userDetailsData));
 
             } catch (e) {
@@ -112,7 +113,7 @@ export function DrawerContent(props) {
                 </View>
                
             </DrawerContentScrollView>
-            <Drawer.Section title="Preferences">
+            {/* <Drawer.Section title="Preferences">
                 <TouchableRipple onPress={() => { toggleTheme() }}>
                     <View style={styles.preference}>
                         <Text>Dark Theme</Text>
@@ -121,7 +122,7 @@ export function DrawerContent(props) {
                         </View>
                     </View>
                 </TouchableRipple>
-            </Drawer.Section>
+            </Drawer.Section> */}
             <Drawer.Section style={styles.bottomDrawerSection}>
                 <DrawerItem
                     icon={({ color, size }) => (

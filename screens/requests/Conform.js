@@ -6,8 +6,7 @@ import LoginService from '../../services/loginServices';
 import EmergencyService from '../../services/emergencyServices';
 
 const ConfirmRequest = (props) => {
-  console.log(props.data.userDetails);
-  console.log(props.geometry);
+  // console.log(props.geometry);
   const navigation = useNavigation();
   const [visible, setVisible] = useState(true);
 
@@ -34,18 +33,27 @@ const ConfirmRequest = (props) => {
   const submitRequest = () => {
     let updateData = {
       "userid": props.data.userDetails.id,
-      "emergencyType": props.data.service_name,
+      "requestType": props.data.service_name,
+      "requestDetails":{
+        "requestForSelf": isSelf,
+        "landMark": data.landmark,
+        "forName": data.name || '',
+        "forContact": data.phonenumber || '',
+        "bloodGroupType": props.data.serviceType?.bloodGroupType || '',
+        "bloodGroup": props.data.serviceType?.bloodGroup || '',
+        "paidAmbulance": props.data.serviceType?.paidService || false,
+        "freeAmbulance": props.data.serviceType?.freeService || false
+      },
       "geometry": {
         "type": "point",
         "coordinates": [
           props.geometry.latitude,
           props.geometry.longitude
         ]
-      },
-      "landmark": data.landmark,
-      "helpFor": data
+      }
     }
     Keyboard.dismiss()
+    setVisible(false)
 
     EmergencyService.emergencyRequest(updateData).then((res) => {
       Alert.alert('Request Success!', 'Your emergency request added, soon you will get help', [
@@ -79,12 +87,11 @@ const ConfirmRequest = (props) => {
           <Dialog.Title>{props.data.service_title} Request</Dialog.Title>
           <Dialog.Content >
             <View style={{
-              flexDirection: 'row', flex: 1,
+              flexDirection: 'row', 
               alignItems: "center",
               justifyContent: "flex-end",
-              marginBottom: 20
             }}>
-              <Text>Others</Text>
+          <Text style={{color:'red'}}>Others</Text>
               <Switch
                 trackColor={{ false: "#767577", true: "green" }}
                 thumbColor={isSelf ? "red" : "red"}
@@ -144,7 +151,7 @@ const ConfirmRequest = (props) => {
           </Dialog.Content>
           <Dialog.Actions>
             <Button mode={'contained'} color={'#ea3a3a'} onPress={() => { props.closeOption() }} style={{ marginRight: 30 }}>Cancel</Button>
-            <Button mode={'contained'} color={'#17841c'} onPress={() => submitRequest()}>Submit</Button>
+            <Button mode={'contained'} color={'#17841c'} onPress={() => submitRequest()} disabled={!data.landmark}>Submit</Button>
           </Dialog.Actions>
         </Dialog>
       </Portal>

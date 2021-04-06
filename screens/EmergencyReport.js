@@ -100,8 +100,8 @@ const EmergencyReport = ({ route, navigation }) => {
                     color={Colors.gray500}
                     size={30}
                     onPress={() => setRegion({
-                        latitude: region.latitude,
-                        longitude: region.longitude,
+                        latitude: coordinates.latitude,
+                        longitude: coordinates.longitude,
                         latitudeDelta: latitudeDelta,
                         longitudeDelta: longitudeDelta,
                     })}

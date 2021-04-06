@@ -10,7 +10,7 @@ import {
     Button
 } from 'react-native';
 import { useTheme } from '@react-navigation/native';
-
+import { useSelector } from 'react-redux';
 // import Swiper from 'react-native-swiper';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -26,13 +26,17 @@ import LaunchNavigator from 'react-native-launch-navigator';
 import Geolocation from '@react-native-community/geolocation';
 import { check, PERMISSIONS } from 'react-native-permissions';
 import { PermissionsAndroid, Platform } from 'react-native';
+import Moment from 'moment'; // Import momentjs
 const googleApiKey = 'AIzaSyCGLgQXcqtOT_DzZI4gavScYkaqFc5EuTw';
 const EmergencyDetails = ({ route, navigation }) => {
-    // const userDetails = route.params.userDetails;
+    Moment.locale('IST');
+    const { coordinates } = useSelector(state => state.currentLocationReducer);
+
     const userDetails = route.params.userDetails;
+    console.log(userDetails)
     const theme = useTheme();
     let instance, defaultSelectedApp, defaultLaunchMode, launchModes;
-
+    const [readyToHelp, setReadyToHelp] = useState(false)
 
     const navigateLocation = () => {
         if (Platform.OS === "android") {
@@ -46,8 +50,8 @@ const EmergencyDetails = ({ route, navigation }) => {
             };
             defaultLaunchMode = LaunchNavigator.LAUNCH_MODE.MAPS;
 
-            LaunchNavigator.navigate([route.params.userDetails.coordinate.latitude, route.params.userDetails.coordinate.longitude], {
-                start: `${route.params.location.latitude}, ${route.params.location.longitude}`
+            LaunchNavigator.navigate([route.params.userDetails.geometry.coordinates[0], route.params.userDetails.geometry.coordinates[1]], {
+                start: `${coordinates.latitude}, ${coordinates.longitude}`
             })
                 .then(() => console.log("Launched navigator"))
                 .catch((err) => console.error("Error launching navigator: " + err));
@@ -60,7 +64,7 @@ const EmergencyDetails = ({ route, navigation }) => {
             <StatusBar barStyle={theme.dark ? 'light-content' : 'dark-content'} />
             <View style={styles.sliderContainer}>
                 <Image
-                    source={require('../assets/banners/blood-donor.jpg')}
+                    source={require('../assets/defaultProfile.png')}
                     style={styles.userprofile}
                     resizeMode="cover"
                 />
@@ -68,14 +72,14 @@ const EmergencyDetails = ({ route, navigation }) => {
                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'flex-start', padding: 10 }}>
                     <View style={{ flex: 1 }}>
                         <View>
-                            <Text style={styles.userName}>{userDetails.userName}</Text>
+                            <Text style={styles.userName}>{userDetails.userDetails[0].firstname} {userDetails.userDetails[0].lastname}</Text>
                         </View>
                     </View>
-                    <View style={{ flex: 1 }}>
+                    {/* <View style={{ flex: 1 }}>
                         <View style={styles.userInfo}>
                             <Text style={{ color: '#444' }}>{'Address: - Bhandara Road Warthi - Bhandara 441906'}</Text>
                         </View>
-                    </View>
+                    </View> */}
                 </View>
             </View>
 
@@ -86,7 +90,7 @@ const EmergencyDetails = ({ route, navigation }) => {
                         navigation.navigate('CardListScreen', { title: 'Restaurant' })
                     }>
                     <View style={styles.categoryIcon}>
-                        <Text style={styles.text} size={35} color="#FF6347">{userDetails.age || '15+'}</Text>
+                        <Text style={styles.text} size={35} color="#FF6347">{Moment(userDetails.userDetails[0].dob).local().fromNow().split(" ")[0]} </Text>
                     </View>
                     <Text style={styles.categoryBtnTxt}>Age</Text>
                 </TouchableOpacity>
@@ -96,13 +100,13 @@ const EmergencyDetails = ({ route, navigation }) => {
                         navigation.navigate('CardListScreen', { title: 'Fastfood Center' })
                     }>
                     <View style={styles.categoryIcon}>
-                        <Text style={styles.text} size={35} color="#FF6347">{userDetails.bloodGrp}</Text>
+                        <Text style={styles.text} size={35} color="#FF6347">{userDetails.userDetails[0].bloodGroup}</Text>
                     </View>
                     <Text style={styles.categoryBtnTxt}>Blood Group</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.categoryBtn} onPress={() => { }}>
                     <View style={styles.categoryIcon}>
-                        <Text style={styles.text} size={35} color="#FF6347">{userDetails.gender}</Text>
+                        <Text style={styles.text} size={35} color="#FF6347">{userDetails.userDetails[0].userGender}</Text>
                     </View>
                     <Text style={styles.categoryBtnTxt}>Gender</Text>
                 </TouchableOpacity>
@@ -122,48 +126,52 @@ const EmergencyDetails = ({ route, navigation }) => {
             <View style={[styles.categoryContainer, { marginTop: 10 }]}>
                 {/* {userDetails.immidiateContact.map(data => { */}
                 <TouchableOpacity style={styles.categoryBtn} onPress={() => { }}>
-                    <View style={styles.categoryIcon2}>
-                        <Fontisto name="holiday-village" size={35} color="#FF6347" />
-                        <View style={[styles.friendsCount, { backgroundColor: '#FF6347' }]}>
-                            <Text style={{ color: "#fff" }}>2</Text>
+                    <View style={[styles.categoryIcon2,{borderColor: `${(userDetails.userDetails[0].familyContacts.length > 0 ? '#FF6347' : '#fdeae7')}`, backgroundColor: `${(userDetails.userDetails[0].familyContacts.length > 0 ? '#d9f1df' : '#e5e5e5')}`}]}>
+                        <Fontisto name="holiday-village" size={35} color={`${(userDetails.userDetails[0].familyContacts.length > 0 ? '#FF6347' : '#8d8c8c')}`} />
+                        <View style={[styles.friendsCount, { backgroundColor: `${(userDetails.userDetails[0].familyContacts.length > 0 ? '#FF6347' : '#ccc')}` }]}>
+                            <Text style={{ color: "#fff" }}>{userDetails.userDetails[0].familyContacts.length}</Text>
                         </View>
                     </View>
                     <Text style={[styles.categoryBtnTxt, { color: "#FF6347" }]}>Family</Text>
                 </TouchableOpacity>
                 {/* })} */}
                 <TouchableOpacity style={styles.categoryBtn} onPress={() => { }}>
-                    <View style={[styles.categoryIcon2, { borderColor: '#1a8434', backgroundColor: '#d9f1df' }]}>
-                        <Ionicons name="md-people" size={35} color="#1a8434" />
-                        <View style={[styles.friendsCount, { backgroundColor: '#FF6347' }]}>
-                            <Text style={{ color: "#fff" }}>2</Text>
+                    <View style={[styles.categoryIcon2, { borderColor: `${(userDetails.userDetails[0].familyContacts.length > 0 ? '#1a8434' : '#ccc')}`, 
+                    backgroundColor: `${(userDetails.userDetails[0].familyContacts.length > 0 ? '#d9f1df' : '#e5e5e5')}` }]}>
+                        <Ionicons name="md-people" size={35}  color={`${(userDetails.userDetails[0].familyContacts.length > 0 ? '#1a8434' : '#8d8c8c')}`} />
+                        <View style={[styles.friendsCount, { backgroundColor: `${(userDetails.userDetails[0].familyContacts.length > 0 ? '#FF6347' : '#ccc')}` }]}>
+                            <Text style={{ color: "#fff" }}>{userDetails.userDetails[0].friendsContacts.length}</Text>
                         </View>
                     </View>
                     <Text style={[styles.categoryBtnTxt, { color: "#1a8434" }]}>Friend</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.categoryBtn} onPress={() => { }}>
-                    <View style={[styles.categoryIcon2, { borderColor: '#d21036', backgroundColor: '#f5d4db' }]}>
-                        <Fontisto name="user-secret" size={35} color="#d21036" />
-                        <View style={styles.friendsCount}>
-                            <Text style={{ color: "#fff" }}>2</Text>
+                    <View style={[styles.categoryIcon2, { borderColor: `${(userDetails.userDetails[0].familyContacts.length > 0 ? '#d21036' : '#ccc')}`, 
+                    backgroundColor: `${(userDetails.userDetails[0].familyContacts.length > 0 ? '#f5d4db' : '#e5e5e5')}` }]}>
+                        <Fontisto name="user-secret" size={35}  color={`${(userDetails.userDetails[0].familyContacts.length > 0 ? '#d21036' : '#8d8c8c')}`}/>
+                        <View style={[styles.friendsCount,{ backgroundColor: `${(userDetails.userDetails[0].familyContacts.length > 0 ? '#FF6347' : '#ccc')}` }]}>
+                            <Text style={{ color: "#fff" }}>{userDetails.userDetails[0].officeContacts.length}</Text>
                         </View>
                     </View>
                     <Text style={[styles.categoryBtnTxt, { color: "#d21036" }]}>Office</Text>
                 </TouchableOpacity>
             </View>
 
-        
-            <View style={styles.button}>
-                <Text style={[{
-                    paddingHorizontal: 15, textAlign: 'center',
-                    color: '#d21036'
-                }]}>Once you Ready to help, You will get navigate option to search user fast using good map.</Text>
 
-                <Text style={[{
+            <View style={styles.button}>
+                {!readyToHelp && <Text style={[{
                     paddingHorizontal: 15, textAlign: 'center',
-                    color: '#1a8434'
-                }]}>We are appreciated for your help, you can connect with other nearest emergency warrior</Text>
-               
-                <TouchableOpacity
+                    color: '#d21036', marginBottom:10
+                }]}>Once you Ready to help, You will get navigate option to search user fast using good map.
+                </Text>}
+
+                {readyToHelp && <Text style={[{
+                    paddingHorizontal: 15, textAlign: 'center',
+                    color: '#1a8434', marginBottom:10
+                }]}>We are appreciated for your help, you can connect with other nearest emergency warrior
+                </Text>}
+
+                {readyToHelp && <TouchableOpacity
                     style={styles.signIn}
                     onPress={() => { navigateLocation() }}
                 >
@@ -176,10 +184,27 @@ const EmergencyDetails = ({ route, navigation }) => {
                         <Text style={[styles.textSign, {
                             color: '#fff'
                         }]}>
-                            <Fontisto name="first-aid-alt" size={25} color="#fff" /> navigate to google Map</Text>
+                             Navigate to Google Map</Text>
                     </LinearGradient>
                 </TouchableOpacity>
+                }
+                {!readyToHelp && <TouchableOpacity
+                    style={styles.signIn}
+                    onPress={() => { setReadyToHelp(true) }}
+                >
+                    <LinearGradient
+                        colors={['#1a8434', '#1a8434']}
+                        style={styles.signIn}
+                    >
 
+
+                        <Text style={[styles.textSign, {
+                            color: '#fff'
+                        }]}>
+                             <Text>Ready to Help</Text></Text>
+                    </LinearGradient>
+                </TouchableOpacity>
+                }
 
             </View>
         </ScrollView>
@@ -301,7 +326,8 @@ const styles = StyleSheet.create({
         borderColor: 'green',
     },
     text: {
-        fontSize: 19
+        fontSize: 19,
+        textTransform:'capitalize'
     },
     categoryIcon2: {
         borderWidth: 1,

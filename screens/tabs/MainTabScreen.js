@@ -98,7 +98,7 @@ const HomeStackScreen = ({navigation}) => {
         name="Dashboard"
         component={Home}
         options={{
-          title: 'Dashboard',
+          title: 'Emergency Dashboard',
           headerLeft: () => (
             <View style={{marginLeft: 10, fontWeight:100}}>
               <Icon.Button

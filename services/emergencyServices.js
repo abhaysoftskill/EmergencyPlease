@@ -17,7 +17,7 @@ const nearestEmergencyRequestCount = (region) => {
 }
 const nearestEmergencyRequest = (lng,lat,type) => {
     return request({
-        url: `/emergencyrequest/near?lng=${lng}&lat=${lat}&emergencyType=${type}`,
+        url: `/emergencyrequest/near?lng=${lng}&lat=${lat}&requestType=${type}`,
         method: 'GET',
         handleHeaders: 2
     });
