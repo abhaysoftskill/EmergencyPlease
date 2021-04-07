@@ -57,11 +57,15 @@ import { Provider } from 'react-redux';
 import store from './Redux/store';
 import CheckConnection from './utils/CheckConnection';
 import { Image } from 'react-native-animatable';
+import withCodePush from './codepush';
 
 const RootStack = createStackNavigator();
 const ErrorCard = () => {
   return (
     <View style={styles.errorContainer}>
+      <View>
+        <Image source={require('./assets/logo.png')} style={[styles.img, {marginTop:20,marginBottom:50}]} />
+      </View>
       <View>
         <Image source={require('./assets/error.png')} style={styles.img} />
       </View>
@@ -266,7 +270,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     alignItems: 'center',
     paddingBottom: 30,
-    justifyContent: 'center',
+    // justifyContent: 'center',
   },
   rootContainer: {justifyContent: 'flex-start', padding: 10},
   img: {height: 120, width: 120},
@@ -327,4 +331,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default App;
+export default withCodePush(App);

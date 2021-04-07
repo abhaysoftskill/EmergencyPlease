@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">EmergencyPlease</string>
+    <string moduleConfig="true" name="CodePushDeploymentKey">txaLNiDQeooyMSuQP1-772pQPx3m8yh_-C7_D</string>
 </resources>

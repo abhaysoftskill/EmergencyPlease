@@ -201,7 +201,7 @@ const Home = ({ navigation }) => {
                                     <Ionicons name="ios-person-circle-outline" size={55} color="#fff" />
 
                                     <View style={{ color: '#fff' }}>
-                                        <Title style={{ color: '#fff' }}>My Request</Title>
+                                        <Title style={{ color: '#fff' }}>My Request test</Title>
                                         <Paragraph style={{ color: '#fff' }}>Requested for Emergency     </Paragraph>
                                     </View>
                                     <View style={styles.navigate} >
