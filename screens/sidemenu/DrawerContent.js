@@ -34,7 +34,6 @@ export function DrawerContent(props) {
 
             try {
                 let userDetailsData = await AsyncStorage.getItem('userDetails');
-                console.log(JSON.parse(userDetailsData))
                 setUserDetails(JSON.parse(userDetailsData));
 
             } catch (e) {

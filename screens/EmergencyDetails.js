@@ -27,13 +27,12 @@ import Geolocation from '@react-native-community/geolocation';
 import { check, PERMISSIONS } from 'react-native-permissions';
 import { PermissionsAndroid, Platform } from 'react-native';
 import Moment from 'moment'; // Import momentjs
-const googleApiKey = 'AIzaSyCGLgQXcqtOT_DzZI4gavScYkaqFc5EuTw';
+const googleApiKey = 'AIzaSyCJPqnfIgpcbwydCoTmIIjyTpfNjX9AgWk';
 const EmergencyDetails = ({ route, navigation }) => {
     Moment.locale('IST');
     const { coordinates } = useSelector(state => state.currentLocationReducer);
 
     const userDetails = route.params.userDetails;
-    console.log(userDetails)
     const theme = useTheme();
     let instance, defaultSelectedApp, defaultLaunchMode, launchModes;
     const [readyToHelp, setReadyToHelp] = useState(false)

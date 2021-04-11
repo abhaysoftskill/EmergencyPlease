@@ -57,14 +57,14 @@ const Home = ({ navigation }) => {
     // useEffect(() => {
     //     { region && requestData()}
     // }, [region])
-    const [showBlink, setShowBlink] = useState(true);
-    useEffect(() => {
-        // Change the state every second or the time given by User.
-        const interval = setInterval(() => {
-            setShowBlink((showBlink) => !showBlink);
-        }, 1000);
-        return () => clearInterval(interval);
-    }, []);
+    // const [showBlink, setShowBlink] = useState(true);
+    // useEffect(() => {
+    //     // Change the state every second or the time given by User.
+    //     const interval = setInterval(() => {
+    //         setShowBlink((showBlink) => !showBlink);
+    //     }, 1000);
+    //     return () => clearInterval(interval);
+    // }, []);
 
     useEffect(() => {
         setTimeout(async () => {
@@ -107,8 +107,6 @@ const Home = ({ navigation }) => {
             style={[styles.fixed, styles.containter]}
             imageStyle={{
                 resizeMode: "contain",
-                // // height: 200, // the image height
-                // top: undefined
                 bottom: -300
             }}
         >
@@ -129,8 +127,8 @@ const Home = ({ navigation }) => {
                         height:300
                     }}>
                         <Image
-                            source={require('../assets/loading.gif')}
-                            style={{ width: 200, height: 100 }}
+                            source={require('../assets/loading.png')}
+                            // style={{ width: 200, height: 100 }}
                             resizeMode="cover"
                         />
                         <Text>{RequestCount}Loading....</Text>
@@ -201,7 +199,7 @@ const Home = ({ navigation }) => {
                                     <Ionicons name="ios-person-circle-outline" size={55} color="#fff" />
 
                                     <View style={{ color: '#fff' }}>
-                                        <Title style={{ color: '#fff' }}>My Request test</Title>
+                                        <Title style={{ color: '#fff' }}>My Request</Title>
                                         <Paragraph style={{ color: '#fff' }}>Requested for Emergency     </Paragraph>
                                     </View>
                                     <View style={styles.navigate} >

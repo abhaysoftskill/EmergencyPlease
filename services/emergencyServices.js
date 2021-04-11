@@ -23,7 +23,6 @@ const nearestEmergencyRequest = (lng,lat,type) => {
     });
 }
 const myEmergencyRequest = (userID) => {
-    // console.log(userID)
     return request({
         url: `/emergencyrequest/${userID}`,
         method: 'GET',

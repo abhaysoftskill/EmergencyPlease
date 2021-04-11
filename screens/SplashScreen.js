@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback } from 'react';
 import { 
     View, 
     Text, 
@@ -6,18 +6,35 @@ import {
     Dimensions,
     StyleSheet,
     StatusBar,
-    Image
+    Image,
+    Linking,
+    Button
 } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useTheme } from '@react-navigation/native';
-import AsyncStorage from '@react-native-community/async-storage';
 
 const SplashScreen = ({navigation}) => {
     const { colors } = useTheme();
     
-
+    const OpenURLButton = ({ url, children }) => {
+        const handlePress = useCallback(async () => {
+          // Checking if the link is supported for links with custom URL scheme.
+          const supported = await Linking.canOpenURL(url);
+      
+          if (supported) {
+            // Opening the link with some app, if the URL scheme is "http" the web link should be opened
+            // by some browser in the mobile
+            await Linking.openURL(url);
+          } else {
+            Alert.alert(`Don't know how to open this URL: ${url}`);
+          }
+        }, [url]);
+      
+        return <Text onPress={handlePress} style={{color:'#C40201'}}>{children}</Text>;
+        // return <Button title={children} onPress={handlePress} /><Text on>{children}</Text>;
+      };
 
     return (
       <View style={styles.container}>
@@ -40,7 +57,7 @@ const SplashScreen = ({navigation}) => {
             <Text style={[styles.title, {
                 color: colors.text
             }]}>Emergency Please are always with you.</Text>
-            <Text style={styles.text}>Sign in with account</Text>
+            <Text style={[styles.text]}>By continuing you accepts our <OpenURLButton url={'https://emergencyplease.com/termofuse.html'}>Terms of Use,</OpenURLButton><OpenURLButton url={'https://emergencyplease.com/privacypolicy.html'}> Privacy Policy</OpenURLButton> & <OpenURLButton url={'https://emergencyplease.com/subscription.html'}>Subscription Terms</OpenURLButton></Text>
             <View style={styles.button}>
             <TouchableOpacity onPress={()=>navigation.navigate('SignIn')}>
                 <LinearGradient
@@ -95,7 +112,8 @@ const styles = StyleSheet.create({
   },
   text: {
       color: 'grey',
-      marginTop:5
+      marginTop:5,
+      lineHeight:22
   },
   button: {
       alignItems: 'flex-end',

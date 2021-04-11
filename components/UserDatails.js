@@ -22,7 +22,6 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 const UserDetails = ({ route, navigation }) => {
     // const userDetails = route.params.userDetails;
     const userDetails = route.params;
-    console.log(userDetails)
     const theme = useTheme();
 
     return (

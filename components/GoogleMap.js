@@ -56,6 +56,7 @@ const GoogleMap = ({ route, navigation }) => {
     "blood_donor": "Blood Required"
   }
   useEffect(() => {
+    console.log(coordinates)
     {
       region && EmergencyService.nearestEmergencyRequest(region.longitude, region.latitude, route.params.serviceName).then((res) => {
         setShowMap(true);
@@ -65,7 +66,7 @@ const GoogleMap = ({ route, navigation }) => {
         return;
       })
     }
-  }, [region]);
+  }, [region,coordinates]);
 
   let mapIndex = 0;
   let mapAnimation = new Animated.Value(0);
@@ -143,8 +144,8 @@ const GoogleMap = ({ route, navigation }) => {
         alignItems: 'center',
       }}>
         <Image
-          source={require('../assets/loading.gif')}
-          style={{ width: 200, height: 100 }}
+          source={require('../assets/loading.png')}
+          // style={{ width: 200, height: 100 }}
           resizeMode="cover"
         />
         <Text>Loading....</Text>

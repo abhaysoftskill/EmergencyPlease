@@ -5,9 +5,6 @@ import { check, PERMISSIONS } from 'react-native-permissions';
 import { PermissionsAndroid, Platform } from 'react-native';
 
 export const getCurrentLocation =  async () => {
-  const [currentLongitude, setCurrentLongitude] = useState('');
-  const [currentLatitude, setCurrentLatitude] = useState('');
-  const [locationStatus, setLocationStatus] = useState('');
   const [location, setLocation] = useState('');
 
   useEffect(() => {
@@ -61,10 +58,6 @@ export const getCurrentLocation =  async () => {
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421
         };
-        //console.log(region)
-        // setRegion(region);
-        // setShowMap(true);
-
         //getting the Longitude from the location json
         const currentLongitude =
           JSON.stringify(position.coords.longitude);
@@ -177,6 +170,5 @@ export const sendData = async ()  => {
   }
 
   let rr = await getOneTimeLocation()
-console.log(rr)
  // return getOneTimeLocation()
 }

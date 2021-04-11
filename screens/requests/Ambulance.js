@@ -4,7 +4,6 @@ import { Button, Paragraph, Dialog, Portal, Provider, Checkbox, TouchableRipple 
 import { useNavigation } from '@react-navigation/native';
 
 const AmbulanceRequest = (props) => {
-  console.log(props)
   const navigation = useNavigation();
   const [visible, setVisible] = useState(true);
 

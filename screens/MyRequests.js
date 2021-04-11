@@ -1,14 +1,11 @@
-import React,{useState, useEffect} from 'react';
-import { View, Text, Button, FlatList, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, FlatList, StyleSheet } from 'react-native';
 import MyRequestsCard from '../components/myRequestsCard';
-import { data } from '../model/data';
 import EmergencyService from '../services/emergencyServices';
-import AmbulanceRequest from './requests/Ambulance';
-import BloodGroup from './requests/BloodGroup';
 
-const MyRequests = ({route, navigation }) => {
+const MyRequests = ({ route, navigation }) => {
   const [myRequestData, setMyRequestData] = useState([])
-  
+
   const renderItem = ({ item }) => {
     return (
       <MyRequestsCard
@@ -17,25 +14,25 @@ const MyRequests = ({route, navigation }) => {
       />
     );
   };
- 
+
   const requestData = () => {
     EmergencyService.myEmergencyRequest(route.params.userDetails.id).then((res) => {
       setMyRequestData(res)
     }, error => {
-        console.error('onRejected function called: ' + error.message);
-        return;
+      console.error('onRejected function called: ' + error.message);
+      return;
     })
-}
-useEffect(() => {
-  requestData()
-}, [])
+  }
+  useEffect(() => {
+    requestData()
+  }, [])
   return (
     <>
       <View style={styles.container}>
         <FlatList
           data={myRequestData}
           renderItem={renderItem}
-          keyExtractor={(item,index) => index}
+          keyExtractor={(item, index) => index}
         />
       </View>
     </>

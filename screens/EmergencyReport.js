@@ -55,7 +55,6 @@ const EmergencyReport = ({ route, navigation }) => {
         // }, 1000);
         // return () => clearInterval(interval);
         if(coordinates){
-            console.log(coordinates)
           setShowMap(true)
       }
       }, [coordinates]);

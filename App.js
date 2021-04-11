@@ -8,14 +8,11 @@
 
 import React, { useEffect, useReducer, useState } from 'react';
 import {
-  SafeAreaView,
   StyleSheet,
-  ScrollView,
   View,
   Text,
-  StatusBar
 } from 'react-native';
-import NetInfo from "@react-native-community/netinfo";
+
 import {
   NavigationContainer,
   DefaultTheme as NavigationDefaultTheme,
@@ -30,11 +27,7 @@ import {
 const Drawer = createDrawerNavigator();
 
 import {
-  Header,
-  LearnMoreLinks,
   Colors,
-  DebugInstructions,
-  ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
 import { AuthContext } from './components/context';
@@ -42,23 +35,15 @@ import { AuthContext } from './components/context';
 import AsyncStorage from '@react-native-community/async-storage';
 
 import RootStackScreen from './utils/navigations/Routes';
-
-import GoogleMap from './components/GoogleMap';
-import UserDetails from './components/UserDatails';
-import { Navigator } from './utils/navigations/Navigator';
 import { DrawerContent } from './screens/sidemenu/DrawerContent';
 import MainTabScreen from './screens/tabs/MainTabScreen';
 
 import { createStackNavigator } from '@react-navigation/stack';
-import Welcome from './screens/auth/Welcome';
-// import persistStore from 'redux-persist/es/persistStore';
 import { Provider } from 'react-redux';
-// import { PersistGate } from 'redux-persist/integration/react';
 import store from './Redux/store';
 import CheckConnection from './utils/CheckConnection';
 import { Image } from 'react-native-animatable';
 import withCodePush from './codepush';
-
 const RootStack = createStackNavigator();
 const ErrorCard = () => {
   return (
@@ -79,10 +64,6 @@ const ErrorCard = () => {
   );
 };
 const App = () => {
-  // const persistedStore = persistStore(store);
- 
-  const [isLoading, setIsLoading] = useState(true);
-  const [userToken, setUserToken] = useState(null);
   const [isDarkTheme, setIsDarkTheme] = useState(false);
 
   const initialLoginState = {
@@ -155,7 +136,6 @@ const App = () => {
       const userToken = String(foundUser.userToken.token);
       const userName = foundUser.userDetails.firstname + " " + foundUser.userDetails.lastname;
       const userDetails = JSON.stringify(foundUser.userDetails);
-      console.log(userDetails)
 
       try {
         await AsyncStorage.setItem('userToken', userToken);
@@ -186,20 +166,32 @@ const App = () => {
     }
   }), []);
   
+//   const requestData = () => {
+//     EmergencyService.nearestEmergencyRequestCount(coordinates).then((res) => {
+//         setRequestDataCount(res)
+//         setRequestCount(res.accident_reported + res.ambulance_request + res.heart_attack + res.blood_donor);
+//         setLoading(false)
+//     }, error => {
+//         console.error('onRejected function called: ' + error.message);
+//         return;
+//     })
+// }
+//     useEffect(() => {
+//         // Change the state every second or the time given by User.
+//         const interval = setInterval(() => {
+//           requestData()
+//         }, 1000);
+//         return () => clearInterval(interval);
+//     }, []);
   useEffect(() => {
     setTimeout(async () => {
-      // setIsLoading(false);
       let userToken,userDetails;
       userToken = null;
       try {
         userToken = await AsyncStorage.getItem('userToken');
-        // userDetails = await AsyncStorage.getItem('userDetails');
-        // setUserData(JSON.parse(userDetails))
-
       } catch (e) {
         console.log(e);
       }
-      // console.log('user token: ', userToken);
       dispatch({ type: 'RETRIEVE_TOKEN', token: userToken });
     }, 1000);
   }, []);
@@ -209,26 +201,9 @@ const App = () => {
   }
   return (
     <Provider store={store}>
-    {/* <PersistGate loading={null} persistor={persistedStore}> */}
     <PaperProvider theme={theme}>
       <AuthContext.Provider value={authContext}>
         <NavigationContainer theme={theme}>
-          {/* <Navigator /> */}
-         
-             {/* { ( loginState.userToken !== null && 
-                loginState.userToken !== 'undefined'  && 
-                userData.userGender == "" &&
-                userData.bloodGroup == "" ? <RootStackScreen /> :
-                ( loginState.userToken !== null && loginState.userToken !== 'undefined' && userData.userGender != "" &&
-                userData.bloodGroup != ""? (
-                  <Drawer.Navigator drawerContent={props => <DrawerContent {...props} />}>
-                  
-                    <Drawer.Screen name="HomeDrawer" component={MainTabScreen} />
-                  </Drawer.Navigator>
-                ) : 
-                <RootStackScreen />
-                )
-              )} */}
           {loginState.userToken !== null && loginState.userToken !== 'undefined' ? (
             <Drawer.Navigator drawerContent={props => <DrawerContent {...props} />}>
             
@@ -241,25 +216,7 @@ const App = () => {
           }
         </NavigationContainer>
       </AuthContext.Provider>
-      {/* <GoogleMap /> */}
-      {/* <UserDetails /> */}
-      {/* <StatusBar barStyle="dark-content" />
-      <SafeAreaView>
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          style={styles.scrollView}>
-         
-          <View style={styles.body}>
-           <Text>Abhay</Text>
-            <GoogleMap />
-           
-           
-          </View>
-        
-        </ScrollView>
-      </SafeAreaView> */}
     </PaperProvider>
-    {/* </PersistGate> */}
   </Provider>  
   );
 };
@@ -270,7 +227,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     alignItems: 'center',
     paddingBottom: 30,
-    // justifyContent: 'center',
   },
   rootContainer: {justifyContent: 'flex-start', padding: 10},
   img: {height: 120, width: 120},

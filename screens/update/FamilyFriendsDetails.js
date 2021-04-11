@@ -21,7 +21,6 @@ import SelectBloodGroup from '../../components/BloodGroup';
 
 const FamilyFriendsDetails = ({ route, navigation }) => {
     let dateFormat = require("dateformat");
-    console.log(route.params)
     const [data, setData] = React.useState({
         ...route.params.userDetails,
         emergencyContacts:emergencyContacts
@@ -69,10 +68,10 @@ const FamilyFriendsDetails = ({ route, navigation }) => {
                         justifyContent: 'space-between',
                         marginBottom: 20
                     }]}>
-                        <TouchableOpacity style={[styles.tabs, tab == 'family' && { backgroundColor: '#FF6347', borderWidth: 0 }]} onPress={() => { console.log('family'), setTab('family') }}>
+                        <TouchableOpacity style={[styles.tabs, tab == 'family' && { backgroundColor: '#FF6347', borderWidth: 0 }]} onPress={() => { setTab('family') }}>
                             <Text style={[styles.text_footer, tab == 'family' ? { color: '#fff' } : { color: '#05375a' }]}>Family</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={[styles.tabs, tab == 'friends' && { backgroundColor: '#FF6347', borderWidth: 0 }]} onPress={() => { console.log('friends'), setTab('friends') }}>
+                        <TouchableOpacity style={[styles.tabs, tab == 'friends' && { backgroundColor: '#FF6347', borderWidth: 0 }]} onPress={() => { setTab('friends') }}>
                             <Text style={[styles.text_footer, tab == 'friends' ? { color: '#fff' } : { color: '#05375a' }]}>Friends</Text>
                         </TouchableOpacity>
                     </View>

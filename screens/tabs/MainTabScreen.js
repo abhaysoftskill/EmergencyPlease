@@ -18,7 +18,6 @@ import { ComingSoon } from '../../components/ComingSoon';
 import Details from '../update/Details';
 import FamilyFriendsDetails from '../update/FamilyFriendsDetails';
 import MyRequests from '../MyRequests';
-import ChatRoom from '../../components/chat/ChatRoom';
 
 const HomeStack = createStackNavigator();
 const NotificationStack = createStackNavigator();
@@ -186,14 +185,7 @@ const HomeStackScreen = ({navigation}) => {
         })}
       />
       
-        <HomeStack.Screen 
-        name="ChatRoom"
-        component={ChatRoom}
-        options={({route}) => ({
-          title: 'ChatRoom',
-          // headerBackTitleVisible: false
-        })}
-      />
+
        <HomeStack.Screen 
         name="EmergencyReport"
         component={EmergencyReport}

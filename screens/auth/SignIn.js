@@ -20,7 +20,7 @@ import { useTheme } from 'react-native-paper';
 
 import { AuthContext } from '../../components/context';
 
-import Users from '../../model/users';
+
 import LoginService from '../../services/loginServices';
 import OTPVerification from './OTPVerification';
 
@@ -109,7 +109,6 @@ const SignIn = ({ navigation }) => {
 
     const loginHandle = (userName, password) => {
         if (EMAIL_REGEXP.test(userName)) {
-            console.log("Email ID")
             LoginService.checkemail(userName).then((res) => {
                 // window.location.href = '/org/admin/bases';
                 //signIn(res)
@@ -282,7 +281,7 @@ const SignIn = ({ navigation }) => {
                         >
                             <Text style={[styles.textSign, {
                                 color: '#fff'
-                            }]}>Sign In</Text>
+                            }]}>Next</Text>
                         </LinearGradient>
                     </TouchableOpacity>
 

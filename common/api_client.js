@@ -11,14 +11,10 @@ export const request = function (options) {
 
     const onSuccess = function (response) {
         const resp = response.data;
-        // console.log('Success %%%%%%%%%%')
-
         if (resp.hasOwnProperty("success")) {
-            console.log(resp)
             return resp;
         }
         else {
-            console.log(resp)
             return resp
             //return { ...resp, success: true }
         }
