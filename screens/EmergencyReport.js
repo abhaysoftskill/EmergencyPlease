@@ -17,13 +17,7 @@ import { useTheme } from '@react-navigation/native';
 // import Swiper from 'react-native-swiper';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { getCurrentLocation, sendData } from '../services/getCurrentLocation';
-
 import ConfirmRequest from './requests/Conform';
-
-
-import { color } from 'react-native-reanimated';
-// import Geolocation from 'react-native-geolocation-service';
 
 import Geolocation from '@react-native-community/geolocation';
 import { check, PERMISSIONS } from 'react-native-permissions';

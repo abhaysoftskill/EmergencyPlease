@@ -16,7 +16,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 
-import { useTheme } from 'react-native-paper';
+import { useTheme, Button } from 'react-native-paper';
 
 import { AuthContext } from '../../components/context';
 
@@ -36,6 +36,7 @@ const SignIn = ({ navigation }) => {
     });
     const [otpVerification, setotpVerification] = useState(false)
     const [userDetails, setUserDetails] = useState()
+    const [loading, setLoading] = useState(false)
     const { colors } = useTheme();
 
     const { signIn } = useContext(AuthContext);
@@ -108,6 +109,8 @@ const SignIn = ({ navigation }) => {
     }
 
     const loginHandle = (userName, password) => {
+        Keyboard.dismiss()
+        setLoading(true)
         if (EMAIL_REGEXP.test(userName)) {
             LoginService.checkemail(userName).then((res) => {
                 // window.location.href = '/org/admin/bases';
@@ -119,33 +122,41 @@ const SignIn = ({ navigation }) => {
                 if (res == 'No record') {
                     //     let navigationExtras: NavigationExtras = { state: { email: this.f.phonenumber.value } };
                     //     this.route.navigate(['/register'], navigationExtras);
+                    setLoading(false)
                     navigation.navigate('SignUpScreen', { email: userName })
                 }
                 else {
+                    setLoading(false)
                     res.user.email = userName;
                     setUserDetails(res.user)
                     setotpVerification(true)
 
                 }
             }, error => {
-                console.error('onRejected function called: ' + error.message);
+                setLoading(false)
+                // console.error('onRejected function called: ' + error.message);
             })
         }
         else {
             LoginService.checkphonenumber(userName).then((res) => {
+                setLoading(true)
                 Keyboard.dismiss()
                 if (res == 'No record') {
                     //     let navigationExtras: NavigationExtras = { state: { email: this.f.phonenumber.value } };
                     //     this.route.navigate(['/register'], navigationExtras);
+                    setLoading(false)
                     navigation.navigate('SignUpScreen', { phonenumber: userName })
                 }
                 else {
+                  
+                    setLoading(false)
                     res.user.phonenumber = userName;
                     setUserDetails(res.user)
                     setotpVerification(true)
                 }
 
             }, error => {
+                setLoading(false)
                 console.error('onRejected function called: ' + error.message);
             })
 
@@ -173,6 +184,7 @@ const SignIn = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
+           
             <StatusBar backgroundColor='#FF6347' barStyle="light-content" />
             <View style={styles.header}>
                 <Text style={styles.text_header}>Welcome! </Text>
@@ -221,83 +233,38 @@ const SignIn = ({ navigation }) => {
                 }
 
 
-                {/* <Text style={[styles.text_footer, {
-                color: colors.text,
-                marginTop: 35
-            }]}>Password</Text>
-            <View style={styles.action}>
-                <Feather 
-                    name="lock"
-                    color={colors.text}
-                    size={20}
-                />
-                <TextInput 
-                    placeholder="Your Password"
-                    placeholderTextColor="#666666"
-                    secureTextEntry={data.secureTextEntry ? true : false}
-                    style={[styles.textInput, {
-                        color: colors.text
-                    }]}
-                    autoCapitalize="none"
-                    onChangeText={(val) => handlePasswordChange(val)}
-                />
-                <TouchableOpacity
-                    onPress={updateSecureTextEntry}
-                >
-                    {data.secureTextEntry ? 
-                    <Feather 
-                        name="eye-off"
-                        color="grey"
-                        size={20}
+                {loading && <View style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginTop:10
+                }}>
+                    <Image
+                        source={require('../../assets/loading.png')}
+                        // style={{ width: 200, height: 100 }}
+                        resizeMode="cover"
                     />
-                    :
-                    <Feather 
-                        name="eye"
-                        color="grey"
-                        size={20}
-                    />
-                    }
-                </TouchableOpacity>
-            </View> */}
-                {/* { data.isValidPassword ? null : 
-            <Animatable.View animation="fadeInLeft" duration={500}>
-            <Text style={styles.errorMsg}>Password must be 8 characters long.</Text>
-            </Animatable.View>
-            }
-             */}
-
-                {/* <TouchableOpacity>
-                <Text style={{color: '#FF6347', marginTop:15}}>Forgot password?</Text>
-            </TouchableOpacity> */}
-                <View style={styles.button}>
+                    <Text>Loading....</Text>
+                </View>}
+               {!loading && <View style={styles.button}>
                     <TouchableOpacity
                         style={styles.signIn}
                         onPress={() => { loginHandle(data.username, data.password) }}
-                        disabled={data.isValidUser && data.username != '' ? false : true}
+                        disabled={data.isValidUser && data.username == ''}
+                       
                     >
                         <LinearGradient
-                            colors={['#FFA07A', '#FF6347']}
+                            colors={data.isValidUser && data.username != ''? ['#FFA07A', '#FF6347'] : ['#ccc', '#ccc']}
                             style={styles.signIn}
                         >
                             <Text style={[styles.textSign, {
                                 color: '#fff'
-                            }]}>Next</Text>
+                            }]}>Sign In</Text>
                         </LinearGradient>
                     </TouchableOpacity>
 
-                    {/* <TouchableOpacity
-                    onPress={() => navigation.navigate('SignUpScreen')}
-                    style={[styles.signIn, {
-                        borderColor: '#FF6347',
-                        borderWidth: 1,
-                        marginTop: 15
-                    }]}
-                >
-                    <Text style={[styles.textSign, {
-                        color: '#FF6347'
-                    }]}>Sign Up</Text>
-                </TouchableOpacity> */}
-                </View>
+                 
+                </View>}
                 <View style={styles.banner}>
                     <Image
                         source={require('../../assets/banners/banner1.png')}

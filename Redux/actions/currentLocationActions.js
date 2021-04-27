@@ -1,8 +1,8 @@
-import { getCurrentLocation } from "../../services/getCurrentLocation";
 
 
+// import Geolocation from '@react-native-community/geolocation';
+import Geolocation from 'react-native-geolocation-service';
 
-import Geolocation from '@react-native-community/geolocation';
 import { check, PERMISSIONS } from 'react-native-permissions';
 import { PermissionsAndroid, Platform } from 'react-native';
 
@@ -17,18 +17,17 @@ const longitudeDelta = 0.02;
 
 export const readCurrentLocation = () => {
     try {
-
         return dispatch => {
             const getOneTimeLocation = async () => {
                 const position = await new Promise((resolve, reject) => {
-                    Geolocation.getCurrentPosition(resolve, reject,  {
-                        enableHighAccuracy: false,
+
+                    Geolocation.getCurrentPosition(resolve, reject, {
+                        enableHighAccuracy: true,
                         timeout: 30000,
                         maximumAge: 1000
                     });
 
                 });
-       
                 return {
                     latitude: parseFloat(position.coords.latitude),
                     longitude: parseFloat(position.coords.longitude),
@@ -39,7 +38,6 @@ export const readCurrentLocation = () => {
             const requestLocationPermission = async () => {
                 if (Platform.OS === 'ios') {
                     const coordinates = await getOneTimeLocation()
-                    
                     return coordinates;
                     // subscribeLocationLocation();
                 } else {
@@ -54,13 +52,13 @@ export const readCurrentLocation = () => {
                         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
                             //To Check, If Permission is granted
                             const coordinates = await getOneTimeLocation()
-                    return coordinates;
+                            return coordinates;
                             // subscribeLocationLocation();
                         } else {
                             // setLocationStatus('Permission Denied');
                         }
                     } catch (err) {
-                        console.warn('err' + err);
+                        console.warn(err);
                     }
                 }
             };
@@ -71,7 +69,7 @@ export const readCurrentLocation = () => {
                             dispatch({
                                 type: GET_CURRENT_LOCATION,
                                 payload: response
-                              });
+                            });
 
                         })
                         .catch(error => {

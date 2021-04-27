@@ -29,11 +29,19 @@ const myEmergencyRequest = (userID) => {
         handleHeaders: 2
     });
 }
+const getAppUpdateVersion = () => {
+    return request({
+        url: `/users/appversions`,
+        method: 'GET',
+        handleHeaders: 2
+    });  
+}
 const EmergencyService = {
     myEmergencyRequest,
     emergencyRequest,
     nearestEmergencyRequestCount,
-    nearestEmergencyRequest
+    nearestEmergencyRequest,
+    getAppUpdateVersion
 };
 
 export default EmergencyService;

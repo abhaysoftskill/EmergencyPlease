@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, FlatList, StyleSheet } from 'react-native';
-import MyRequestsCard from '../components/myRequestsCard';
 import EmergencyService from '../services/emergencyServices';
+import MyRequestsCard from './myRequestsCard';
 
 const MyRequests = ({ route, navigation }) => {
   const [myRequestData, setMyRequestData] = useState([])
@@ -19,7 +19,6 @@ const MyRequests = ({ route, navigation }) => {
     EmergencyService.myEmergencyRequest(route.params.userDetails.id).then((res) => {
       setMyRequestData(res)
     }, error => {
-      console.error('onRejected function called: ' + error.message);
       return;
     })
   }
@@ -33,6 +32,7 @@ const MyRequests = ({ route, navigation }) => {
           data={myRequestData}
           renderItem={renderItem}
           keyExtractor={(item, index) => index}
+          inverted={true}
         />
       </View>
     </>

@@ -7,7 +7,8 @@ import {
     Platform,
     StyleSheet,
     StatusBar,
-    Alert
+    Alert,
+    Image
 } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
@@ -30,7 +31,7 @@ const SignInScreen = ({ route, navigation }) => {
         isValidUser: true,
         isValidPassword: true,
     });
-
+    const [loading, setLoading] = useState(false)
     const { colors } = useTheme();
 
     const { signIn } = useContext(AuthContext);
@@ -95,6 +96,7 @@ const SignInScreen = ({ route, navigation }) => {
         // const foundUser = Users.filter(item => {
         //     return userName == item.username && password == item.password;
         // });
+        setLoading(true)
         let EMAIL_REGEXP = /^[a-z0-9!#$%&'*+\/=?^_`{|}~.-]+@[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)*$/i;
         if (EMAIL_REGEXP.test(data.username)) {
             LoginService.loginViaEmail({
@@ -109,10 +111,13 @@ const SignInScreen = ({ route, navigation }) => {
                     userDetails: res[0],
                     userToken: res[1]
                 })
+                setLoading(false)
+
                 // Keyboard.dismiss()
                 // setotpVerification(true)
             }, error => {
-                console.error('onRejected function called: ' + error.message);
+                setLoading(false)
+
                 Alert.alert('Login Fail!', error.message, [
                     { text: 'Retry' }
                 ]);
@@ -128,16 +133,16 @@ const SignInScreen = ({ route, navigation }) => {
                 // console.log({userDetails: res[0],
                 //     userToken: res[1],})
                 // window.location.href = '/org/admin/bases';
-                console.log(res)
-
                 signIn({
                     userDetails: res[0],
                     userToken: res[1]
                 })
+                setLoading(false)
+
                 // Keyboard.dismiss()
                 // setotpVerification(true)
             }, error => {
-                console.error('onRejected function called: ' + error.message);
+                setLoading(false)
                 Alert.alert('Login Fail!', error.message, [
                     { text: 'Retry' }
                 ]);
@@ -231,6 +236,7 @@ const SignInScreen = ({ route, navigation }) => {
                             color: colors.text
                         }]}
                         autoCapitalize="none"
+                        editable={!loading}
                         onChangeText={(val) => handlePasswordChange(val)}
                     />
                     <TouchableOpacity
@@ -261,14 +267,28 @@ const SignInScreen = ({ route, navigation }) => {
                 <TouchableOpacity>
                     <Text style={{ color: '#FF6347', marginTop: 15 }}>Forgot password?</Text>
                 </TouchableOpacity>
-                <View style={styles.button}>
+                {loading && <View style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginTop:10
+                }}>
+                    <Image
+                        source={require('../../assets/loading.png')}
+                        // style={{ width: 200, height: 100 }}
+                        resizeMode="cover"
+                    />
+                    <Text>Loading....</Text>
+                </View>}
+
+               {!loading && <View style={styles.button}>
                     <TouchableOpacity
                         style={styles.signIn}
                         onPress={() => { loginHandle(data) }}
                         disabled={data.username.length >= 3 && data.password.length >= 3 ? false : true}
                     >
                         <LinearGradient
-                            colors={['#FFA07A', '#FF6347']}
+                            colors={data.username.length >= 3 && data.password.length >= 3 ?['#FFA07A', '#FF6347'] : ['#ccc','#ccc']}
                             style={styles.signIn}
                         >
                             <Text style={[styles.textSign, {
@@ -289,7 +309,7 @@ const SignInScreen = ({ route, navigation }) => {
                             color: '#FF6347'
                         }]}>Back</Text>
                     </TouchableOpacity>
-                </View>
+                </View>}
             </Animatable.View>
         </View>
     );

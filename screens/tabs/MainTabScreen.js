@@ -1,13 +1,12 @@
 import React from 'react';
 
-import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
-import {createStackNavigator} from '@react-navigation/stack';
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {useTheme, Avatar} from 'react-native-paper';
-import {View} from 'react-native-animatable';
-import {TouchableOpacity} from 'react-native-gesture-handler';
-import GoogleMap from '../../components/GoogleMap';
+import { useTheme, Avatar } from 'react-native-paper';
+import { View } from 'react-native-animatable';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import EmergencyDetails from '../EmergencyDetails';
 import Home from '../Home';
 import EmergencyServices from '../EmergencyServices';
@@ -18,6 +17,8 @@ import { ComingSoon } from '../../components/ComingSoon';
 import Details from '../update/Details';
 import FamilyFriendsDetails from '../update/FamilyFriendsDetails';
 import MyRequests from '../MyRequests';
+import EmergencyContacts from '../EmergencyContacts/EmergencyContacts';
+import EmergencyRequestMap from '../EmergencyRequestMap';
 
 const HomeStack = createStackNavigator();
 const NotificationStack = createStackNavigator();
@@ -27,25 +28,25 @@ const Tab = createMaterialBottomTabNavigator();
 
 const MainTabScreen = () => (
   <Tab.Navigator initialRouteName="Dashboard" activeColor="#fff" barStyle={{ backgroundColor: '#FF6347' }}>
-  
+
     <Tab.Screen
       name="Dashboard"
       component={HomeStackScreen}
       options={{
         tabBarLabel: 'Dashboard',
         tabBarColor: '#FF6347',
-        tabBarIcon: ({color}) => (
+        tabBarIcon: ({ color }) => (
           <Icon name="ios-home" color={color} size={26} />
         ),
       }}
     />
-     <Tab.Screen
+    <Tab.Screen
       name="Notifications"
       component={NotificationStackScreen}
       options={{
         tabBarLabel: 'Notifications',
         tabBarColor: '#1f65ff',
-        tabBarIcon: ({color}) => (
+        tabBarIcon: ({ color }) => (
           <Icon name="ios-notifications" color={color} size={26} />
         ),
       }}
@@ -56,7 +57,7 @@ const MainTabScreen = () => (
       options={{
         tabBarLabel: 'Success Story',
         tabBarColor: '#694fad',
-        tabBarIcon: ({color}) => (
+        tabBarIcon: ({ color }) => (
           <Icon name="ios-book" color={color} size={26} />
         ),
       }}
@@ -67,7 +68,7 @@ const MainTabScreen = () => (
       options={{
         tabBarLabel: 'Emergency Contacts',
         tabBarColor: '#d02860',
-        tabBarIcon: ({color}) => (
+        tabBarIcon: ({ color }) => (
           <Icon name="md-call" color={color} size={26} />
         ),
       }}
@@ -77,8 +78,8 @@ const MainTabScreen = () => (
 
 export default MainTabScreen;
 
-const HomeStackScreen = ({navigation}) => {
-  const {colors} = useTheme();
+const HomeStackScreen = ({ navigation }) => {
+  const { colors } = useTheme();
   return (
     <HomeStack.Navigator
       screenOptions={{
@@ -90,7 +91,7 @@ const HomeStackScreen = ({navigation}) => {
         headerTintColor: colors.text,
         headerTitleStyle: {
           // fontWeight: 'bold',
-          color:'#05375a'
+          color: '#05375a'
         },
       }}>
       <HomeStack.Screen
@@ -99,7 +100,7 @@ const HomeStackScreen = ({navigation}) => {
         options={{
           title: 'Emergency Dashboard',
           headerLeft: () => (
-            <View style={{marginLeft: 10, fontWeight:100}}>
+            <View style={{ marginLeft: 10, fontWeight: 100 }}>
               <Icon.Button
                 name="ios-menu"
                 size={25}
@@ -110,14 +111,14 @@ const HomeStackScreen = ({navigation}) => {
             </View>
           ),
           headerRight: () => (
-            <View style={{flexDirection: 'row', marginRight: 10}}>
-           
+            <View style={{ flexDirection: 'row', marginRight: 10 }}>
+
               <TouchableOpacity
-                style={{paddingHorizontal: 10, marginTop: 5}}
-               >
+                style={{ paddingHorizontal: 10, marginTop: 5 }}
+              >
                 <Avatar.Image
-                 backgroundColor= {'#fff'}
-                 source={require('../../assets/defaultProfile.png')}
+                  backgroundColor={'#fff'}
+                  source={require('../../assets/defaultProfile.png')}
                   size={30}
                 />
               </TouchableOpacity>
@@ -125,20 +126,21 @@ const HomeStackScreen = ({navigation}) => {
           ),
         }}
       />
+
       <HomeStack.Screen
-        name="Map"
-        component={GoogleMap}
-        options={({route}) => ({
-          title:  route.params.title,
-        
+        name="EmergencyRequestMap"
+        component={EmergencyRequestMap}
+        options={({ route }) => ({
+          title: route.params.title,
+
           headerRight: () => (
-            <View style={{flexDirection: 'row', marginRight: 10}}>
-              
+            <View style={{ flexDirection: 'row', marginRight: 10 }}>
+
               <TouchableOpacity
-                style={{paddingHorizontal: 10, marginTop: 5}}
-               >
+                style={{ paddingHorizontal: 10, marginTop: 5 }}
+              >
                 <Avatar.Image
-                 backgroundColor= {'#fff'}
+                  backgroundColor={'#fff'}
                   source={require('../../assets/defaultProfile.png')}
                   size={30}
                 />
@@ -146,64 +148,65 @@ const HomeStackScreen = ({navigation}) => {
             </View>
           ),
         })}
-      
+
       />
-       <HomeStack.Screen 
+
+      <HomeStack.Screen
         name="EmergencyCall"
         component={EmergencyCall}
-        options={({route}) => ({
+        options={({ route }) => ({
           // userName: route.params.userName,
           headerBackTitleVisible: false,
           tabBarVisible: false,
           title: 'Emergency Request',
         })}
-        
+
       />
-       <HomeStack.Screen 
+      <HomeStack.Screen
         name="EmergencyDetails"
         component={EmergencyDetails}
-        options={({route}) => ({
-          title:'User Details'
+        options={({ route }) => ({
+          title: 'User Details'
           // userName: route.params.userName,
           // headerBackTitleVisible: false
         })}
       />
-        <HomeStack.Screen 
+      <HomeStack.Screen
         name="EmergencyServices"
         component={EmergencyServices}
-        options={({route}) => ({
+        options={({ route }) => ({
           title: 'Emergency Services',
           // headerBackTitleVisible: false
         })}
       />
-      <HomeStack.Screen 
+      <HomeStack.Screen
         name="MyRequests"
         component={MyRequests}
-        options={({route}) => ({
+        options={({ route }) => ({
           title: 'My Requests',
           // headerBackTitleVisible: false
         })}
       />
-      
 
-       <HomeStack.Screen 
+
+      <HomeStack.Screen
         name="EmergencyReport"
         component={EmergencyReport}
-        options={({route}) => ({
-          title:'Confirm Location'
+        options={({ route }) => ({
+          title: 'Confirm Location'
           // title: route.params.title,
           // headerBackTitleVisible: false
         })}
       />
-       <HomeStack.Screen 
+      <HomeStack.Screen
         name="EmergencyConnect"
         component={EmergencyConnect}
-        options={({route}) => ({
+        options={({ route }) => ({
           // title: route.params.title,
           // headerBackTitleVisible: false
         })}
       />
-       <HomeStack.Screen
+      <HomeStack.Screen
         name="EditDetails"
         options={{
           title: 'Update Details',
@@ -211,14 +214,14 @@ const HomeStackScreen = ({navigation}) => {
         // component={EditProfileScreen}
         component={Details}
       />
-        <HomeStack.Screen
+      <HomeStack.Screen
         name="EditfamilyDetails"
         options={{
           title: 'Update Emergency Contact',
         }}
         component={FamilyFriendsDetails}
       />
-     {/* <HomeStack.Screen 
+      {/* <HomeStack.Screen 
         name="CardItemDetails"
         component={CardItemDetails}
         options={({route}) => ({
@@ -233,44 +236,44 @@ const HomeStackScreen = ({navigation}) => {
   );
 };
 
-const NotificationStackScreen = ({navigation}) => {
-  const {colors} = useTheme();
+const NotificationStackScreen = ({ navigation }) => {
+  const { colors } = useTheme();
   return (
-  <NotificationStack.Navigator
-    screenOptions={{
-      headerStyle: {
-        backgroundColor: colors.background,
-        shadowColor: colors.background, // iOS
-        elevation: 0, // Android
-      },
-      headerTintColor: colors.text,
-      headerTitleStyle: {
-        // fontWeight: 'bold',
-        color:'#05375a'
-      },
-    }}>
-    <NotificationStack.Screen
-      name="Notifications"
-      // component={NotificationScreen}
-      component={ComingSoon}
-      options={{
-        headerLeft: () => (
-          <Icon.Button
-          name="ios-menu"
-          size={25}
-          color={colors.text}
-          backgroundColor={colors.background}
-          onPress={() => navigation.openDrawer()}
-        />
-        ),
-      }}
-    />
-  </NotificationStack.Navigator>
+    <NotificationStack.Navigator
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: colors.background,
+          shadowColor: colors.background, // iOS
+          elevation: 0, // Android
+        },
+        headerTintColor: colors.text,
+        headerTitleStyle: {
+          // fontWeight: 'bold',
+          color: '#05375a'
+        },
+      }}>
+      <NotificationStack.Screen
+        name="Notifications"
+        // component={NotificationScreen}
+        component={ComingSoon}
+        options={{
+          headerLeft: () => (
+            <Icon.Button
+              name="ios-menu"
+              size={25}
+              color={colors.text}
+              backgroundColor={colors.background}
+              onPress={() => navigation.openDrawer()}
+            />
+          ),
+        }}
+      />
+    </NotificationStack.Navigator>
   )
 };
 
-const ProfileStackScreen = ({navigation}) => {
-  const {colors} = useTheme();
+const ProfileStackScreen = ({ navigation }) => {
+  const { colors } = useTheme();
 
   return (
     <ProfileStack.Navigator
@@ -289,7 +292,7 @@ const ProfileStackScreen = ({navigation}) => {
         options={{
           title: 'Success Story',
           headerLeft: () => (
-            <View style={{marginLeft: 10}}>
+            <View style={{ marginLeft: 10 }}>
               <Icon.Button
                 name="ios-menu"
                 size={25}
@@ -320,7 +323,7 @@ const ProfileStackScreen = ({navigation}) => {
         // component={EditProfileScreen}
         component={ComingSoon}
       />
-        <ProfileStack.Screen
+      <ProfileStack.Screen
         name="EditDetails"
         options={{
           title: 'Update Details',
@@ -332,8 +335,8 @@ const ProfileStackScreen = ({navigation}) => {
   );
 };
 
-const ContactsStackScreen = ({navigation}) => {
-  const {colors} = useTheme();
+const ContactsStackScreen = ({ navigation }) => {
+  const { colors } = useTheme();
 
   return (
     <ProfileStack.Navigator
@@ -348,11 +351,11 @@ const ContactsStackScreen = ({navigation}) => {
       <ProfileStack.Screen
         name="EmergencyContacts"
         // component={ProfileScreen}
-        component={ComingSoon}
+        component={EmergencyContacts}
         options={{
           title: 'Emergency Contacts',
           headerLeft: () => (
-            <View style={{marginLeft: 10}}>
+            <View style={{ marginLeft: 10 }}>
               <Icon.Button
                 name="ios-menu"
                 size={25}

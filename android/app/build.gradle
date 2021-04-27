@@ -1,5 +1,5 @@
 apply plugin: "com.android.application"
-apply plugin: 'com.google.gms.google-services'
+
 import com.android.build.OutputFile
 
 /**
@@ -82,7 +82,7 @@ project.ext.react = [
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
-apply from: "../../node_modules/react-native-code-push/android/codepush.gradle"
+
 /**
  * Set this to true to create two separate APKs instead of one:
  *   - An APK that only works on ARM devices
@@ -92,7 +92,7 @@ apply from: "../../node_modules/react-native-code-push/android/codepush.gradle"
  * the correct one based on the CPU architecture of their device.
  */
 def enableSeparateBuildPerCPUArchitecture = true
-// Changed *********
+
 /**
  * Run Proguard to shrink the Java bytecode in release builds.
  */
@@ -131,7 +131,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.emergencyplease"
+        applicationId "com.aklogical.emergencyplease"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -152,7 +152,6 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
-       
         release {
             if (project.hasProperty('MYAPP_UPLOAD_STORE_FILE')) {
                 storeFile file(MYAPP_UPLOAD_STORE_FILE)
@@ -161,7 +160,6 @@ android {
                 keyPassword MYAPP_UPLOAD_KEY_PASSWORD
             }
         }
-    
     }
     buildTypes {
         debug {
@@ -170,9 +168,10 @@ android {
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
-             signingConfig signingConfigs.release
-             //signingConfig signingConfigs.debug
-            minifyEnabled enableProguardInReleaseBuilds
+            // signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
+            // minifyEnabled enableProguardInReleaseBuilds
+             minifyEnabled true
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }
@@ -195,7 +194,7 @@ android {
 }
 
 dependencies {
-   // Import the Firebase BoM
+      // Import the Firebase BoM
     implementation platform('com.google.firebase:firebase-bom:26.8.0')
 
     // Add the dependency for the Firebase SDK for Google Analytics
@@ -204,7 +203,7 @@ dependencies {
 
     // Add the dependencies for any other desired Firebase products
     // https://firebase.google.com/docs/android/setup#available-libraries
-   implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation fileTree(dir: "libs", include: ["*.jar"])
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
 

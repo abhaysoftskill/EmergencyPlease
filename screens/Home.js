@@ -1,38 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { useIsFocused, useTheme } from '@react-navigation/native';
-import { Alert, Dimensions, Image, ImageBackground, RefreshControl, StatusBar, StyleSheet, Text, View } from 'react-native';
-import { Avatar, Button, Card, Title, Paragraph, TextInput } from 'react-native-paper';
+import { Dimensions, Image, ImageBackground, RefreshControl, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { Avatar, Button, Card, Title, Paragraph, TextInput, Snackbar } from 'react-native-paper';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import Animated from 'react-native-reanimated';
 import AsyncStorage from '@react-native-community/async-storage';
 import EmergencyService from '../services/emergencyServices';
 
-
-import Geolocation from '@react-native-community/geolocation';
-import { check, PERMISSIONS } from 'react-native-permissions';
-import { PermissionsAndroid, Platform } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { readCurrentLocation } from '../Redux/actions/currentLocationActions';
-const latitudeDelta = 0.02;
-const longitudeDelta = 0.02;
-
-const { width, height } = Dimensions.get("window");
-const CARD_HEIGHT = 220;
+import { checkVersion } from 'react-native-check-version';
+const { width } = Dimensions.get("window");
 const CARD_WIDTH = width * 0.8;
-const SPACING_FOR_CARD_INSET = width * 0.1 - 10;
+
 const Home = ({ navigation }) => {
     const { coordinates } = useSelector(state => state.currentLocationReducer);
     const dispatch = useDispatch();
     const isFocused = useIsFocused();
     const theme = useTheme();
-    const LeftContent = props => <Avatar.Icon {...props} icon="folder" />
     const [loading, setLoading] = useState(true);
     const [RequestCount, setRequestCount] = useState();
     const [RequestDataCount, setRequestDataCount] = useState();
     const [userDetails, setUserDetails] = useState([])
-    const [region, setRegion] = useState();
-    const [locationStatus, setLocationStatus] = useState('');
     const coveredArea = 5;
 
     const requestData = () => {
@@ -41,12 +30,21 @@ const Home = ({ navigation }) => {
             setRequestCount(res.accident_reported + res.ambulance_request + res.heart_attack + res.blood_donor);
             setLoading(false)
         }, error => {
-            console.error('onRejected function called: ' + error.message);
             return;
         })
     }
     useEffect(() => {
-        if (coordinates?.length == 0) {
+        async function fetchVerson() {
+            const version = await checkVersion();
+                       if (version.needsUpdate) {
+                console.log(`App has a ${version.updateType} update pending.`);
+
+            }
+        }
+        fetchVerson()
+    }, [])
+    useEffect(() => {
+           if (coordinates?.length == 0) {
             dispatch(readCurrentLocation())
         }
         else if (coordinates) {
@@ -68,21 +66,19 @@ const Home = ({ navigation }) => {
 
     useEffect(() => {
         setTimeout(async () => {
-            // setIsLoading(false);
-
             try {
                 let userDetailsData = await AsyncStorage.getItem('userDetails');
 
                 let data = JSON.parse(userDetailsData);
                 setUserDetails(data);
-                if (data.userGender == "" || data.bloodGroup == "") {
-                    navigation.navigate('EditDetails', { userDetails: data })
+                // if (data.userGender == "" || data.bloodGroup == "") {
+                //     navigation.navigate('EditDetails', { userDetails: data })
 
-                }
-                else if (data.familyContacts.length == 0) {
-                    navigation.navigate('EditfamilyDetails', { userDetails: data })
+                // }
+                // else if (data.familyContacts.length == 0) {
+                //     navigation.navigate('EditfamilyDetails', { userDetails: data })
 
-                }
+                // }
 
             } catch (e) {
                 console.log(e);
@@ -118,13 +114,14 @@ const Home = ({ navigation }) => {
                         onRefresh={requestData}
                     />
                 }>
+
                 <StatusBar barStyle={theme.dark ? 'light-content' : 'dark-content'} />
                 <View style={styles.optionContainer}>
                     {!RequestCount && loading && <View style={{
                         flex: 1,
                         justifyContent: 'center',
                         alignItems: 'center',
-                        height:300
+                        height: 300
                     }}>
                         <Image
                             source={require('../assets/loading.png')}
@@ -147,10 +144,10 @@ const Home = ({ navigation }) => {
                         <Card style={styles.Card}>
                             <Card.Content>
                                 <View style={styles.innerContainer}>
-                                {RequestCount <= 1 ? <Ionicons name="md-person" size={55} color="#05375a" />: <Ionicons name="md-people-sharp" size={55} color="#05375a" /> }
+                                    {RequestCount <= 1 ? <Ionicons name="md-person" size={55} color="#05375a" /> : <Ionicons name="md-people-sharp" size={55} color="#05375a" />}
 
                                     <View style={styles.contentTitle}>
-                                        <Title style={{ color: '#05375a' }}>{RequestCount <= 1 ? `${RequestCount} Person` :`${RequestCount} Person's`}</Title>
+                                        <Title style={{ color: '#05375a' }}>{RequestCount <= 1 ? `${RequestCount} Person` : `${RequestCount} Person's`}</Title>
                                         <Paragraph>Requested for Help in <Text style={{ fontWeight: "bold", color: "#ae1302" }}>{coveredArea}km</Text></Paragraph>
                                     </View>
                                     <View style={styles.navigate} >
@@ -210,6 +207,7 @@ const Home = ({ navigation }) => {
 
                         </Card>
                     </TouchableOpacity>}
+               
                 </View>
             </ScrollView>
         </ImageBackground>

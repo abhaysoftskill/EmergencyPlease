@@ -57,7 +57,7 @@ const SplashScreen = ({navigation}) => {
             <Text style={[styles.title, {
                 color: colors.text
             }]}>Emergency Please are always with you.</Text>
-            <Text style={[styles.text]}>By continuing you accepts our <OpenURLButton url={'https://emergencyplease.com/termofuse.html'}>Terms of Use,</OpenURLButton><OpenURLButton url={'https://emergencyplease.com/privacypolicy.html'}> Privacy Policy</OpenURLButton> & <OpenURLButton url={'https://emergencyplease.com/subscription.html'}>Subscription Terms</OpenURLButton></Text>
+            <Text style={[styles.text]}>By continuing you accepts our <OpenURLButton url={'https://emergencyplease.com/termofuse'}>Terms of Use,</OpenURLButton><OpenURLButton url={'https://emergencyplease.com/privacypolicy'}> Privacy Policy</OpenURLButton> & <OpenURLButton url={'https://emergencyplease.com/subscription'}>Subscription Terms</OpenURLButton></Text>
             <View style={styles.button}>
             <TouchableOpacity onPress={()=>navigation.navigate('SignIn')}>
                 <LinearGradient

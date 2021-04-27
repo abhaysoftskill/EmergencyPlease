@@ -49,13 +49,14 @@ export function DrawerContent(props) {
                     <View style={styles.userInfoSection}>
                         <View style={{ flexDirection: 'row', marginTop: 15 }}>
                             <Avatar.Image
-                            backgroundColor= {'#fff'}
+                                backgroundColor={'#fff'}
                                 source={require('../../assets/defaultProfile.png')}
                                 size={50}
                             />
                             <View style={{ marginLeft: 15, flexDirection: 'column' }}>
                                 <Title style={styles.title}>{userDetails.firstname + " " + userDetails.lastname}</Title>
                                 <Caption style={styles.caption}>({userDetails.phonenumber})</Caption>
+                                <Caption style={[userDetails.phonenumber ? styles.verifiedCaption : styles.notVerifiedCaption]}>({userDetails.phonenumber ? 'Verified' : 'Not Verified'})</Caption>
                             </View>
                         </View>
 
@@ -69,48 +70,48 @@ export function DrawerContent(props) {
                     </Drawer.Section>
                     <Drawer.Section title="Emergency Contacts">
 
-                    <View style={[styles.categoryContainer, { marginTop: 10 }]}>
-                {/* {userDetails.immidiateContact.map(data => { */}
-                <TouchableOpacity style={styles.categoryBtn} onPress={() => { }}>
-                    <View style={styles.categoryIcon2}>
-                        <Fontisto name="holiday-village" size={35} color="#FF6347" />
-                        <View style={[styles.friendsCount, { backgroundColor: '#FF6347' }]}>
-                            <Text style={{ color: "#fff" }}>2</Text>
+                        <View style={[styles.categoryContainer, { marginTop: 10 }]}>
+                            {/* {userDetails.immidiateContact.map(data => { */}
+                            <TouchableOpacity style={styles.categoryBtn} onPress={() => { }}>
+                                <View style={styles.categoryIcon2}>
+                                    <Fontisto name="holiday-village" size={35} color="#FF6347" />
+                                    <View style={[styles.friendsCount, { backgroundColor: '#FF6347' }]}>
+                                        <Text style={{ color: "#fff" }}>2</Text>
+                                    </View>
+                                </View>
+                                <Text style={[styles.categoryBtnTxt, { color: "#FF6347" }]}>Family</Text>
+                            </TouchableOpacity>
+                            {/* })} */}
+                            <TouchableOpacity style={styles.categoryBtn} onPress={() => { }}>
+                                <View style={[styles.categoryIcon2, { borderColor: '#1a8434', backgroundColor: '#d9f1df' }]}>
+                                    <Ionicons name="md-people" size={35} color="#1a8434" />
+                                    <View style={[styles.friendsCount, { backgroundColor: '#FF6347' }]}>
+                                        <Text style={{ color: "#fff" }}>2</Text>
+                                    </View>
+                                </View>
+                                <Text style={[styles.categoryBtnTxt, { color: "#1a8434" }]}>Friend</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.categoryBtn} onPress={() => { }}>
+                                <View style={[styles.categoryIcon2, { borderColor: '#d21036', backgroundColor: '#f5d4db' }]}>
+                                    <Fontisto name="user-secret" size={35} color="#d21036" />
+                                    <View style={styles.friendsCount}>
+                                        <Text style={{ color: "#fff" }}>2</Text>
+                                    </View>
+                                </View>
+                                <Text style={[styles.categoryBtnTxt, { color: "#d21036" }]}>Office</Text>
+                            </TouchableOpacity>
                         </View>
-                    </View>
-                    <Text style={[styles.categoryBtnTxt, { color: "#FF6347" }]}>Family</Text>
-                </TouchableOpacity>
-                {/* })} */}
-                <TouchableOpacity style={styles.categoryBtn} onPress={() => { }}>
-                    <View style={[styles.categoryIcon2, { borderColor: '#1a8434', backgroundColor: '#d9f1df' }]}>
-                        <Ionicons name="md-people" size={35} color="#1a8434" />
-                        <View style={[styles.friendsCount, { backgroundColor: '#FF6347' }]}>
-                            <Text style={{ color: "#fff" }}>2</Text>
-                        </View>
-                    </View>
-                    <Text style={[styles.categoryBtnTxt, { color: "#1a8434" }]}>Friend</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.categoryBtn} onPress={() => { }}>
-                    <View style={[styles.categoryIcon2, { borderColor: '#d21036', backgroundColor: '#f5d4db' }]}>
-                        <Fontisto name="user-secret" size={35} color="#d21036" />
-                        <View style={styles.friendsCount}>
-                            <Text style={{ color: "#fff" }}>2</Text>
-                        </View>
-                    </View>
-                    <Text style={[styles.categoryBtnTxt, { color: "#d21036" }]}>Office</Text>
-                </TouchableOpacity>
-            </View>
 
-            <View style={styles.banner}>
-                    <Image
-                        source={require('../../assets/banners/banner1.png')}
-                        resizeMode="cover"
-                        style={{width:'100%', height:'100%'}}
-                    />
-                </View>
+                        <View style={styles.banner}>
+                            <Image
+                                source={require('../../assets/banners/banner1.png')}
+                                resizeMode="cover"
+                                style={{ width: '100%', height: '100%' }}
+                            />
+                        </View>
                     </Drawer.Section>
                 </View>
-               
+
             </DrawerContentScrollView>
             {/* <Drawer.Section title="Preferences">
                 <TouchableRipple onPress={() => { toggleTheme() }}>
@@ -140,10 +141,10 @@ export function DrawerContent(props) {
 }
 
 const styles = StyleSheet.create({
-    banner:{
+    banner: {
         height: 200,
-    width: '100%',
-    alignSelf: 'center',
+        width: '100%',
+        alignSelf: 'center',
     },
     friendsCount: {
         color: "#d21036", position: 'absolute', top: -6, right: 6,
@@ -161,7 +162,7 @@ const styles = StyleSheet.create({
         flex: 1,
         width: '100%',
         marginHorizontal: 10,
-        paddingVertical:10,
+        paddingVertical: 10,
         alignSelf: 'center',
 
     },
@@ -225,7 +226,7 @@ const styles = StyleSheet.create({
     },
     section: {
         flexDirection: 'row',
-        paddingHorizontal:15,
+        paddingHorizontal: 15,
         alignItems: 'center',
         marginRight: 15,
     },

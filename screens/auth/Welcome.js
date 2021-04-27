@@ -18,6 +18,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import { RadioButton } from 'react-native-paper';
 import DateCalendar from '../../components/Calendar';
 import SelectBloodGroup from '../../components/BloodGroup';
+import { authStack } from '../../utils/navigations/Routes';
 
 const Welcome = ({ route, navigation }) => {
     let dateFormat = require("dateformat");
@@ -114,7 +115,8 @@ const Welcome = ({ route, navigation }) => {
 
                         <TouchableOpacity
                             style={styles.signIn, styles.signButton}
-                            onPress={() => { navigation.navigate('FamilyFriends', { userDetails: data }) }}
+                            // onPress={() => { navigation.navigate('FamilyFriends', { userDetails: data }) }}
+                            onPress={() => { navigation.navigate('SignIn', {  userDetails: data }) }}
                         >
                             <LinearGradient
                                 colors={['#FFA07A', '#FF6347']}

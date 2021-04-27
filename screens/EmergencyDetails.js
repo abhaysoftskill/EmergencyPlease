@@ -28,8 +28,9 @@ import { check, PERMISSIONS } from 'react-native-permissions';
 import { PermissionsAndroid, Platform } from 'react-native';
 import Moment from 'moment'; // Import momentjs
 const googleApiKey = 'AIzaSyCJPqnfIgpcbwydCoTmIIjyTpfNjX9AgWk';
+
 const EmergencyDetails = ({ route, navigation }) => {
-    Moment.locale('IST');
+    // Moment.locale('IST');
     const { coordinates } = useSelector(state => state.currentLocationReducer);
 
     const userDetails = route.params.userDetails;

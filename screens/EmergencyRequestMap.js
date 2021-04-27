@@ -23,9 +23,6 @@ import { mapDarkStyle, mapStandardStyle } from '../model/mapData';
 // import StarRating from '../components/StarRating';
 
 import { useTheme } from '@react-navigation/native';
-import Geolocation from '@react-native-community/geolocation';
-import { check, PERMISSIONS } from 'react-native-permissions';
-import { getCurrentLocation } from '../services/getCurrentLocation';
 import LinearGradient from 'react-native-linear-gradient';
 import EmergencyService from '../services/emergencyServices';
 import { cos } from 'react-native-reanimated';
@@ -37,8 +34,8 @@ const CARD_HEIGHT = 220;
 const CARD_WIDTH = width * 0.8;
 const SPACING_FOR_CARD_INSET = width * 0.1 - 10;
 
-const GoogleMap = ({ route, navigation }) => {
-  Moment.locale('IST');
+const EmergencyRequestMap = ({ route, navigation }) => {
+  // Moment.locale('IST');
   const theme = useTheme();
   const { coordinates } = useSelector(state => state.currentLocationReducer);
 
@@ -56,7 +53,6 @@ const GoogleMap = ({ route, navigation }) => {
     "blood_donor": "Blood Required"
   }
   useEffect(() => {
-    console.log(coordinates)
     {
       region && EmergencyService.nearestEmergencyRequest(region.longitude, region.latitude, route.params.serviceName).then((res) => {
         setShowMap(true);
@@ -318,7 +314,7 @@ const GoogleMap = ({ route, navigation }) => {
   );
 };
 
-export default GoogleMap;
+export default EmergencyRequestMap;
 
 const styles = StyleSheet.create({
   container: {

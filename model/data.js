@@ -125,4 +125,15 @@ const Images = [
   }
 ];
 
-export {data, service}
+
+const emergencyContactsNumber = [
+  {name:'Ambulance', number:'108'},
+    {name:'AMBULANCE HELPLINE', number:'102'},
+    {name:'POLICE  HELPLINE', number:'100'},
+    {name:'Women Helpline', number:'22633333'},
+    {name:'FIRE  Helpline', number:'101'},
+    {name:'Railway   Helpline', number:'182'}
+  
+];
+
+export {data, service, emergencyContactsNumber}

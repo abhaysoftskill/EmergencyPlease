@@ -96,11 +96,13 @@ const OTPVerification = (props) => {
                 justifyContent: 'center',
                 height: 50
               }} >
-                <Button mode={'outlined'} 
-                labelStyle={{ fontSize: 10, paddingTop: 3, paddingBottom: 3 }} 
-                disabled={timeLeft > 0} 
-                onPress={() => { setVisible(false); 
-                navigation.navigate('EmergencyReport', { service_name: "Blood Donor", serviceType: { bloodGroup: bloodGroup, bloodGroupType: bloodGroupType } }); }}>Resend OTP</Button>
+                <Button mode={'outlined'}
+                  labelStyle={{ fontSize: 10, paddingTop: 3, paddingBottom: 3 }}
+                  disabled={timeLeft > 0}
+                  onPress={() => {
+                    setVisible(false);
+                    // navigation.navigate('EmergencyReport', { service_name: "Blood Donor", serviceType: { bloodGroup: bloodGroup, bloodGroupType: bloodGroupType } });
+                  }}>Resend OTP</Button>
               </View>
               <View style={{
                 width: '60%',
@@ -108,17 +110,27 @@ const OTPVerification = (props) => {
                 justifyContent: 'center',
                 alignItems: 'center'
               }} >
-                <Button mode={'outlined'} color={'#17841c'} 
-                labelStyle={{ fontSize: 12, paddingTop: 3, paddingBottom: 3 }} 
-                onPress={() => { setVisible(false); 
-                navigation.navigate('SignInScreen', { userDetails: props.userDetails}); }}>Use password</Button>
+                <Button mode={'outlined'} color={'#17841c'}
+                  labelStyle={{ fontSize: 12, paddingTop: 3, paddingBottom: 3 }}
+                  onPress={() => {
+                    setVisible(false);
+                    navigation.navigate('SignInScreen', { userDetails: props.userDetails });
+                  }}>Use password</Button>
 
               </View>
             </View>
           </Dialog.Content>
           <Dialog.Actions>
             <Button mode={'contained'} color={'#ea3a3a'} style={{ marginRight: 30 }} onPress={() => { props.closeOption() }}>Cancel</Button>
-            <Button mode={'contained'} color={'#17841c'} onPress={() => { setVisible(false); navigation.navigate('EmergencyReport', { service_name: "Blood Donor", serviceType: { bloodGroup: bloodGroup, bloodGroupType: bloodGroupType } }); }}>Validate</Button>
+            <Button mode={'contained'} color={'#17841c'}
+              onPress={() => {
+                setVisible(false);
+                // navigation.navigate('EmergencyReport', { service_name: "Blood Donor", serviceType: { bloodGroup: bloodGroup, bloodGroupType: bloodGroupType } });
+              }}
+              disabled={text != '' ? false : true}
+              >
+              Validate
+              </Button>
           </Dialog.Actions>
         </Dialog>
       </Portal>

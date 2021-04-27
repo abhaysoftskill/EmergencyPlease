@@ -219,7 +219,7 @@ const FamilyFriendsDetails = ({ route, navigation }) => {
                         <TouchableOpacity
                             style={styles.signIn, styles.signButton}
                           //  onPress={() => { console.log(emergencyContacts) }}
-                            onPress={() => {console.log(data), navigation.navigate('EmergencyDetails', { userDetails: data }) }}
+                            onPress={() => {navigation.navigate('EmergencyDetails', { userDetails: data }) }}
                            
                         >
                             <LinearGradient

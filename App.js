@@ -287,4 +287,5 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withCodePush(App);
+// export default withCodePush(App);
+export default App;

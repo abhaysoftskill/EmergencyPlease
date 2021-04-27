@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import {
     View,
     Text,
@@ -9,7 +9,8 @@ import {
     Platform,
     StyleSheet,
     ScrollView,
-    StatusBar
+    StatusBar,
+    Alert
 } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
@@ -90,25 +91,37 @@ const SignUpScreen = ({ route, navigation }) => {
     const login = () =>{
         //,{ navigation.navigate('Welcome', { userDetails: data }) }
         LoginService.register(data).then((res) => {
-            navigation.navigate('Welcome', { userDetails: data })
-            // console.log({userDetails: res[0],
-            //     userToken: res[1],})
-            // window.location.href = '/org/admin/bases';
-
-            // signIn({
-            //     userDetails: res[0],
-            //     userToken: res[1]
-            // })
-            // Keyboard.dismiss()
-            // setotpVerification(true)
+            navigation.navigate('Welcome', { userDetails: res })
         }, error => {
-            console.error('onRejected function called: ' + error.message);
-            Alert.alert('Login Fail!', error.message, [
+            Alert.alert('Registration Fail!', error.message, [
                 { text: 'Retry' }
             ]);
             return;
         })
-    }
+        // navigation.navigate('Welcome', { userDetails: {
+        //     "userid": "6072af04ecaefa290c5c6d55",
+        //     "email": "abhaysofttech7@gmail.com",
+        //     "userType": "user",
+        //     "userCity": "",
+        //     "mobileverify": true,
+        //     "emailverify": false,
+        //     "userGender": "Male",
+        //     "bloodGroup": "",
+        //     "familyContacts": [],
+        //     "friendsContacts": [],
+        //     "officeContacts": [],
+        //     "firstname": "Abhay",
+        //     "lastname": "Narnaware",
+        //     "phonenumber": "9960732626",
+        //     "dob": "1989-12-18T00:00:00.000Z"
+        // } })
+}
+    const ref_input1 = useRef();
+    const ref_input2 = useRef();
+    const ref_input3 = useRef();
+    const ref_input4 = useRef();
+    const ref_input5 = useRef();
+    const ref_input6 = useRef();
     return (
         <View style={styles.container}>
             <StatusBar backgroundColor='#FF6347' barStyle="light-content" />
@@ -132,6 +145,9 @@ const SignUpScreen = ({ route, navigation }) => {
                             autoCapitalize="none"
                             value={data.firstname}
                             onChangeText={(val) => textInputFirstNameChange(val)}
+                            returnKeyType="next"
+                            onSubmitEditing={() => ref_input2.current.focus()}
+                            ref={ref_input1}
                         />
                         {data.check_textInputChange ?
                             <Animatable.View
@@ -157,6 +173,9 @@ const SignUpScreen = ({ route, navigation }) => {
                             autoCapitalize="none"
                             value={data.lastname}
                             onChangeText={(val) => textInputLastNameChange(val)}
+                            returnKeyType="next"
+                            onSubmitEditing={() => ref_input3.current.focus()}
+                            ref={ref_input2}
                         />
                         {data.check_textInputChange ?
                             <Animatable.View
@@ -183,7 +202,9 @@ const SignUpScreen = ({ route, navigation }) => {
                             defaultValue={data.phonenumber}
                             editable={route.params.phonenumber? false : true}
                             keyboardType='decimal-pad'
-                            
+                            ref={ref_input3}
+                            returnKeyType="next"
+                            onSubmitEditing={() => ref_input4.current.focus()}
                             onChangeText={(val) => textInputPhoneNumberChange(val)}
                         />
                         {data.check_textInputChange ?
@@ -211,6 +232,9 @@ const SignUpScreen = ({ route, navigation }) => {
                             defaultValue={data.email}
                             editable={route.params.email ? false : true}
                             onChangeText={(val) => textInputEmailChange(val)}
+                            returnKeyType="next"
+                            onSubmitEditing={() => ref_input5.current.focus()}
+                            ref={ref_input4}
                         />
                         {data.check_textInputChange ?
                             <Animatable.View
@@ -237,6 +261,9 @@ const SignUpScreen = ({ route, navigation }) => {
                             style={styles.textInput}
                             autoCapitalize="none"
                             onChangeText={(val) => handlePasswordChange(val)}
+                            returnKeyType="next"
+                            onSubmitEditing={() => ref_input6.current.focus()}
+                            ref={ref_input5}
                         />
                         <TouchableOpacity
                             onPress={updateSecureTextEntry}
@@ -269,6 +296,7 @@ const SignUpScreen = ({ route, navigation }) => {
                             style={styles.textInput}
                             autoCapitalize="none"
                             onChangeText={(val) => handleConfirmPasswordChange(val)}
+                            ref={ref_input6}
                         />
                         <TouchableOpacity
                             onPress={updateConfirmSecureTextEntry}
@@ -311,7 +339,10 @@ const SignUpScreen = ({ route, navigation }) => {
                                 && passwordCorrect ? false : true}
                         >
                             <LinearGradient
-                                colors={['#FFA07A', '#FF6347']}
+                              colors={data.firstname.trim().length >= 3 && data.lastname.trim().length >= 3 && 
+                                EMAIL_REGEXP.test(data.email) && 
+                                data.phonenumber.trim().length == 10 &&  passwordCorrect != '' 
+                                && passwordCorrect ?['#FFA07A', '#FF6347'] : ['#ccc','#ccc']}
                                 style={[styles.signIn]}
                             >
                                 <Text style={[styles.textSign, {

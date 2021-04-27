@@ -1,4 +1,4 @@
-package com.emergencyplease;
+package com.aklogical.emergencyplease;
 
 import com.facebook.react.ReactActivity;
 

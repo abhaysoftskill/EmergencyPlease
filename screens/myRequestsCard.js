@@ -1,11 +1,11 @@
 import React from 'react';
 import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import Moment from 'moment'; // Import momentjs
-import StarRating from './StarRating';
+import StarRating from '../components/StarRating';
 import LinearGradient from 'react-native-linear-gradient';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 const MyRequestsCard = ({itemData}) => {
-  Moment.locale('en');
+  // Moment.locale('en');
   const EmergencyType = {
     "accident_reported": "Accident",
     "ambulance_request": "Ambulance",
@@ -23,7 +23,7 @@ const MyRequestsCard = ({itemData}) => {
           />
         </View>
         <View style={styles.cardInfo}>
-        <Text style={styles.time}>{Moment(itemData.requestdate).format('DD-MM-YYYY hh:mma')}</Text>
+        <Text style={styles.time}>{Moment(itemData.requestDate).format('DD-MM-YYYY hh:mma')}</Text>
         <Text style={styles.cardTitle}>{EmergencyType[itemData.requestType]}</Text>
           <Text style={[styles.status],[itemData.requestStatus == 'closed'? styles.closeStatus:styles.activeStatus]}>
             {itemData.requestStatus == 'new' ? 'Active' : 'Closed'}</Text>

@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "389151912894",
-    "project_id": "emergencyplease-c1710",
-    "storage_bucket": "emergencyplease-c1710.appspot.com"
+    "project_number": "788716149501",
+    "project_id": "emergencyplease-56c74",
+    "storage_bucket": "emergencyplease-56c74.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:389151912894:android:fd984986a7d0e599fbffef",
+        "mobilesdk_app_id": "1:788716149501:android:3edf9344ef013a47dafc94",
         "android_client_info": {
-          "package_name": "com.emergencyplease"
+          "package_name": "com.aklogical.emergencyplease"
         }
       },
       "oauth_client": [
         {
-          "client_id": "389151912894-hbrcc3gl66frc5udijpl1lo6c5iads6s.apps.googleusercontent.com",
+          "client_id": "788716149501-c4s7pl497jbs845rsumao8aq625pf12d.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCVRkNT_YIpO_vVYke0w2F_FlRLE27kToA"
+          "current_key": "AIzaSyBA0NdH7n8lNeL9OhKrwyIh61IRSbrvM9w"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "389151912894-hbrcc3gl66frc5udijpl1lo6c5iads6s.apps.googleusercontent.com",
+              "client_id": "788716149501-c4s7pl497jbs845rsumao8aq625pf12d.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

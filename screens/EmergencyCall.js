@@ -14,7 +14,7 @@ export const EmergencyCall = ({ route, navigation }) => {
     }
     const renderItem = ({ item }) => {
         return (
-            <TouchableOpacity onPress={() => navigation.navigate('Map', {title: item.title, serviceName:item.name})}
+            <TouchableOpacity onPress={() => navigation.navigate('EmergencyRequestMap', {title: item.title, serviceName:item.name})}
             disabled={RequestDataCount[item.name] > 0 ? false : true}
             >
                 <View style={[styles.card, RequestDataCount[item.name] > 0 ? styles.active : styles.inActive]}>
