@@ -2,14 +2,14 @@ import request from "../common/api_client";
 
 const checkphonenumber = (phonenumber) => {
     return request({
-        url: `/users/phonenumber/${phonenumber}`,
+        url: `/user/phonenumber/${phonenumber}`,
         method: 'GET',
         handleHeaders: 2
     });
 }
 const checkemail = (email) =>{
     return request({
-        url: `/users/emailcheck/${email}`,
+        url: `/user/checkemail/${email}`,
         method: 'GET',
         handleHeaders: 2
     });
@@ -18,16 +18,23 @@ const checkemail = (email) =>{
 const login = (formData) => {
    
     return request({
-        url: `/users/authenticate`,
+        url: `/user/authenticate`,
         method: 'POST',
         data: formData,
         handleHeaders: 2
     });
 }
 const loginViaEmail = (formData) => {
-   
     return request({
-        url: `/users/authenticatebyemail`,
+        url: `/user/loginviaemail`,
+        method: 'POST',
+        data: formData,
+        handleHeaders: 2
+    });
+}
+const loginViaPhonenumber = (formData) => {
+    return request({
+        url: `/user/loginviaphonenumber`,
         method: 'POST',
         data: formData,
         handleHeaders: 2
@@ -36,7 +43,7 @@ const loginViaEmail = (formData) => {
 
 const register = (formData) => {
     return request({
-        url: `/users/register`,
+        url: `/user/signup`,
         method: 'POST',
         data: formData,
         handleHeaders: 2
@@ -44,7 +51,7 @@ const register = (formData) => {
 }
 const updateProfile = (formData) => {
     return request({
-        url: `/users/update/${formData.id}`,
+        url: `/user/update/${formData.id}`,
         method: 'PUT',
         data: formData,
         handleHeaders: 2
@@ -56,6 +63,7 @@ const LoginService = {
     checkemail,
     login,
     loginViaEmail,
+    loginViaPhonenumber,
     register,
     updateProfile,
 };

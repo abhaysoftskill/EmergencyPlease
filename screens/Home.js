@@ -36,7 +36,7 @@ const Home = ({ navigation }) => {
     useEffect(() => {
         async function fetchVerson() {
             const version = await checkVersion();
-                       if (version.needsUpdate) {
+            if (version.needsUpdate) {
                 console.log(`App has a ${version.updateType} update pending.`);
 
             }
@@ -44,7 +44,7 @@ const Home = ({ navigation }) => {
         fetchVerson()
     }, [])
     useEffect(() => {
-           if (coordinates?.length == 0) {
+        if (coordinates?.length == 0) {
             dispatch(readCurrentLocation())
         }
         else if (coordinates) {
@@ -131,8 +131,114 @@ const Home = ({ navigation }) => {
                         <Text>{RequestCount}Loading....</Text>
                     </View>}
 
-                    {!RequestCount && !loading && <Text style={styles.noReported}>Today's Great day No Emergency Yet Reported</Text>}
+                    {/* {!RequestCount && !loading && <Text style={styles.noReported}>Today's Great day No Emergency Yet Reported</Text>} */}
+                    <View style={{
+                        alignContent: 'center',
+                        padding: 10, flexDirection: "row", justifyContent: 'space-between'
+                    }}>
+                        <TouchableOpacity
+                            onPress={() => navigation.navigate('EmergencyCall',
+                                {
+                                    RequestDataCount: RequestDataCount,
+                                })}
+                            disabled={RequestCount == 0}
 
+                        >
+                            <View style={[styles.innerContainer, styles.Card], { borderWidth: 1, borderRadius: 5, borderBottomWidth: 10, borderBottomColor: '#FF6347' }}>
+
+                                <View style={[styles.contentTitle], { alignItems: 'center' }}>
+                                    <Title style={[styles.requestCount], { paddingVertical: 5 }}>{RequestCount + 20000}</Title>
+                                    <Title style={{ fontSize: 16, paddingHorizontal: 20, backgroundColor: '#FF6347', color: '#fff' }}>Total</Title>
+                                </View>
+
+                            </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={() => navigation.navigate('EmergencyCall',
+                                {
+                                    RequestDataCount: RequestDataCount,
+                                })}
+                            disabled={RequestCount == 0}
+
+                        >
+                            <View style={[styles.innerContainer, styles.Card], { borderWidth: 1, borderRadius: 5, borderBottomWidth: 10, borderBottomColor: '#05375a' }}>
+
+                                <View style={[styles.contentTitle], { alignItems: 'center' }}>
+                                    <Title style={[styles.requestCount], { paddingVertical: 5 }}>{RequestCount + 20000}</Title>
+                                    <Title style={{ fontSize: 16, paddingHorizontal: 20, backgroundColor: '#05375a', color: '#fff' }}>Today</Title>
+                                </View>
+
+                            </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={() => navigation.navigate('EmergencyCall',
+                                {
+                                    RequestDataCount: RequestDataCount,
+                                })}
+                            disabled={RequestCount == 0}
+
+                        >
+                            <View style={[styles.innerContainer, styles.Card], { borderWidth: 1, borderRadius: 5, borderBottomWidth: 10, borderBottomColor: 'green' }}>
+
+                                <View style={[styles.contentTitle], { alignItems: 'center' }}>
+                                    <Title style={[styles.requestCount], { paddingVertical: 5 }}>{RequestCount + 20000}</Title>
+                                    <Title style={{ fontSize: 16, paddingHorizontal: 20, backgroundColor: 'green', color: '#fff' }}>Active</Title>
+                                </View>
+
+                            </View>
+                        </TouchableOpacity>
+
+                    </View>
+
+                    <View style={{
+                        alignItems: 'center',
+                        flex: 1, padding: 10, flexDirection: "row",
+                    }}>
+                        <TouchableOpacity
+                            onPress={() => navigation.navigate('EmergencyCall',
+                                {
+                                    RequestDataCount: RequestDataCount,
+                                })}
+                            disabled={RequestCount == 0}
+
+                        >
+                            <View style={[styles.innerContainer, styles.Card], { width: 130, height: 130, borderWidth: 1, borderRadius: 500, backgroundColor: '#fff' }}>
+
+                                <View style={[styles.contentTitle], { height: '100%', alignItems: 'center', backgroundColor: '#00000000' }}>
+                                    <Title style={[styles.requestCount], { fontSize: 30, paddingTop: 30, paddingBottom: 5, backgroundColor: '#00000000' }}>{RequestCount + 20000}</Title>
+                                    <Text style={{ fontSize: 13, }}>in 5 km </Text>
+                                    <Title style={{ fontSize: 16, borderBottomWidth: 5, position: 'absolute', bottom: 0, width: '100%', textAlign: 'center', paddingHorizontal: 13, backgroundColor: 'green', color: '#fff' }}>Nearest</Title>
+                                </View>
+
+                            </View>
+
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={() => navigation.navigate('EmergencyCall',
+                                {
+                                    RequestDataCount: RequestDataCount,
+                                })}
+                            disabled={RequestCount == 0}
+
+                        >
+                            <View style={[styles.innerContainer, styles.Card], { marginHorizontal: 10, height: 100, width: 200, borderWidth: 1, borderRadius: 5, borderBottomWidth: 10, borderBottomColor: 'green' }}>
+
+                                <View style={[styles.contentTitle], { alignItems: 'center', height: '100%' }}>
+                                    <Paragraph>Requested for Help in <Text style={{ fontWeight: "bold", color: "#ae1302" }}>{coveredArea}km</Text></Paragraph>
+                                    <Button icon="walk" mode="contained" color="red" style={{ position: 'absolute', bottom: 10 }} 
+                                      onPress={() => navigation.navigate('EmergencyCall',
+                                      {
+                                          RequestDataCount: RequestDataCount,
+                                      })}
+                                  disabled={RequestCount == 0}
+                                  >
+                                        Click Here </Button>
+                                </View>
+
+                            </View>
+                        </TouchableOpacity>
+
+                    </View>
                     {!loading && RequestCount != 0 && <TouchableOpacity
                         onPress={() => navigation.navigate('EmergencyCall',
                             {
@@ -158,6 +264,9 @@ const Home = ({ navigation }) => {
 
                         </Card>
                     </TouchableOpacity>}
+
+
+
                     {!loading && <TouchableOpacity
                         onPress={() => navigation.navigate('EmergencyServices',
                             {
@@ -207,7 +316,7 @@ const Home = ({ navigation }) => {
 
                         </Card>
                     </TouchableOpacity>}
-               
+
                 </View>
             </ScrollView>
         </ImageBackground>
@@ -217,6 +326,7 @@ const Home = ({ navigation }) => {
 export default Home;
 
 const styles = StyleSheet.create({
+    requestCount: { fontSize: 30 },
     containter: {
         width: Dimensions.get("window").width, //for full screen
         height: Dimensions.get("window").height //for full screen
@@ -242,7 +352,6 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-start'
     },
     innerContainer: {
-        // flexDirection: 'row'
         flexDirection: 'row',
         alignSelf: 'center',
 

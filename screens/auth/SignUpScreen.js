@@ -22,6 +22,7 @@ const SignUpScreen = ({ route, navigation }) => {
     let EMAIL_REGEXP = /^[a-z0-9!#$%&'*+\/=?^_`{|}~.-]+@[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)*$/i;
 
     const [data, setData] = React.useState({
+        username:'',
         firstname: '',
         lastname: '',
         password: '',
@@ -88,7 +89,8 @@ const SignUpScreen = ({ route, navigation }) => {
             confirm_secureTextEntry: !data.confirm_secureTextEntry
         });
     }
-    const login = () =>{
+    const RegisterUser = () =>{
+        data.username = (data.firstname.slice(0, 3) + data.lastname.slice(0, 3)).toLowerCase(),
         //,{ navigation.navigate('Welcome', { userDetails: data }) }
         LoginService.register(data).then((res) => {
             navigation.navigate('Welcome', { userDetails: res })
@@ -332,7 +334,7 @@ const SignUpScreen = ({ route, navigation }) => {
 
                         <TouchableOpacity
                             style={styles.signIn, styles.signButton}
-                            onPress={() => login()}
+                            onPress={() => RegisterUser()}
                             disabled={data.firstname.trim().length >= 3 && data.lastname.trim().length >= 3 && 
                                 EMAIL_REGEXP.test(data.email) && 
                                 data.phonenumber.trim().length == 10 &&  passwordCorrect != '' 

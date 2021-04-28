@@ -103,6 +103,7 @@ const SignInScreen = ({ route, navigation }) => {
                 "email": data.username,
                 "password": data.password
             }).then((res) => {
+                console.log(res)
                 // console.log({userDetails: res[0],
                 //     userToken: res[1],})
                 // window.location.href = '/org/admin/bases';
@@ -126,10 +127,11 @@ const SignInScreen = ({ route, navigation }) => {
 
         }
         else {
-            LoginService.login({
+            LoginService.loginViaPhonenumber({
                 "phonenumber": data.username,
                 "password": data.password
             }).then((res) => {
+                 console.log(res)
                 // console.log({userDetails: res[0],
                 //     userToken: res[1],})
                 // window.location.href = '/org/admin/bases';
