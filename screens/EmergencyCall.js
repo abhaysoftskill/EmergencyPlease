@@ -4,14 +4,25 @@ import { View, Text, Button, FlatList, StyleSheet, Image, TouchableOpacity, Imag
 import Card from '../components/Card';
 import StarRating from '../components/StarRating';
 import { service } from '../model/data';
+import EmergencyService from '../services/emergencyServices';
 import AmbulanceRequest from './requests/Ambulance';
 
 export const EmergencyCall = ({ route, navigation }) => {
     const [RequestDataCount, setRequestDataCount] = useState(route.params.RequestDataCount)
     const [serviceName, setServiceName] = useState('')
+   useEffect(() => {
+    // EmergencyService.services(coordinates).then((res) => {
+    //     setRequestDataCount(res)
+    //     setRequestCount(res.accident_reported + res.ambulance_request + res.heart_attack + res.blood_donor);
+    //     setLoading(false)
+    // }, error => {
+    //     return;
+    // })
+   },[])
     const callService = (service_name) => {
         setServiceName(service_name);
     }
+    console.log(RequestDataCount.requests.nearRequest)
     const renderItem = ({ item }) => {
         return (
             <TouchableOpacity onPress={() => navigation.navigate('EmergencyRequestMap', {title: item.title, serviceName:item.name})}

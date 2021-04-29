@@ -8,7 +8,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import EmergencyService from '../services/emergencyServices';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { readCurrentLocation } from '../Redux/actions/currentLocationActions';
+import { readCurrentLocation } from '../redux/actions/currentLocationActions';
 import { checkVersion } from 'react-native-check-version';
 const { width } = Dimensions.get("window");
 const CARD_WIDTH = width * 0.8;
@@ -38,7 +38,6 @@ const Home = ({ navigation }) => {
             const version = await checkVersion();
             if (version.needsUpdate) {
                 console.log(`App has a ${version.updateType} update pending.`);
-
             }
         }
         fetchVerson()
@@ -147,7 +146,7 @@ const Home = ({ navigation }) => {
                             <View style={[styles.innerContainer, styles.Card], { borderWidth: 1, borderRadius: 5, borderBottomWidth: 10, borderBottomColor: '#FF6347' }}>
 
                                 <View style={[styles.contentTitle], { alignItems: 'center' }}>
-                                    <Title style={[styles.requestCount], { paddingVertical: 5 }}>{RequestCount + 20000}</Title>
+                                    <Title style={[styles.requestCount], { paddingVertical: 5 }}>{RequestDataCount?.requests.totalRequestCount}</Title>
                                     <Title style={{ fontSize: 16, paddingHorizontal: 20, backgroundColor: '#FF6347', color: '#fff' }}>Total</Title>
                                 </View>
 
@@ -164,7 +163,7 @@ const Home = ({ navigation }) => {
                             <View style={[styles.innerContainer, styles.Card], { borderWidth: 1, borderRadius: 5, borderBottomWidth: 10, borderBottomColor: '#05375a' }}>
 
                                 <View style={[styles.contentTitle], { alignItems: 'center' }}>
-                                    <Title style={[styles.requestCount], { paddingVertical: 5 }}>{RequestCount + 20000}</Title>
+                                    <Title style={[styles.requestCount], { paddingVertical: 5 }}>{RequestDataCount?.requests.todayRequestCount}</Title>
                                     <Title style={{ fontSize: 16, paddingHorizontal: 20, backgroundColor: '#05375a', color: '#fff' }}>Today</Title>
                                 </View>
 
@@ -181,7 +180,7 @@ const Home = ({ navigation }) => {
                             <View style={[styles.innerContainer, styles.Card], { borderWidth: 1, borderRadius: 5, borderBottomWidth: 10, borderBottomColor: 'green' }}>
 
                                 <View style={[styles.contentTitle], { alignItems: 'center' }}>
-                                    <Title style={[styles.requestCount], { paddingVertical: 5 }}>{RequestCount + 20000}</Title>
+                                    <Title style={[styles.requestCount], { paddingVertical: 5 }}>{RequestDataCount?.requests.nearRequest.length}</Title>
                                     <Title style={{ fontSize: 16, paddingHorizontal: 20, backgroundColor: 'green', color: '#fff' }}>Active</Title>
                                 </View>
 
@@ -194,78 +193,36 @@ const Home = ({ navigation }) => {
                         alignItems: 'center',
                         flex: 1, padding: 10, flexDirection: "row",
                     }}>
-                        <TouchableOpacity
-                            onPress={() => navigation.navigate('EmergencyCall',
-                                {
-                                    RequestDataCount: RequestDataCount,
-                                })}
-                            disabled={RequestCount == 0}
 
-                        >
-                            <View style={[styles.innerContainer, styles.Card], { width: 130, height: 130, borderWidth: 1, borderRadius: 500, backgroundColor: '#fff' }}>
+                        <View style={[styles.innerContainer, styles.Card], { width: 130, height: 130, borderWidth: 1, borderRadius: 500, backgroundColor: '#fff' }}>
 
-                                <View style={[styles.contentTitle], { height: '100%', alignItems: 'center', backgroundColor: '#00000000' }}>
-                                    <Title style={[styles.requestCount], { fontSize: 30, paddingTop: 30, paddingBottom: 5, backgroundColor: '#00000000' }}>{RequestCount + 20000}</Title>
-                                    <Text style={{ fontSize: 13, }}>in 5 km </Text>
-                                    <Title style={{ fontSize: 16, borderBottomWidth: 5, position: 'absolute', bottom: 0, width: '100%', textAlign: 'center', paddingHorizontal: 13, backgroundColor: 'green', color: '#fff' }}>Nearest</Title>
-                                </View>
-
+                            <View style={[styles.contentTitle], { height: '100%', alignItems: 'center', backgroundColor: '#00000000' }}>
+                                <Title style={[styles.requestCount], { fontSize: 30, paddingTop: 30, paddingBottom: 5, backgroundColor: '#00000000' }}>{RequestDataCount?.requests.nearRequest.length}</Title>
+                                <Text style={{ fontSize: 13, }}>in 5 km </Text>
+                                <Title style={{ fontSize: 16, borderBottomWidth: 5, position: 'absolute', bottom: 0, width: '100%', textAlign: 'center', paddingHorizontal: 13, backgroundColor: 'green', color: '#fff' }}>Nearest</Title>
                             </View>
 
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            onPress={() => navigation.navigate('EmergencyCall',
-                                {
-                                    RequestDataCount: RequestDataCount,
-                                })}
-                            disabled={RequestCount == 0}
+                        </View>
 
-                        >
-                            <View style={[styles.innerContainer, styles.Card], { marginHorizontal: 10, height: 100, width: 200, borderWidth: 1, borderRadius: 5, borderBottomWidth: 10, borderBottomColor: 'green' }}>
 
-                                <View style={[styles.contentTitle], { alignItems: 'center', height: '100%' }}>
-                                    <Paragraph>Requested for Help in <Text style={{ fontWeight: "bold", color: "#ae1302" }}>{coveredArea}km</Text></Paragraph>
-                                    <Button icon="walk" mode="contained" color="red" style={{ position: 'absolute', bottom: 10 }} 
-                                      onPress={() => navigation.navigate('EmergencyCall',
-                                      {
-                                          RequestDataCount: RequestDataCount,
-                                      })}
-                                  disabled={RequestCount == 0}
-                                  >
-                                        Click Here </Button>
-                                </View>
+                        <View style={[styles.innerContainer, styles.Card], { marginHorizontal: 10, height: 100, width: 200, borderWidth: 1, borderRadius: 5, borderBottomWidth: 10, borderBottomColor: 'green' }}>
 
+                            <View style={[styles.contentTitle], { alignItems: 'center', height: '100%' }}>
+                                <Paragraph>Requested for Help in <Text style={{ fontWeight: "bold", color: "#ae1302" }}>{coveredArea}km</Text></Paragraph>
+                                <Button icon="walk" mode="contained" color="red" style={{ position: 'absolute', bottom: 10 }}
+                                    onPress={() => navigation.navigate('EmergencyCall',
+                                        {
+                                            RequestDataCount: RequestDataCount,
+                                        })}
+                                    disabled={RequestDataCount?.requests.nearRequest.length == 0}
+                                >
+                                    Click Here </Button>
                             </View>
-                        </TouchableOpacity>
+
+                        </View>
+
 
                     </View>
-                    {!loading && RequestCount != 0 && <TouchableOpacity
-                        onPress={() => navigation.navigate('EmergencyCall',
-                            {
-                                RequestDataCount: RequestDataCount,
-                            })}
-                        disabled={RequestCount == 0}
-
-                    >
-                        <Card style={styles.Card}>
-                            <Card.Content>
-                                <View style={styles.innerContainer}>
-                                    {RequestCount <= 1 ? <Ionicons name="md-person" size={55} color="#05375a" /> : <Ionicons name="md-people-sharp" size={55} color="#05375a" />}
-
-                                    <View style={styles.contentTitle}>
-                                        <Title style={{ color: '#05375a' }}>{RequestCount <= 1 ? `${RequestCount} Person` : `${RequestCount} Person's`}</Title>
-                                        <Paragraph>Requested for Help in <Text style={{ fontWeight: "bold", color: "#ae1302" }}>{coveredArea}km</Text></Paragraph>
-                                    </View>
-                                    <View style={styles.navigate} >
-                                        <Ionicons name="md-arrow-forward-circle-sharp" size={55} color="green" />
-                                    </View>
-                                </View>
-                            </Card.Content>
-
-                        </Card>
-                    </TouchableOpacity>}
-
-
 
                     {!loading && <TouchableOpacity
                         onPress={() => navigation.navigate('EmergencyServices',

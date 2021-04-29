@@ -49,7 +49,7 @@ const OTPVerification = (props) => {
       {/* <Button onPress={showDialog}>Show Dialog</Button> */}
       <Portal>
         <Dialog visible={visible} onDismiss={hideDialog} dismissable={false}>
-          <Dialog.Title>Welcome Back, <Text style={{ color: 'red' }}>{props.userDetails.username}</Text></Dialog.Title>
+          <Dialog.Title>Welcome Back, <Text style={{ color: 'red' }}>{props.userDetails.firstname}</Text></Dialog.Title>
           <Dialog.Content style={{ height: 230 }}>
             <View style={{ flexDirection: 'row', marginBottom: 10 }}>
               <Text>OTP has been sent to your registered mobile number</Text>

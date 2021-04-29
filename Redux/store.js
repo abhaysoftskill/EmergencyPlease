@@ -8,7 +8,7 @@ import currentLocationReducer from "./reducers/currentLocationReducer";
 
 const rootReducer = combineReducers({
     commonReducer: commonReducer,
-    currentLocationReducer:currentLocationReducer
+    currentLocationReducer:currentLocationReducer,
 });
 
 const config = {

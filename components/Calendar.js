@@ -4,8 +4,10 @@ import {
     StyleSheet
 } from 'react-native';
 import { Button, Dialog, Portal, Provider } from 'react-native-paper';
+import Moment from 'moment';
 const DateCalendar = (props) => {
     let dateFormat = require("dateformat");
+    console.log(Moment(new Date(), "DD-MM-YYYY").subtract(13, 'years').format('YYYY-MM-DD'))
     const [selected, setSelected] = useState('');
     const [selectedDate, setSelectedDate] = useState('');
     const [showMarkedDatesExamples, setShowMarkedDatesExamples] = useState(false);
@@ -20,14 +22,15 @@ const DateCalendar = (props) => {
             <Portal>
                 <Dialog visible={true} onDismiss={hideDialog} dismissable={false}>
                     <Dialog.Content >
-                        <Calendar
+                        <CalendarList
                             //   style={styles.calendar}
                             //   hideExtraDays
                             onDayPress={onDayPress}
                             current={new Date()}
                             minDate={'2012-05-10'}
-                            maxDate={new Date()}
+                            maxDate={Moment(new Date(), "DD-MM-YYYY").subtract(13, 'years').format('YYYY-MM-DD')}
                             enableSwipeMonths={true}
+                            disableMonthChange={false}
                             markedDates={{
                                 [selected]: {
                                     selected: true,

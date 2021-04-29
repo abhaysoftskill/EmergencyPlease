@@ -16,7 +16,7 @@ const MyRequests = ({ route, navigation }) => {
   };
 
   const requestData = () => {
-    EmergencyService.myEmergencyRequest(route.params.userDetails.id).then((res) => {
+    EmergencyService.myEmergencyRequest().then((res) => {
       setMyRequestData(res)
     }, error => {
       return;
@@ -29,7 +29,7 @@ const MyRequests = ({ route, navigation }) => {
     <>
       <View style={styles.container}>
         <FlatList
-          data={myRequestData}
+          data={myRequestData.requests}
           renderItem={renderItem}
           keyExtractor={(item, index) => index}
           inverted={true}

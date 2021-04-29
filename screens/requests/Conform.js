@@ -6,7 +6,6 @@ import LoginService from '../../services/loginServices';
 import EmergencyService from '../../services/emergencyServices';
 
 const ConfirmRequest = (props) => {
-  // console.log(props.geometry);
   const navigation = useNavigation();
   const [visible, setVisible] = useState(true);
 
@@ -32,8 +31,7 @@ const ConfirmRequest = (props) => {
 
   const submitRequest = () => {
     let updateData = {
-      "userid": props.data.userDetails.id,
-      "requestType": props.data.service_name,
+      "service_id": props.data.service_id,
       "requestDetails":{
         "requestForSelf": isSelf,
         "landMark": data.landmark,
@@ -74,7 +72,7 @@ const ConfirmRequest = (props) => {
       ]);
     }, error => {
       console.error('onRejected function called: ' + error.message);
-      Alert.alert('Login Fail!', error.message, [
+      Alert.alert('Request save fail!', error.message, [
         { text: 'Retry' }
       ]);
       return;

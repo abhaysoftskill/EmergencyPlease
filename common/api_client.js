@@ -2,7 +2,6 @@ import axios from "axios";
 import { BASE_API_URL } from "./constants";
 
 export const request = function (options) {
-    // console.log(options)
     // const authHeaders = JSON.parse(localStorage.getItem('authorization_headers'));
     const client = axios.create({
         baseURL: BASE_API_URL,

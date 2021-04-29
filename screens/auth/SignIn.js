@@ -114,12 +114,12 @@ const SignIn = ({ navigation }) => {
         if (EMAIL_REGEXP.test(userName)) {
             LoginService.checkemail(userName).then((res) => {
                 // window.location.href = '/org/admin/bases';
-                //signIn(res)
+                console.log(res)
                 Keyboard.dismiss()
                 //    setUserDetails(res.user)
                 //     setotpVerification(true)
 
-                if (res == 'No record') {
+                if (res == 'No  user found') {
                     //     let navigationExtras: NavigationExtras = { state: { email: this.f.phonenumber.value } };
                     //     this.route.navigate(['/register'], navigationExtras);
                     setLoading(false)
@@ -127,8 +127,7 @@ const SignIn = ({ navigation }) => {
                 }
                 else {
                     setLoading(false)
-                    res.user.email = userName;
-                    setUserDetails(res.user)
+                    setUserDetails(res)
                     setotpVerification(true)
 
                 }
@@ -141,17 +140,16 @@ const SignIn = ({ navigation }) => {
             LoginService.checkphonenumber(userName).then((res) => {
                 setLoading(true)
                 Keyboard.dismiss()
-                if (res == 'No record') {
+                if (res == 'No  user found') {
                     //     let navigationExtras: NavigationExtras = { state: { email: this.f.phonenumber.value } };
                     //     this.route.navigate(['/register'], navigationExtras);
                     setLoading(false)
                     navigation.navigate('SignUpScreen', { phonenumber: userName })
                 }
                 else {
-                  
+                  console.log(res)
                     setLoading(false)
-                    res.user.phonenumber = userName;
-                    setUserDetails(res.user)
+                    setUserDetails(res)
                     setotpVerification(true)
                 }
 

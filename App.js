@@ -40,7 +40,7 @@ import MainTabScreen from './screens/tabs/MainTabScreen';
 
 import { createStackNavigator } from '@react-navigation/stack';
 import { Provider } from 'react-redux';
-import store from './Redux/store';
+import store from './redux/store';
 import CheckConnection from './utils/CheckConnection';
 import { Image } from 'react-native-animatable';
 import withCodePush from './codepush';
@@ -133,7 +133,8 @@ const App = () => {
     signIn: async (foundUser) => {
       // setUserToken('fgkj');
       // setIsLoading(false);
-      const userToken = String(foundUser.userToken.token);
+      console.log(foundUser)
+      const userToken = String(foundUser.userToken);
       const userName = foundUser.userDetails.firstname + " " + foundUser.userDetails.lastname;
       const userDetails = JSON.stringify(foundUser.userDetails);
 

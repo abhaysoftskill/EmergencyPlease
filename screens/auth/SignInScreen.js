@@ -22,7 +22,6 @@ import { AuthContext } from '../../components/context';
 import LoginService from '../../services/loginServices';
 
 const SignInScreen = ({ route, navigation }) => {
-    // console.log(route.params)
     const [data, setData] = useState({
         username: route.params.userDetails.phonenumber || route.params.userDetails.email,
         password: '',
@@ -103,14 +102,13 @@ const SignInScreen = ({ route, navigation }) => {
                 "email": data.username,
                 "password": data.password
             }).then((res) => {
-                console.log(res)
                 // console.log({userDetails: res[0],
                 //     userToken: res[1],})
                 // window.location.href = '/org/admin/bases';
 
                 signIn({
-                    userDetails: res[0],
-                    userToken: res[1]
+                    userDetails: res.user,
+                    userToken: res.token
                 })
                 setLoading(false)
 
@@ -131,7 +129,6 @@ const SignInScreen = ({ route, navigation }) => {
                 "phonenumber": data.username,
                 "password": data.password
             }).then((res) => {
-                 console.log(res)
                 // console.log({userDetails: res[0],
                 //     userToken: res[1],})
                 // window.location.href = '/org/admin/bases';
@@ -174,7 +171,7 @@ const SignInScreen = ({ route, navigation }) => {
         <View style={styles.container}>
             <StatusBar backgroundColor='#FF6347' barStyle="light-content" />
             <View style={styles.header}>
-                <Text style={styles.text_header}>Welcome!</Text>
+                <Text style={styles.text_header}>Welcome! {route.params.userDetails.firstname}</Text>
             </View>
             <Animatable.View
                 animation="fadeInUpBig"
@@ -198,7 +195,7 @@ const SignInScreen = ({ route, navigation }) => {
                             color: colors.text
                         }]}
                         autoCapitalize="none"
-                        defaultValue={data.username}
+                        defaultValue={`${data.username}`}
                         editable={false}
                     />
                     {data.check_textInputChange ?

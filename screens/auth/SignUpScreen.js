@@ -90,7 +90,7 @@ const SignUpScreen = ({ route, navigation }) => {
         });
     }
     const RegisterUser = () =>{
-        data.username = (data.firstname.slice(0, 3) + data.lastname.slice(0, 3)).toLowerCase(),
+        data.username = (data.firstname.slice(0, 3) + data.lastname.slice(0, 3)).toLowerCase();
         //,{ navigation.navigate('Welcome', { userDetails: data }) }
         LoginService.register(data).then((res) => {
             navigation.navigate('Welcome', { userDetails: res })

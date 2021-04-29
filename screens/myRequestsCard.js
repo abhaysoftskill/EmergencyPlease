@@ -5,6 +5,7 @@ import StarRating from '../components/StarRating';
 import LinearGradient from 'react-native-linear-gradient';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 const MyRequestsCard = ({itemData}) => {
+  console.log(itemData)
   // Moment.locale('en');
   const EmergencyType = {
     "accident_reported": "Accident",
@@ -23,10 +24,10 @@ const MyRequestsCard = ({itemData}) => {
           />
         </View>
         <View style={styles.cardInfo}>
-        <Text style={styles.time}>{Moment(itemData.requestDate).format('DD-MM-YYYY hh:mma')}</Text>
-        <Text style={styles.cardTitle}>{EmergencyType[itemData.requestType]}</Text>
+        <Text style={styles.time}>{Moment(itemData.updated_at).format('DD-MM-YYYY hh:mma')}</Text>
+        <Text style={styles.cardTitle}>{itemData.services.service_name_alias}</Text>
           <Text style={[styles.status],[itemData.requestStatus == 'closed'? styles.closeStatus:styles.activeStatus]}>
-            {itemData.requestStatus == 'new' ? 'Active' : 'Closed'}</Text>
+            {itemData.requestStatus}</Text>
        
         </View>
       </View>
@@ -38,20 +39,20 @@ export default MyRequestsCard;
 
 const styles = StyleSheet.create({
   time:{ fontSize: 16, color:'#8e8e8e'},
-  status:{fontSize: 14},
+  status:{fontSize: 14, textTransform:'capitalize'},
   closeStatus:{fontSize: 10,
     backgroundColor:'#b1003b',
     color:'#fff',
     padding:3,
     width:100,
-    textAlign:'center',
+    textAlign:'center',textTransform:'capitalize',
     borderRadius:50},
   activeStatus:{fontSize: 14, 
     backgroundColor:'#1abae8',
     color:'#fff',
     padding:3,
     width:100,
-    textAlign:'center',
+    textAlign:'center',textTransform:'capitalize',
     borderRadius:50
   },
   card: {

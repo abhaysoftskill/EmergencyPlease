@@ -28,6 +28,7 @@ const longitudeDelta = 0.02;
 
 const EmergencyReport = ({ route, navigation }) => {
     // const userDetails = route.params.userDetails;
+  
     const userDetails = route.params.userDetails;
     const theme = useTheme();
     const { coordinates } = useSelector(state => state.currentLocationReducer);
