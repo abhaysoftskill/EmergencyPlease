@@ -62,13 +62,36 @@ const services = async () => {
         }
     });
 }
+const nearservices = async (lng,lat) => {
+    userToken = await AsyncStorage.getItem('userToken');
+     return request({
+        url: `/service/nearservices?lng=${lng}&lat=${lat}`,
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${userToken}`
+        }
+    });
+}
+
+const emergencyContacts = async () => {
+    userToken = await AsyncStorage.getItem('userToken');
+     return request({
+        url: `/contacts/all`,
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${userToken}`
+        }
+    });
+}
 const EmergencyService = {
     myEmergencyRequest,
     emergencyRequest,
     nearestEmergencyRequestCount,
     nearestEmergencyRequest,
     getAppUpdateVersion,
-    services
+    services,
+    nearservices,
+    emergencyContacts
 };
 
 export default EmergencyService;

@@ -22,7 +22,7 @@ import EmergencyRequestMap from '../EmergencyRequestMap';
 
 const HomeStack = createStackNavigator();
 const NotificationStack = createStackNavigator();
-const ProfileStack = createStackNavigator();
+const StoryStack = createStackNavigator();
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -53,7 +53,7 @@ const MainTabScreen = () => (
     />
     <Tab.Screen
       name="SuccessStory"
-      component={ProfileStackScreen}
+      component={StoryStackScreen}
       options={{
         tabBarLabel: 'Success Story',
         tabBarColor: '#694fad',
@@ -72,6 +72,8 @@ const MainTabScreen = () => (
           <Icon name="md-call" color={color} size={26} />
         ),
       }}
+
+      
     />
   </Tab.Navigator>
 );
@@ -272,11 +274,11 @@ const NotificationStackScreen = ({ navigation }) => {
   )
 };
 
-const ProfileStackScreen = ({ navigation }) => {
+const StoryStackScreen = ({ navigation }) => {
   const { colors } = useTheme();
 
   return (
-    <ProfileStack.Navigator
+    <StoryStack.Navigator
       screenOptions={{
         headerStyle: {
           backgroundColor: colors.background,
@@ -285,7 +287,7 @@ const ProfileStackScreen = ({ navigation }) => {
         },
         headerTintColor: colors.text,
       }}>
-      <ProfileStack.Screen
+      <StoryStack.Screen
         name="SuccessStory"
         // component={ProfileScreen}
         component={ComingSoon}
@@ -315,7 +317,7 @@ const ProfileStackScreen = ({ navigation }) => {
           // ),
         }}
       />
-      <ProfileStack.Screen
+      <StoryStack.Screen
         name="EditProfile"
         options={{
           title: 'Edit Profile',
@@ -323,7 +325,7 @@ const ProfileStackScreen = ({ navigation }) => {
         // component={EditProfileScreen}
         component={ComingSoon}
       />
-      <ProfileStack.Screen
+      <StoryStack.Screen
         name="EditDetails"
         options={{
           title: 'Update Details',
@@ -331,7 +333,7 @@ const ProfileStackScreen = ({ navigation }) => {
         // component={EditProfileScreen}
         component={Details}
       />
-    </ProfileStack.Navigator>
+    </StoryStack.Navigator>
   );
 };
 
@@ -339,7 +341,7 @@ const ContactsStackScreen = ({ navigation }) => {
   const { colors } = useTheme();
 
   return (
-    <ProfileStack.Navigator
+    <StoryStack.Navigator
       screenOptions={{
         headerStyle: {
           backgroundColor: colors.background,
@@ -348,7 +350,7 @@ const ContactsStackScreen = ({ navigation }) => {
         },
         headerTintColor: colors.text,
       }}>
-      <ProfileStack.Screen
+      <StoryStack.Screen
         name="EmergencyContacts"
         // component={ProfileScreen}
         component={EmergencyContacts}
@@ -378,6 +380,6 @@ const ContactsStackScreen = ({ navigation }) => {
           // ),
         }}
       />
-    </ProfileStack.Navigator>
+    </StoryStack.Navigator>
   );
 };

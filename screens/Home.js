@@ -19,15 +19,14 @@ const Home = ({ navigation }) => {
     const isFocused = useIsFocused();
     const theme = useTheme();
     const [loading, setLoading] = useState(true);
-    const [RequestCount, setRequestCount] = useState();
     const [RequestDataCount, setRequestDataCount] = useState();
     const [userDetails, setUserDetails] = useState([])
     const coveredArea = 5;
 
     const requestData = () => {
+
         EmergencyService.nearestEmergencyRequestCount(coordinates).then((res) => {
             setRequestDataCount(res)
-            setRequestCount(res.accident_reported + res.ambulance_request + res.heart_attack + res.blood_donor);
             setLoading(false)
         }, error => {
             return;
@@ -116,7 +115,7 @@ const Home = ({ navigation }) => {
 
                 <StatusBar barStyle={theme.dark ? 'light-content' : 'dark-content'} />
                 <View style={styles.optionContainer}>
-                    {!RequestCount && loading && <View style={{
+                    {!RequestDataCount && loading && <View style={{
                         flex: 1,
                         justifyContent: 'center',
                         alignItems: 'center',
@@ -127,69 +126,42 @@ const Home = ({ navigation }) => {
                             // style={{ width: 200, height: 100 }}
                             resizeMode="cover"
                         />
-                        <Text>{RequestCount}Loading....</Text>
+                        <Text>Loading....</Text>
                     </View>}
 
                     {/* {!RequestCount && !loading && <Text style={styles.noReported}>Today's Great day No Emergency Yet Reported</Text>} */}
-                    <View style={{
+                    {!loading && <View style={{
                         alignContent: 'center',
                         padding: 10, flexDirection: "row", justifyContent: 'space-between'
                     }}>
-                        <TouchableOpacity
-                            onPress={() => navigation.navigate('EmergencyCall',
-                                {
-                                    RequestDataCount: RequestDataCount,
-                                })}
-                            disabled={RequestCount == 0}
+                        <View style={[styles.innerContainer, styles.Card], { borderWidth: 1, borderRadius: 5, borderBottomWidth: 10, borderBottomColor: '#FF6347' }}>
 
-                        >
-                            <View style={[styles.innerContainer, styles.Card], { borderWidth: 1, borderRadius: 5, borderBottomWidth: 10, borderBottomColor: '#FF6347' }}>
-
-                                <View style={[styles.contentTitle], { alignItems: 'center' }}>
-                                    <Title style={[styles.requestCount], { paddingVertical: 5 }}>{RequestDataCount?.requests.totalRequestCount}</Title>
-                                    <Title style={{ fontSize: 16, paddingHorizontal: 20, backgroundColor: '#FF6347', color: '#fff' }}>Total</Title>
-                                </View>
-
+                            <View style={[styles.contentTitle], { alignItems: 'center' }}>
+                                <Title style={[styles.requestCount], { paddingVertical: 5 }}>{RequestDataCount?.requests.totalRequestCount}</Title>
+                                <Title style={{ fontSize: 16, paddingHorizontal: 20, backgroundColor: '#FF6347', color: '#fff' }}>Total</Title>
                             </View>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            onPress={() => navigation.navigate('EmergencyCall',
-                                {
-                                    RequestDataCount: RequestDataCount,
-                                })}
-                            disabled={RequestCount == 0}
 
-                        >
-                            <View style={[styles.innerContainer, styles.Card], { borderWidth: 1, borderRadius: 5, borderBottomWidth: 10, borderBottomColor: '#05375a' }}>
+                        </View>
+                        <View style={[styles.innerContainer, styles.Card], { borderWidth: 1, borderRadius: 5, borderBottomWidth: 10, borderBottomColor: '#05375a' }}>
 
-                                <View style={[styles.contentTitle], { alignItems: 'center' }}>
-                                    <Title style={[styles.requestCount], { paddingVertical: 5 }}>{RequestDataCount?.requests.todayRequestCount}</Title>
-                                    <Title style={{ fontSize: 16, paddingHorizontal: 20, backgroundColor: '#05375a', color: '#fff' }}>Today</Title>
-                                </View>
-
+                            <View style={[styles.contentTitle], { alignItems: 'center' }}>
+                                <Title style={[styles.requestCount], { paddingVertical: 5 }}>{RequestDataCount?.requests.todayRequestCount}</Title>
+                                <Title style={{ fontSize: 16, paddingHorizontal: 20, backgroundColor: '#05375a', color: '#fff' }}>Today</Title>
                             </View>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            onPress={() => navigation.navigate('EmergencyCall',
-                                {
-                                    RequestDataCount: RequestDataCount,
-                                })}
-                            disabled={RequestCount == 0}
 
-                        >
-                            <View style={[styles.innerContainer, styles.Card], { borderWidth: 1, borderRadius: 5, borderBottomWidth: 10, borderBottomColor: 'green' }}>
+                        </View>
+                        <View style={[styles.innerContainer, styles.Card], { borderWidth: 1, borderRadius: 5, borderBottomWidth: 10, borderBottomColor: 'green' }}>
 
-                                <View style={[styles.contentTitle], { alignItems: 'center' }}>
-                                    <Title style={[styles.requestCount], { paddingVertical: 5 }}>{RequestDataCount?.requests.nearRequest.length}</Title>
-                                    <Title style={{ fontSize: 16, paddingHorizontal: 20, backgroundColor: 'green', color: '#fff' }}>Active</Title>
-                                </View>
-
+                            <View style={[styles.contentTitle], { alignItems: 'center' }}>
+                                <Title style={[styles.requestCount], { paddingVertical: 5 }}>{RequestDataCount?.requests.activeRequestCount}</Title>
+                                <Title style={{ fontSize: 16, paddingHorizontal: 20, backgroundColor: 'green', color: '#fff' }}>Active</Title>
                             </View>
-                        </TouchableOpacity>
 
-                    </View>
+                        </View>
 
-                    <View style={{
+                    </View>}
+
+                    {!loading && <View style={{
                         alignItems: 'center',
                         flex: 1, padding: 10, flexDirection: "row",
                     }}>
@@ -222,7 +194,7 @@ const Home = ({ navigation }) => {
                         </View>
 
 
-                    </View>
+                    </View>}
 
                     {!loading && <TouchableOpacity
                         onPress={() => navigation.navigate('EmergencyServices',

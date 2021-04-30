@@ -1,17 +1,15 @@
 import React from 'react';
 import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 
-import StarRating from '../../components/StarRating';
-
 const EmerContactCard = ({itemData, onPress}) => {
   return (
     <TouchableOpacity onPress={onPress}>
       <View style={styles.card}>
         <View style={styles.cardInfo}>
-          <Text style={styles.cardTitle}>{itemData.name}  </Text>
+          <Text style={styles.cardTitle}>{itemData.contact_name_alias}  </Text>
         </View>
         <View style={styles.cardInfo}>
-          <Text numberOfLines={2} style={styles.cardDetails}>{itemData.number}</Text>
+          <Text numberOfLines={2} style={styles.cardDetails}>{itemData.contact_number}</Text>
         </View>
       </View>
     </TouchableOpacity>

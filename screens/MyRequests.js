@@ -32,7 +32,6 @@ const MyRequests = ({ route, navigation }) => {
           data={myRequestData.requests}
           renderItem={renderItem}
           keyExtractor={(item, index) => index}
-          inverted={true}
         />
       </View>
     </>

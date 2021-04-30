@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Button, FlatList, StyleSheet, Image, TouchableOpacity, ImageBackground } from 'react-native';
+import { useSelector } from 'react-redux';
 // import { data } from '../model/data';
 import Card from '../components/Card';
 import StarRating from '../components/StarRating';
@@ -8,41 +9,45 @@ import EmergencyService from '../services/emergencyServices';
 import AmbulanceRequest from './requests/Ambulance';
 
 export const EmergencyCall = ({ route, navigation }) => {
+    const { coordinates } = useSelector(state => state.currentLocationReducer);
     const [RequestDataCount, setRequestDataCount] = useState(route.params.RequestDataCount)
     const [serviceName, setServiceName] = useState('')
-   useEffect(() => {
-    // EmergencyService.services(coordinates).then((res) => {
-    //     setRequestDataCount(res)
-    //     setRequestCount(res.accident_reported + res.ambulance_request + res.heart_attack + res.blood_donor);
-    //     setLoading(false)
-    // }, error => {
-    //     return;
-    // })
-   },[])
+    const [serviceData, setServiceData] = useState(null)
+    const [region, setRegion] = useState(coordinates);
+    useEffect(() => {
+        {
+          region && EmergencyService.nearservices(region.longitude, region.latitude).then((res) => {
+          console.log(res)
+            setServiceData(res)
+          }, error => {
+            console.error('onRejected function called: ' + error.message);
+            return;
+          })
+        }
+      }, [region,coordinates]);
     const callService = (service_name) => {
         setServiceName(service_name);
     }
-    console.log(RequestDataCount.requests.nearRequest)
     const renderItem = ({ item }) => {
         return (
-            <TouchableOpacity onPress={() => navigation.navigate('EmergencyRequestMap', {title: item.title, serviceName:item.name})}
-            disabled={RequestDataCount[item.name] > 0 ? false : true}
+            <TouchableOpacity onPress={() => navigation.navigate('EmergencyRequestMap', {serviceData:item})}
+            disabled={item.request.length > 0 ? false : true}
             >
-                <View style={[styles.card, RequestDataCount[item.name] > 0 ? styles.active : styles.inActive]}>
+                <View style={[styles.card, item.request.length > 0 ? styles.active : styles.inActive]}>
                     <View style={styles.cardImgWrapper}>
-                        <View style={[styles.categoryIcon, RequestDataCount[item.name] > 0 ? styles.active : styles.inActive]}>
-                            <Text style={[styles.count,  RequestDataCount[item.name] > 0 ? styles.active : styles.inActive]} color="green">{RequestDataCount[item.name]}</Text>
+                        <View style={[styles.categoryIcon, item.request.length > 0 ? styles.active : styles.inActive]}>
+                            <Text style={[styles.count,  item.request.length > 0 ? styles.active : styles.inActive]} color="green">{item.request.length}</Text>
                         </View>
                     </View>
                     <View style={styles.cardInfo}>
-                        <Text style={[styles.cardTitle,RequestDataCount[item.name] > 0 ? styles.active : styles.inActive]}>{item.title}</Text>
+                        <Text style={[styles.cardTitle,item.request.length > 0 ? styles.active : styles.inActive]}>{item.service_name_alias}</Text>
                         {/* <StarRating ratings={item.ratings} reviews={item.reviews} /> */}
-                        <Text numberOfLines={1} style={[styles.cardDetails,RequestDataCount[item.name] > 0 ? styles.active : styles.inActive]}>{item.description}</Text>
+                        <Text numberOfLines={1} style={[styles.cardDetails,item.request.length > 0 ? styles.active : styles.inActive]}>{item.service_description}</Text>
 
                     </View>
                     <View style={styles.cardImgWrapper}>
                         <Image
-                            source={item.image}
+                           source={{uri: `https://emergencyplease.com/api/src/uploads/${item.service_name}.jpg`}}
                             resizeMode="cover"
                             style={styles.cardImg}
                         />
@@ -65,9 +70,9 @@ export const EmergencyCall = ({ route, navigation }) => {
                 <View style={{ width: '90%', alignSelf: 'center', }} >
 
                     <FlatList
-                        data={service}
+                        data={serviceData?.services}
                         renderItem={renderItem}
-                        keyExtractor={item => item.id}
+                        keyExtractor={(item) => item.service_name}
                     />
                 </View>
                 {serviceName === "ambulance_request" && <AmbulanceRequest visible={serviceName === "ambulance_request" ? true : false} />}

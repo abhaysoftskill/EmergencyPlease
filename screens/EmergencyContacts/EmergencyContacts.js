@@ -1,28 +1,30 @@
-import React,{useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Button, FlatList, StyleSheet, Linking } from 'react-native';
 import { emergencyContactsNumber } from '../../model/data';
+import EmergencyService from '../../services/emergencyServices';
 import EmerContactCard from './EmerContactCard';
 // import Card from '../components/Card';
 
 
-const EmergencyContacts = ({route, navigation }) => {
+const EmergencyContacts = ({ route, navigation }) => {
 
   const [serviceName, setServiceName] = useState('')
-  
+  const [emergencyContacts, setEmergencyContacts] = useState('')
+
 
   const makeCall = (e) => {
     let phoneNumber = ''
 
-    if(Platform.OS === 'android'){
-        phoneNumber = `tel:${e.number}`
+    if (Platform.OS === 'android') {
+      phoneNumber = `tel:${e.number}`
     }
     else {
-        phoneNumber = `telprompt:${e.number}`
+      phoneNumber = `telprompt:${e.number}`
     }
 
     Linking.openURL(phoneNumber);
-};
-const renderItem = ({ item }) => {
+  };
+  const renderItem = ({ item }) => {
     return (
       <EmerContactCard
         itemData={item}
@@ -31,9 +33,15 @@ const renderItem = ({ item }) => {
     );
   };
   useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", () => {
+    EmergencyService.emergencyContacts().then((res) => {
+      setEmergencyContacts(res);
+  }, error => {
+      return;
+  })
+  const unsubscribe = navigation.addListener("focus", () => {
       setServiceName('')
     })
+    
     // this will help to clear the state when navigate the screen
     return unsubscribe;
   }, [navigation])
@@ -41,11 +49,11 @@ const renderItem = ({ item }) => {
     <>
       <View style={styles.container}>
         <FlatList
-          data={emergencyContactsNumber}
+          data={emergencyContacts?.contacts}
           renderItem={renderItem}
-          keyExtractor={item => item.name}
+          keyExtractor={item => item._id}
         />
-        
+
 
       </View>
     </>

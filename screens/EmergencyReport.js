@@ -18,10 +18,6 @@ import { useTheme } from '@react-navigation/native';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ConfirmRequest from './requests/Conform';
-
-import Geolocation from '@react-native-community/geolocation';
-import { check, PERMISSIONS } from 'react-native-permissions';
-import { PermissionsAndroid, Platform } from 'react-native';
 import { useSelector } from 'react-redux';
 const latitudeDelta = 0.02;
 const longitudeDelta = 0.02;

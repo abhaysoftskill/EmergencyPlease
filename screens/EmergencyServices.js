@@ -11,9 +11,6 @@ const EmergencyServices = ({ route, navigation }) => {
   const [services, setServices] = useState({});
  
   const callService = (service) => {
-    console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
-
- console.log(service)
     // if(service_name === 'accident_reported'){
     //   navigation.navigate('EmergencyReport', { service_name:"accident_reported",service_title:"Accident", userDetails: route.params.userDetails});
     // } else if(service_name === 'heart_attack'){

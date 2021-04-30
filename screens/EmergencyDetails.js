@@ -34,6 +34,12 @@ const EmergencyDetails = ({ route, navigation }) => {
     const { coordinates } = useSelector(state => state.currentLocationReducer);
 
     const userDetails = route.params.userDetails;
+    console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&')
+    console.log(userDetails)
+    console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&')
+    console.log(route.params.location)
+    console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&')
+    console.log(coordinates)
     const theme = useTheme();
     let instance, defaultSelectedApp, defaultLaunchMode, launchModes;
     const [readyToHelp, setReadyToHelp] = useState(false)
@@ -50,7 +56,7 @@ const EmergencyDetails = ({ route, navigation }) => {
             };
             defaultLaunchMode = LaunchNavigator.LAUNCH_MODE.MAPS;
 
-            LaunchNavigator.navigate([route.params.userDetails.geometry.coordinates[0], route.params.userDetails.geometry.coordinates[1]], {
+            LaunchNavigator.navigate([route.params.location[0], route.params.location[1]], {
                 start: `${coordinates.latitude}, ${coordinates.longitude}`
             })
                 .then(() => console.log("Launched navigator"))
@@ -72,14 +78,10 @@ const EmergencyDetails = ({ route, navigation }) => {
                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'flex-start', padding: 10 }}>
                     <View style={{ flex: 1 }}>
                         <View>
-                            <Text style={styles.userName}>{userDetails.userDetails[0].firstname} {userDetails.userDetails[0].lastname}</Text>
+                            <Text style={styles.userName}>{userDetails.firstname} {userDetails.lastname}</Text>
                         </View>
                     </View>
-                    {/* <View style={{ flex: 1 }}>
-                        <View style={styles.userInfo}>
-                            <Text style={{ color: '#444' }}>{'Address: - Bhandara Road Warthi - Bhandara 441906'}</Text>
-                        </View>
-                    </View> */}
+         
                 </View>
             </View>
 
@@ -90,7 +92,7 @@ const EmergencyDetails = ({ route, navigation }) => {
                         navigation.navigate('CardListScreen', { title: 'Restaurant' })
                     }>
                     <View style={styles.categoryIcon}>
-                        <Text style={styles.text} size={35} color="#FF6347">{Moment(userDetails.userDetails[0].dob).local().fromNow().split(" ")[0]} </Text>
+                        <Text style={styles.text} size={35} color="#FF6347">{Moment(userDetails.dob).local().fromNow().split(" ")[0]} </Text>
                     </View>
                     <Text style={styles.categoryBtnTxt}>Age</Text>
                 </TouchableOpacity>
@@ -100,13 +102,13 @@ const EmergencyDetails = ({ route, navigation }) => {
                         navigation.navigate('CardListScreen', { title: 'Fastfood Center' })
                     }>
                     <View style={styles.categoryIcon}>
-                        <Text style={styles.text} size={35} color="#FF6347">{userDetails.userDetails[0].bloodGroup}</Text>
+                        <Text style={styles.text} size={35} color="#FF6347">{userDetails.bloodGroup}</Text>
                     </View>
                     <Text style={styles.categoryBtnTxt}>Blood Group</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.categoryBtn} onPress={() => { }}>
                     <View style={styles.categoryIcon}>
-                        <Text style={styles.text} size={35} color="#FF6347">{userDetails.userDetails[0].userGender}</Text>
+                        <Text style={styles.text} size={35} color="#FF6347">{userDetails.userGender}</Text>
                     </View>
                     <Text style={styles.categoryBtnTxt}>Gender</Text>
                 </TouchableOpacity>
@@ -126,31 +128,31 @@ const EmergencyDetails = ({ route, navigation }) => {
             <View style={[styles.categoryContainer, { marginTop: 10 }]}>
                 {/* {userDetails.immidiateContact.map(data => { */}
                 <TouchableOpacity style={styles.categoryBtn} onPress={() => { }}>
-                    <View style={[styles.categoryIcon2,{borderColor: `${(userDetails.userDetails[0].familyContacts.length > 0 ? '#FF6347' : '#fdeae7')}`, backgroundColor: `${(userDetails.userDetails[0].familyContacts.length > 0 ? '#d9f1df' : '#e5e5e5')}`}]}>
-                        <Fontisto name="holiday-village" size={35} color={`${(userDetails.userDetails[0].familyContacts.length > 0 ? '#FF6347' : '#8d8c8c')}`} />
-                        <View style={[styles.friendsCount, { backgroundColor: `${(userDetails.userDetails[0].familyContacts.length > 0 ? '#FF6347' : '#ccc')}` }]}>
-                            <Text style={{ color: "#fff" }}>{userDetails.userDetails[0].familyContacts.length}</Text>
+                    <View style={[styles.categoryIcon2,{borderColor: `${(userDetails.familyContacts.length > 0 ? '#FF6347' : '#fdeae7')}`, backgroundColor: `${(userDetails.familyContacts.length > 0 ? '#d9f1df' : '#e5e5e5')}`}]}>
+                        <Fontisto name="holiday-village" size={35} color={`${(userDetails.familyContacts.length > 0 ? '#FF6347' : '#8d8c8c')}`} />
+                        <View style={[styles.friendsCount, { backgroundColor: `${(userDetails.familyContacts.length > 0 ? '#FF6347' : '#ccc')}` }]}>
+                            <Text style={{ color: "#fff" }}>{userDetails.familyContacts.length}</Text>
                         </View>
                     </View>
                     <Text style={[styles.categoryBtnTxt, { color: "#FF6347" }]}>Family</Text>
                 </TouchableOpacity>
                 {/* })} */}
                 <TouchableOpacity style={styles.categoryBtn} onPress={() => { }}>
-                    <View style={[styles.categoryIcon2, { borderColor: `${(userDetails.userDetails[0].familyContacts.length > 0 ? '#1a8434' : '#ccc')}`, 
-                    backgroundColor: `${(userDetails.userDetails[0].familyContacts.length > 0 ? '#d9f1df' : '#e5e5e5')}` }]}>
-                        <Ionicons name="md-people" size={35}  color={`${(userDetails.userDetails[0].familyContacts.length > 0 ? '#1a8434' : '#8d8c8c')}`} />
-                        <View style={[styles.friendsCount, { backgroundColor: `${(userDetails.userDetails[0].familyContacts.length > 0 ? '#FF6347' : '#ccc')}` }]}>
-                            <Text style={{ color: "#fff" }}>{userDetails.userDetails[0].friendsContacts.length}</Text>
+                    <View style={[styles.categoryIcon2, { borderColor: `${(userDetails.familyContacts.length > 0 ? '#1a8434' : '#ccc')}`, 
+                    backgroundColor: `${(userDetails.familyContacts.length > 0 ? '#d9f1df' : '#e5e5e5')}` }]}>
+                        <Ionicons name="md-people" size={35}  color={`${(userDetails.familyContacts.length > 0 ? '#1a8434' : '#8d8c8c')}`} />
+                        <View style={[styles.friendsCount, { backgroundColor: `${(userDetails.familyContacts.length > 0 ? '#FF6347' : '#ccc')}` }]}>
+                            <Text style={{ color: "#fff" }}>{userDetails.friendsContacts.length}</Text>
                         </View>
                     </View>
                     <Text style={[styles.categoryBtnTxt, { color: "#1a8434" }]}>Friend</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.categoryBtn} onPress={() => { }}>
-                    <View style={[styles.categoryIcon2, { borderColor: `${(userDetails.userDetails[0].familyContacts.length > 0 ? '#d21036' : '#ccc')}`, 
-                    backgroundColor: `${(userDetails.userDetails[0].familyContacts.length > 0 ? '#f5d4db' : '#e5e5e5')}` }]}>
-                        <Fontisto name="user-secret" size={35}  color={`${(userDetails.userDetails[0].familyContacts.length > 0 ? '#d21036' : '#8d8c8c')}`}/>
-                        <View style={[styles.friendsCount,{ backgroundColor: `${(userDetails.userDetails[0].familyContacts.length > 0 ? '#FF6347' : '#ccc')}` }]}>
-                            <Text style={{ color: "#fff" }}>{userDetails.userDetails[0].officeContacts.length}</Text>
+                    <View style={[styles.categoryIcon2, { borderColor: `${(userDetails.familyContacts.length > 0 ? '#d21036' : '#ccc')}`, 
+                    backgroundColor: `${(userDetails.familyContacts.length > 0 ? '#f5d4db' : '#e5e5e5')}` }]}>
+                        <Fontisto name="user-secret" size={35}  color={`${(userDetails.familyContacts.length > 0 ? '#d21036' : '#8d8c8c')}`}/>
+                        <View style={[styles.friendsCount,{ backgroundColor: `${(userDetails.familyContacts.length > 0 ? '#FF6347' : '#ccc')}` }]}>
+                            <Text style={{ color: "#fff" }}>{userDetails.officeContacts.length}</Text>
                         </View>
                     </View>
                     <Text style={[styles.categoryBtnTxt, { color: "#d21036" }]}>Office</Text>

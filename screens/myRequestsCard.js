@@ -5,14 +5,8 @@ import StarRating from '../components/StarRating';
 import LinearGradient from 'react-native-linear-gradient';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 const MyRequestsCard = ({itemData}) => {
-  console.log(itemData)
   // Moment.locale('en');
-  const EmergencyType = {
-    "accident_reported": "Accident",
-    "ambulance_request": "Ambulance",
-    "heart_attack": "Heart Attack",
-    "blood_donor": "Blood Donor"
-  }
+
   return (
     <TouchableOpacity>
       <View style={styles.card}>

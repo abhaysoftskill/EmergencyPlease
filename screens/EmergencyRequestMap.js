@@ -54,15 +54,17 @@ const EmergencyRequestMap = ({ route, navigation }) => {
   }
   useEffect(() => {
     {
-      region && EmergencyService.nearestEmergencyRequest(region.longitude, region.latitude, route.params.serviceName).then((res) => {
-        setShowMap(true);
-        setRequestData(res)
-      }, error => {
-        console.error('onRejected function called: ' + error.message);
-        return;
-      })
+      // region && EmergencyService.nearestEmergencyRequest(region.longitude, region.latitude, route.params.serviceName).then((res) => {
+      //   setShowMap(true);
+      //   setRequestData(res)
+      // }, error => {
+      //   console.error('onRejected function called: ' + error.message);
+      //   return;
+      // })
+
+      region && setShowMap(true);
     }
-  }, [region,coordinates]);
+  }, [region, coordinates]);
 
   let mapIndex = 0;
   let mapAnimation = new Animated.Value(0);
@@ -85,8 +87,8 @@ const EmergencyRequestMap = ({ route, navigation }) => {
         if (mapIndex !== index) {
           mapIndex = index;
 
-          const coordinate = requestData[index].geometry.coordinates;
-
+          const coordinate = route.params.serviceData.request[index].geometry.coordinates;
+          console.log(coordinate)
           _map.current.animateToRegion(
             {
               latitude: parseFloat(coordinate[0]),
@@ -101,7 +103,7 @@ const EmergencyRequestMap = ({ route, navigation }) => {
     });
   });
 
-  const interpolations = requestData && requestData.map((marker, index) => {
+  const interpolations = route.params.serviceData && route.params.serviceData.request.map((marker, index) => {
     const inputRange = [
       (index - 1) * CARD_WIDTH,
       index * CARD_WIDTH,
@@ -146,7 +148,7 @@ const EmergencyRequestMap = ({ route, navigation }) => {
         />
         <Text>Loading....</Text>
       </View>}
-      { showMap && requestData && <MapView
+      { showMap && route.params.serviceData && <MapView
         ref={_map}
         initialRegion={
           {
@@ -156,7 +158,7 @@ const EmergencyRequestMap = ({ route, navigation }) => {
             longitudeDelta: longitudeDelta
           }
         }
-        style={styles.container}
+        style={styles.map}
         provider={PROVIDER_GOOGLE}
         // maxZoomLevel={16}
         // mapType='satellite'
@@ -164,7 +166,7 @@ const EmergencyRequestMap = ({ route, navigation }) => {
         zoomControlEnabled={true}
         showsScale={true}
         showsUserLocation={true}
-        customMapStyle={theme.dark ? mapDarkStyle : mapStandardStyle}
+        // customMapStyle={theme.dark ? mapDarkStyle : mapStandardStyle}
       >
         <MapView.Circle
           center={{
@@ -177,7 +179,7 @@ const EmergencyRequestMap = ({ route, navigation }) => {
           fillColor={'rgba(230,192,193,0.5)'}
         />
 
-        {requestData && requestData.map((marker, index) => {
+        {route.params.serviceData && route.params.serviceData.request.map((marker, index) => {
           const scaleStyle = {
             transform: [
               {
@@ -236,7 +238,7 @@ const EmergencyRequestMap = ({ route, navigation }) => {
           { useNativeDriver: true }
         )}
       >
-        {requestData && requestData.map((marker, index) => (
+        {route.params.serviceData && route.params.serviceData.request.map((marker, index) => (
           <View style={[styles.card]} key={index}>
             <View style={styles.requestNumber}>
               <Text style={{ color: "#fff" }}>{index + 1}</Text>
@@ -259,13 +261,12 @@ const EmergencyRequestMap = ({ route, navigation }) => {
                   resizeMode="cover"
                 />
                 <View style={[styles.textContent]}>
-                  <Text numberOfLines={1} style={styles.cardtitle}>{marker.userDetails[0].firstname} {marker.userDetails[0].lastname}</Text>
-                  <Text style={{ backgroundColor: '#1a8434', color: '#fff', paddingHorizontal: 5, borderRadius: 50, textAlign: 'center', marginBottom: 5, marginTop: 5 }}>{EmergencyType[marker.requestType]}</Text>
+                  <Text numberOfLines={1} style={styles.cardtitle}>{marker.user[0].firstname} {marker.user[0].lastname}</Text>
+                  <Text style={{ backgroundColor: '#1a8434', color: '#fff', paddingHorizontal: 5, borderRadius: 50, textAlign: 'center', marginBottom: 5, marginTop: 5 }}>{route.params.serviceData.service_name_alias}</Text>
                   {expand == index + 1 && <View>{marker.requestType == 'ambulance_request' && <Text numberOfLines={1} style={[styles.cardDescription, { color: '#1a8434' }]}>Request for {marker.requestDetails.freeAmbulance && 'Free Ambulance'}</Text>}
                     {marker.requestType == 'ambulance_request' && marker.requestDetails.paidAmbulance && <Text numberOfLines={1} style={[styles.cardDescription, { color: '#1a8434' }]}> {marker.requestDetails.paidAmbulance == true && ' / Paid Ambulance'} </Text>}
-                    {marker.userDetails[0].bloodGroup != '' && <Text numberOfLines={1} style={[styles.cardDescription, { color: '#1a8434' }]}>Blood Group <Text style={{ color: '#d21036' }}>{marker.userDetails[0].bloodGroup}</Text></Text>}
+                    {marker.user[0].bloodGroup != '' && <Text numberOfLines={1} style={[styles.cardDescription, { color: '#1a8434' }]}>Blood Group <Text style={{ color: '#d21036' }}>{marker.user[0].bloodGroup}</Text></Text>}
                     {marker.requestDetails.bloodGroup != '' && <Text numberOfLines={1} style={[styles.cardDescription, { color: '#1a8434' }]}>Requested BloodGroup <Text style={{ color: '#d21036' }}>{marker.requestDetails.bloodGroup} {marker.requestDetails.bloodGroupType} </Text></Text>}
-                    {/* <Text numberOfLines={1} style={styles.cardDescription}>{marker.helpingUser} Users ready to help</Text> */}
                   </View>}
                 </View>
               </View>
@@ -273,7 +274,7 @@ const EmergencyRequestMap = ({ route, navigation }) => {
 
                 <View style={{ flex: 1, padding: 10 }}>
                   <Text numberOfLines={1} style={[styles.cardDescription, { fontSize: 14, color: '#d21036' }]}>Request Before</Text>
-                  <Text style={styles.time}>{Moment(marker.requestDate).startOf('minutes').fromNow()} (<Text style={styles.time}>{Moment(marker.requestDate).local().calendar()}</Text>)</Text>
+                  <Text style={styles.time}>{Moment(marker.updated_at).startOf('minutes').fromNow()} (<Text style={styles.time}>{Moment(marker.updated_at).local().calendar()}</Text>)</Text>
                   {/* <Text numberOfLines={1} style={styles.cardDescription}>{marker.helpingUser} Users ready to help</Text> */}
 
                 </View>
@@ -285,8 +286,8 @@ const EmergencyRequestMap = ({ route, navigation }) => {
                     style={styles.signIn}
                     onPress={() => navigation.navigate('EmergencyDetails',
                       {
-                        userDetails: marker,
-                        location: region,
+                        userDetails: marker.user[0],
+                        location: marker.geometry.coordinates,
                       })}
                   >
                     <LinearGradient
@@ -317,6 +318,9 @@ const EmergencyRequestMap = ({ route, navigation }) => {
 export default EmergencyRequestMap;
 
 const styles = StyleSheet.create({
+  map: {
+    ...StyleSheet.absoluteFillObject,
+  },
   container: {
     flex: 1,
   },
