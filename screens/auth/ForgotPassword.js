@@ -8,7 +8,8 @@ import {
     StyleSheet,
     StatusBar,
     Alert,
-    Image
+    Image,
+    Dimensions
 } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
@@ -21,9 +22,9 @@ import { AuthContext } from '../../components/context';
 
 import LoginService from '../../services/loginServices';
 
-const SignInScreen = ({ route, navigation }) => {
+const ForgotPassword = ({ route, navigation }) => {
     const [data, setData] = useState({
-        username: route.params.userDetails.phonenumber || route.params.userDetails.email,
+        username:'',
         password: '',
         check_textInputChange: false,
         secureTextEntry: true,
@@ -170,8 +171,17 @@ const SignInScreen = ({ route, navigation }) => {
     return (
         <View style={styles.container}>
             <StatusBar backgroundColor='#FF6347' barStyle="light-content" />
-            <View style={styles.header}>
-                <Text style={styles.text_header}>Welcome! {route.params.userDetails.firstname}</Text>
+            <View style={styles.logoHeader}>
+            <Animatable.Image 
+                animation="bounceIn"
+                duraton="1500"
+            source={require('../../assets/logo.png')}
+            style={styles.logo}
+            resizeMode="stretch"
+            />
+        </View>
+         <View style={styles.header}>
+                <Text style={styles.text_header}>Forgot Password!</Text>
             </View>
             <Animatable.View
                 animation="fadeInUpBig"
@@ -181,7 +191,7 @@ const SignInScreen = ({ route, navigation }) => {
             >
                 <Text style={[styles.text_footer, {
                     color: colors.text
-                }]}>Email ID/ Phone Number</Text>
+                }]}>Registered Email ID</Text>
                 <View style={styles.action}>
                     <FontAwesome
                         name="user-o"
@@ -189,14 +199,14 @@ const SignInScreen = ({ route, navigation }) => {
                         size={20}
                     />
                     <TextInput
-                        placeholder="Enter Email ID/ Phone Number"
+                        placeholder="Enter Registered Email ID"
                         placeholderTextColor="#666666"
                         style={[styles.textInput, {
                             color: colors.text
                         }]}
                         autoCapitalize="none"
                         defaultValue={`${data.username}`}
-                        editable={false}
+                        
                     />
                     {data.check_textInputChange ?
                         <Animatable.View
@@ -216,56 +226,7 @@ const SignInScreen = ({ route, navigation }) => {
                     </Animatable.View>
                 }
 
-
-                <Text style={[styles.text_footer, {
-                    color: colors.text,
-                    marginTop: 35
-                }]}>Password</Text>
-                <View style={styles.action}>
-                    <Feather
-                        name="lock"
-                        color={colors.text}
-                        size={20}
-                    />
-                    <TextInput
-                        placeholder="Your Password"
-                        placeholderTextColor="#666666"
-                        secureTextEntry={data.secureTextEntry ? true : false}
-                        style={[styles.textInput, {
-                            color: colors.text
-                        }]}
-                        autoCapitalize="none"
-                        editable={!loading}
-                        onChangeText={(val) => handlePasswordChange(val)}
-                    />
-                    <TouchableOpacity
-                        onPress={updateSecureTextEntry}
-                    >
-                        {data.secureTextEntry ?
-                            <Feather
-                                name="eye-off"
-                                color="grey"
-                                size={20}
-                            />
-                            :
-                            <Feather
-                                name="eye"
-                                color="grey"
-                                size={20}
-                            />
-                        }
-                    </TouchableOpacity>
-                </View>
-                {data.isValidPassword ? null :
-                    <Animatable.View animation="fadeInLeft" duration={500}>
-                        <Text style={styles.errorMsg}>Password must be 8 characters long.</Text>
-                    </Animatable.View>
-                }
-
-
-                <TouchableOpacity>
-                    <Text style={{ color: '#FF6347', marginTop: 15 }} onPress={()=>navigation.navigate('ResetPassword')}>Forgot password?</Text>
-                </TouchableOpacity>
+               
                 {loading && <View style={{
                     flex: 1,
                     justifyContent: 'center',
@@ -284,15 +245,15 @@ const SignInScreen = ({ route, navigation }) => {
                     <TouchableOpacity
                         style={styles.signIn}
                         onPress={() => { loginHandle(data) }}
-                        disabled={data.username.toString().length >= 3 && data.password.length >= 3 ? false : true}
+                        disabled={data.username.toString().length >= 3 ? false : true}
                     >
                         <LinearGradient
-                            colors={data.username.toString().length >= 3 && data.password.length >= 3 ?['#FFA07A', '#FF6347'] : ['#ccc','#ccc']}
+                            colors={data.username.toString().length >= 3 ?['#FFA07A', '#FF6347'] : ['#ccc','#ccc']}
                             style={styles.signIn}
                         >
                             <Text style={[styles.textSign, {
                                 color: '#fff'
-                            }]}>Sign In</Text>
+                            }]}>Submit</Text>
                         </LinearGradient>
                     </TouchableOpacity>
 
@@ -314,12 +275,24 @@ const SignInScreen = ({ route, navigation }) => {
     );
 };
 
-export default SignInScreen;
+export default ForgotPassword;
+const {height} = Dimensions.get("screen");
+const height_logo = height * 0.28;
 
 const styles = StyleSheet.create({
+    logo: {
+        width: 150,
+        height: 150,
+        zIndex:0
+    },
     container: {
         flex: 1,
         backgroundColor: '#FF6347'
+    },
+    logoHeader: {
+        flex: 2,
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     header: {
         flex: 1,

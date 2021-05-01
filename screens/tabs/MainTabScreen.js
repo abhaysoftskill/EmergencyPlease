@@ -19,6 +19,8 @@ import FamilyFriendsDetails from '../update/FamilyFriendsDetails';
 import MyRequests from '../MyRequests';
 import EmergencyContacts from '../EmergencyContacts/EmergencyContacts';
 import EmergencyRequestMap from '../EmergencyRequestMap';
+import { SuccessStories } from '../SuccessStories/SuccessStories';
+import { Notifications } from '../Notifications/Notifications';
 
 const HomeStack = createStackNavigator();
 const NotificationStack = createStackNavigator();
@@ -256,8 +258,7 @@ const NotificationStackScreen = ({ navigation }) => {
       }}>
       <NotificationStack.Screen
         name="Notifications"
-        // component={NotificationScreen}
-        component={ComingSoon}
+        component={Notifications}
         options={{
           headerLeft: () => (
             <Icon.Button
@@ -290,7 +291,7 @@ const StoryStackScreen = ({ navigation }) => {
       <StoryStack.Screen
         name="SuccessStory"
         // component={ProfileScreen}
-        component={ComingSoon}
+        component={SuccessStories}
         options={{
           title: 'Success Story',
           headerLeft: () => (

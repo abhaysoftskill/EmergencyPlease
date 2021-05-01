@@ -16,10 +16,10 @@ const EmergencyContacts = ({ route, navigation }) => {
     let phoneNumber = ''
 
     if (Platform.OS === 'android') {
-      phoneNumber = `tel:${e.number}`
+      phoneNumber = `tel:${e.contact_number}`
     }
     else {
-      phoneNumber = `telprompt:${e.number}`
+      phoneNumber = `telprompt:${e.contact_number}`
     }
 
     Linking.openURL(phoneNumber);

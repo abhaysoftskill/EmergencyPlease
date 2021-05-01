@@ -8,6 +8,8 @@ import SignUpScreen from '../../screens/auth/SignUpScreen';
 import Welcome from '../../screens/auth/Welcome';
 import FamilyFriends from '../../screens/auth/FamilyFriends';
 import SplashScreen from '../../screens/SplashScreen';
+import ForgotPassword from '../../screens/auth/ForgotPassword';
+import ResetPassword from '../../screens/auth/ResetPassword';
 const RootStack = createStackNavigator();
 
 const RootStackScreen = () => {
@@ -19,6 +21,8 @@ const RootStackScreen = () => {
       <RootStack.Screen name="SignUpScreen" options={{ headerShown: false }} component={SignUpScreen} />
       <RootStack.Screen name="Welcome" options={{ headerShown: false }} component={Welcome} />
       <RootStack.Screen name="SignInScreen" options={{ title: 'Login', headerShown: false }} component={SignInScreen} />
+      <RootStack.Screen name="ForgotPassword" options={{ title: 'Forgot Password', headerShown: false }} component={ForgotPassword} />
+      <RootStack.Screen name="ResetPassword" options={{ title: 'Reset Password', headerShown: false }} component={ResetPassword} />
     </RootStack.Navigator>
   )
 }

@@ -9,7 +9,8 @@ import {
     StatusBar,
     TouchableOpacity,
     ScrollView,
-    Animated
+    Animated,
+    Alert
 } from 'react-native';
 import { ActivityIndicator, Button, Colors, IconButton } from 'react-native-paper';
 import { useTheme } from '@react-navigation/native';
@@ -19,12 +20,14 @@ import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ConfirmRequest from './requests/Conform';
 import { useSelector } from 'react-redux';
+import EmergencyService from '../services/emergencyServices';
+import AsyncStorage from '@react-native-community/async-storage';
 const latitudeDelta = 0.02;
 const longitudeDelta = 0.02;
 
 const EmergencyReport = ({ route, navigation }) => {
     // const userDetails = route.params.userDetails;
-  
+
     const userDetails = route.params.userDetails;
     const theme = useTheme();
     const { coordinates } = useSelector(state => state.currentLocationReducer);
@@ -33,23 +36,52 @@ const EmergencyReport = ({ route, navigation }) => {
     const [region, setRegion] = useState(coordinates);
     // const [coordinates, setCoordinates] = useState();
     const onRegionChange = updateRegion => {
-        if(updateRegion.latitude.toFixed(6) === region.latitude.toFixed(6)
-        && updateRegion.longitude.toFixed(6) === region.longitude.toFixed(6)){ return;}
-         setRegion(updateRegion)
+        if (updateRegion.latitude.toFixed(6) === region.latitude.toFixed(6)
+            && updateRegion.longitude.toFixed(6) === region.longitude.toFixed(6)) { return; }
+        setRegion(updateRegion)
     }
 
- 
+
     useEffect(() => {
         // Change the state every second or the time given by User.
         // const interval = setInterval(() => {
         //   setShowBlink((showBlink) => !showBlink);
         // }, 1000);
         // return () => clearInterval(interval);
-        if(coordinates){
-          setShowMap(true)
-      }
-      }, [coordinates]);
- 
+        if (coordinates) {
+            setShowMap(true)
+        }
+    }, [coordinates]);
+
+    const confirmLocation = async () => {
+        let epAppSettings = await AsyncStorage.getItem('epAppSettings');
+        let AppSettings = JSON.parse(epAppSettings)
+        EmergencyService.myTodayRequest()
+            .then((res) => {
+
+                if (res.count <= AppSettings.settings[0].settings.daily_request_limit) {
+                    setConfirm_message(true);
+                }
+                else {
+                    Alert.alert('Daily Request Limit Exceeded !', 'You reached request limit, Please contact Emergency Please Team.', [
+                        {
+                            text: 'Okay',
+                            onPress: async () => {
+                                try {
+                                    navigation.navigate('Dashboard')
+                                } catch (e) {
+                                    console.log(e);
+                                }
+
+                            }
+                        }
+                    ]);
+                }
+            }, error => {
+                return;
+            })
+    }
+
     return (
         <View style={styles.cardsWrapper} >
             <View style={styles.mapContainer}>
@@ -81,9 +113,9 @@ const EmergencyReport = ({ route, navigation }) => {
                     <Text style={styles.markerText}> You are Here</Text>
                 </Animated.View>}
                 {showMap && <SafeAreaView style={styles.footer}>
-                    <Button icon="location-enter" mode="contained" onPress={() => setConfirm_message(true)} color='#05375a'  size=''
-                   >
-                        Conform Location  </Button>
+                    <Button icon="location-enter" mode="contained" onPress={() => confirmLocation()} color='#05375a' size=''
+                    >
+                        Confirm Location  </Button>
                 </SafeAreaView>}
                 {showMap && <IconButton
                     icon={require('../assets/current_location.png')}
@@ -100,14 +132,14 @@ const EmergencyReport = ({ route, navigation }) => {
                             position: 'absolute',
                             bottom: 130,
                             right: 10,
-                          //  zIndex: 1,
+                            //  zIndex: 1,
                             backgroundColor: '#fab3ad'
                         }
                     ]}
                 />}
 
                 {!showMap && <ActivityIndicator animating={true} color={Colors.red800} />}
-                {confirm_message && <ConfirmRequest closeOption={() => setConfirm_message(false)} data={route.params} geometry={region}  />}
+                {confirm_message && <ConfirmRequest closeOption={() => setConfirm_message(false)} data={route.params} geometry={region} />}
 
             </View>
 
@@ -183,8 +215,8 @@ const styles = StyleSheet.create({
         top: '50%'
     },
     markerText: {
-      marginLeft: -25,
-      color:'#d21036'
+        marginLeft: -25,
+        color: '#d21036'
     },
     marker: {
         width: 30,

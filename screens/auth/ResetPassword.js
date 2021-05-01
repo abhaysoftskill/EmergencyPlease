@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import {
     View,
     Text,
@@ -8,7 +8,8 @@ import {
     StyleSheet,
     StatusBar,
     Alert,
-    Image
+    Image,
+    Dimensions
 } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
@@ -21,12 +22,14 @@ import { AuthContext } from '../../components/context';
 
 import LoginService from '../../services/loginServices';
 
-const SignInScreen = ({ route, navigation }) => {
+const ResetPassword = ({ route, navigation }) => {
     const [data, setData] = useState({
-        username: route.params.userDetails.phonenumber || route.params.userDetails.email,
+        username: '',
         password: '',
-        check_textInputChange: false,
-        secureTextEntry: true,
+        resetToken: '',
+        check_emailInputChange: false,
+        passwordTextEntry: true,
+        confirm_passwordTextEntry: true,
         isValidUser: true,
         isValidPassword: true,
     });
@@ -34,20 +37,20 @@ const SignInScreen = ({ route, navigation }) => {
     const { colors } = useTheme();
 
     const { signIn } = useContext(AuthContext);
-
-    const textInputChange = (val) => {
+    const [passwordCorrect, setPasswordCorrect] = React.useState('');
+    const emailInputChange = (val) => {
         if (val.trim().length >= 4) {
             setData({
                 ...data,
                 username: val,
-                check_textInputChange: true,
+                check_emailInputChange: true,
                 isValidUser: true
             });
         } else {
             setData({
                 ...data,
                 username: val,
-                check_textInputChange: false,
+                check_emailInputChange: false,
                 isValidUser: false
             });
         }
@@ -69,12 +72,6 @@ const SignInScreen = ({ route, navigation }) => {
         }
     }
 
-    const updateSecureTextEntry = () => {
-        setData({
-            ...data,
-            secureTextEntry: !data.secureTextEntry
-        });
-    }
 
     const handleValidUser = (val) => {
         if (val.trim().length >= 4) {
@@ -166,12 +163,37 @@ const SignInScreen = ({ route, navigation }) => {
         // }
         // signIn(foundUser);
     }
+    const updatePasswordTextEntry = () => {
+        setData({
+            ...data,
+            passwordTextEntry: !data.passwordTextEntry
+        });
+    }
 
+    const updateConfirmPasswordTextEntry = () => {
+        setData({
+            ...data,
+            confirm_passwordTextEntry: !data.confirm_passwordTextEntry
+        });
+    }
+    const handleConfirmPasswordChange = (val) => {
+        setData({
+            ...data,
+            confirm_passwordTextEntry: val
+        });
+        if (data.password == val) {
+            setPasswordCorrect(true);
+        } else {
+            setPasswordCorrect(false);
+        }
+    }
+    const ref_input5 = useRef();
+    const ref_input6 = useRef();
     return (
         <View style={styles.container}>
             <StatusBar backgroundColor='#FF6347' barStyle="light-content" />
             <View style={styles.header}>
-                <Text style={styles.text_header}>Welcome! {route.params.userDetails.firstname}</Text>
+                <Text style={styles.text_header}>Reset Password!</Text>
             </View>
             <Animatable.View
                 animation="fadeInUpBig"
@@ -181,7 +203,7 @@ const SignInScreen = ({ route, navigation }) => {
             >
                 <Text style={[styles.text_footer, {
                     color: colors.text
-                }]}>Email ID/ Phone Number</Text>
+                }]}>Registered Email ID</Text>
                 <View style={styles.action}>
                     <FontAwesome
                         name="user-o"
@@ -189,16 +211,16 @@ const SignInScreen = ({ route, navigation }) => {
                         size={20}
                     />
                     <TextInput
-                        placeholder="Enter Email ID/ Phone Number"
+                        placeholder="Enter Registered Email ID"
                         placeholderTextColor="#666666"
                         style={[styles.textInput, {
                             color: colors.text
                         }]}
                         autoCapitalize="none"
                         defaultValue={`${data.username}`}
-                        editable={false}
+
                     />
-                    {data.check_textInputChange ?
+                    {data.check_emailInputChange ?
                         <Animatable.View
                             animation="bounceIn"
                         >
@@ -215,33 +237,29 @@ const SignInScreen = ({ route, navigation }) => {
                         <Text style={styles.errorMsg}>Username must be 4 characters long.</Text>
                     </Animatable.View>
                 }
-
-
                 <Text style={[styles.text_footer, {
-                    color: colors.text,
-                    marginTop: 35
-                }]}>Password</Text>
+                    color: colors.text
+                }]}>New Password</Text>
                 <View style={styles.action}>
                     <Feather
                         name="lock"
-                        color={colors.text}
+                        color="#05375a"
                         size={20}
                     />
                     <TextInput
-                        placeholder="Your Password"
-                        placeholderTextColor="#666666"
-                        secureTextEntry={data.secureTextEntry ? true : false}
-                        style={[styles.textInput, {
-                            color: colors.text
-                        }]}
+                        placeholder="Enter New Password"
+                        secureTextEntry={data.securePasswordEntry ? true : false}
+                        style={styles.textInput}
                         autoCapitalize="none"
-                        editable={!loading}
                         onChangeText={(val) => handlePasswordChange(val)}
+                        returnKeyType="next"
+                        onSubmitEditing={() => ref_input6.current.focus()}
+                        ref={ref_input5}
                     />
                     <TouchableOpacity
-                        onPress={updateSecureTextEntry}
+                        onPress={updatePasswordTextEntry}
                     >
-                        {data.secureTextEntry ?
+                        {data.securePasswordEntry ?
                             <Feather
                                 name="eye-off"
                                 color="grey"
@@ -256,21 +274,76 @@ const SignInScreen = ({ route, navigation }) => {
                         }
                     </TouchableOpacity>
                 </View>
-                {data.isValidPassword ? null :
-                    <Animatable.View animation="fadeInLeft" duration={500}>
-                        <Text style={styles.errorMsg}>Password must be 8 characters long.</Text>
-                    </Animatable.View>
-                }
 
+                <Text style={[styles.text_footer, {
+                    color: colors.text
+                }]}>Confirm New Password</Text>
+                <View style={styles.action}>
+                    <Feather
+                        name="lock"
+                        color="#05375a"
+                        size={20}
+                    />
+                    <TextInput
+                        placeholder="Confirm New Password"
+                        secureTextEntry={data.confirm_passwordTextEntry ? true : false}
+                        style={styles.textInput}
+                        autoCapitalize="none"
+                        onChangeText={(val) => handleConfirmPasswordChange(val)}
+                        ref={ref_input6}
+                    />
+                    <TouchableOpacity
+                        onPress={updateConfirmPasswordTextEntry}
+                    >
+                        {data.confirm_passwordTextEntry ?
+                            <Feather
+                                name="eye-off"
+                                color="grey"
+                                size={20}
+                            />
+                            :
+                            <Feather
+                                name="eye"
+                                color="grey"
+                                size={20}
+                            />
+                        }
+                    </TouchableOpacity>
+                </View>
 
-                <TouchableOpacity>
-                    <Text style={{ color: '#FF6347', marginTop: 15 }} onPress={()=>navigation.navigate('ResetPassword')}>Forgot password?</Text>
-                </TouchableOpacity>
+                <Text style={[styles.text_footer, {
+                    color: colors.text
+                }]}>Reset Password Token</Text>
+                <View style={styles.action}>
+                    <Feather
+                        name="lock"
+                        color="#05375a"
+                        size={20}
+                    />
+                    <TextInput
+                        placeholder="Reset Password Token"
+                        style={styles.textInput}
+                        autoCapitalize="none"
+                    />
+                       {data.resetToken ?
+                        <Animatable.View
+                            animation="bounceIn"
+                        >
+                            <Feather
+                                name="check-circle"
+                                color="green"
+                                size={20}
+                            />
+                        </Animatable.View>
+                        : null}
+                  
+                </View>
+
                 {loading && <View style={{
                     flex: 1,
                     justifyContent: 'center',
                     alignItems: 'center',
-                    marginTop:10
+                    marginTop: 10
                 }}>
                     <Image
                         source={require('../../assets/loading.png')}
@@ -280,19 +353,22 @@ const SignInScreen = ({ route, navigation }) => {
                     <Text>Loading....</Text>
                 </View>}
 
-               {!loading && <View style={styles.button}>
+                {!loading && <View style={styles.button}>
                     <TouchableOpacity
                         style={styles.signIn}
                         onPress={() => { loginHandle(data) }}
-                        disabled={data.username.toString().length >= 3 && data.password.length >= 3 ? false : true}
+                        disabled={data.firstname.trim().length >= 3 && data.lastname.trim().length >= 3 && 
+                            EMAIL_REGEXP.test(data.email) && 
+                            data.phonenumber.trim().length == 10 &&  passwordCorrect != '' 
+                            && passwordCorrect ? false : true}
                     >
                         <LinearGradient
-                            colors={data.username.toString().length >= 3 && data.password.length >= 3 ?['#FFA07A', '#FF6347'] : ['#ccc','#ccc']}
+                            colors={data.username.toString().length >= 3 ? ['#FFA07A', '#FF6347'] : ['#ccc', '#ccc']}
                             style={styles.signIn}
                         >
                             <Text style={[styles.textSign, {
                                 color: '#fff'
-                            }]}>Sign In</Text>
+                            }]}>Submit</Text>
                         </LinearGradient>
                     </TouchableOpacity>
 
@@ -314,12 +390,24 @@ const SignInScreen = ({ route, navigation }) => {
     );
 };
 
-export default SignInScreen;
+export default ResetPassword;
+const { height } = Dimensions.get("screen");
+const height_logo = height * 0.28;
 
 const styles = StyleSheet.create({
+    logo: {
+        width: 150,
+        height: 150,
+        zIndex: 0
+    },
     container: {
         flex: 1,
         backgroundColor: '#FF6347'
+    },
+    logoHeader: {
+        flex: 2,
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     header: {
         flex: 1,

@@ -1,5 +1,6 @@
 import request from "../common/api_client";
 import qs from "qs"
+import AsyncStorage from "@react-native-community/async-storage";
 const checkphonenumber = (phonenumber) => {
     return request({
         url: `/user/checkphonenumber/${phonenumber}`,
@@ -8,7 +9,6 @@ const checkphonenumber = (phonenumber) => {
     });
 }
 const checkemail = (email) => {
-    console.log(email)
     return request({
         url: `/user/checkemail/${email}`,
         method: 'GET',
@@ -50,7 +50,6 @@ const loginViaPhonenumber = (formData) => {
 
 const register = (formData) => {
     let data = qs.stringify(formData)
-    console.log(data)
     return request({
         url: `/user/signup`,
         method: 'POST',
@@ -69,6 +68,34 @@ const updateProfile = (formData) => {
     });
 }
 
+
+const emailVerify = async (formData) => {
+    let data = qs.stringify(formData)
+    userToken = await AsyncStorage.getItem('userToken');
+    return request({
+        url: `user/verify`,
+        method: 'PATCH',
+        data,
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+            'Authorization': `Bearer ${userToken}`,
+        }
+    });
+}
+
+const resendEmailVerifyToken = async (formData) => {
+    let data = qs.stringify(formData)
+    userToken = await AsyncStorage.getItem('userToken');
+    return request({
+        url: `user/send/verification/email`,
+        method: 'GET',
+        data,
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+            'Authorization': `Bearer ${userToken}`,
+        }
+    });
+}
 const LoginService = {
     checkphonenumber,
     checkemail,
@@ -77,6 +104,8 @@ const LoginService = {
     loginViaPhonenumber,
     register,
     updateProfile,
+    emailVerify,
+    resendEmailVerifyToken
 };
 
 export default LoginService;

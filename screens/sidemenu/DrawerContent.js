@@ -76,7 +76,7 @@ export function DrawerContent(props) {
                                 <View style={styles.categoryIcon2}>
                                     <Fontisto name="holiday-village" size={35} color="#FF6347" />
                                     <View style={[styles.friendsCount, { backgroundColor: '#FF6347' }]}>
-                                        <Text style={{ color: "#fff" }}>2</Text>
+                                        <Text style={{ color: "#fff" }}>0</Text>
                                     </View>
                                 </View>
                                 <Text style={[styles.categoryBtnTxt, { color: "#FF6347" }]}>Family</Text>
@@ -86,7 +86,7 @@ export function DrawerContent(props) {
                                 <View style={[styles.categoryIcon2, { borderColor: '#1a8434', backgroundColor: '#d9f1df' }]}>
                                     <Ionicons name="md-people" size={35} color="#1a8434" />
                                     <View style={[styles.friendsCount, { backgroundColor: '#FF6347' }]}>
-                                        <Text style={{ color: "#fff" }}>2</Text>
+                                        <Text style={{ color: "#fff" }}>0</Text>
                                     </View>
                                 </View>
                                 <Text style={[styles.categoryBtnTxt, { color: "#1a8434" }]}>Friend</Text>
@@ -95,7 +95,7 @@ export function DrawerContent(props) {
                                 <View style={[styles.categoryIcon2, { borderColor: '#d21036', backgroundColor: '#f5d4db' }]}>
                                     <Fontisto name="user-secret" size={35} color="#d21036" />
                                     <View style={styles.friendsCount}>
-                                        <Text style={{ color: "#fff" }}>2</Text>
+                                        <Text style={{ color: "#fff" }}>0</Text>
                                     </View>
                                 </View>
                                 <Text style={[styles.categoryBtnTxt, { color: "#d21036" }]}>Office</Text>

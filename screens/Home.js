@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { useIsFocused, useTheme } from '@react-navigation/native';
-import { Dimensions, Image, ImageBackground, RefreshControl, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { Alert, Dimensions, Image, ImageBackground, Modal, Pressable, RefreshControl, StatusBar, StyleSheet, Text, View } from 'react-native';
 import { Avatar, Button, Card, Title, Paragraph, TextInput, Snackbar } from 'react-native-paper';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -10,6 +10,9 @@ import EmergencyService from '../services/emergencyServices';
 import { useDispatch, useSelector } from 'react-redux';
 import { readCurrentLocation } from '../redux/actions/currentLocationActions';
 import { checkVersion } from 'react-native-check-version';
+
+import modalStyles from '../model/emailVerifyModal';
+import LoginService from '../services/loginServices';
 const { width } = Dimensions.get("window");
 const CARD_WIDTH = width * 0.8;
 
@@ -21,13 +24,31 @@ const Home = ({ navigation }) => {
     const [loading, setLoading] = useState(true);
     const [RequestDataCount, setRequestDataCount] = useState();
     const [userDetails, setUserDetails] = useState([])
+    const [emailVerified, setEmailVerified] = useState(null)
+    const [emailID, setEmailID] = useState('')
+    const [verifyCode, setVerifyCode] = useState('')
     const coveredArea = 5;
 
-    const requestData = () => {
-
+    const requestData = async () => {
+        let userDetailsData = await AsyncStorage.getItem('userDetails');
         EmergencyService.nearestEmergencyRequestCount(coordinates).then((res) => {
             setRequestDataCount(res)
             setLoading(false)
+        }, error => {
+            return;
+        })
+        EmergencyService.settings().then((res) => {
+            AsyncStorage.setItem('epAppSettings', JSON.stringify(res));
+        }, error => {
+            return;
+        })
+
+        EmergencyService.getuserprofile().then((res) => {
+            setEmailID(res.email);
+            if( new Date(new Date(new Date())) > (new Date(res.updated_at) + 60000) && !res.email_verified){
+                setEmailVerified(res.email_verified)
+            }
+            AsyncStorage.setItem('userDetails', JSON.stringify(res));
         }, error => {
             return;
         })
@@ -93,7 +114,59 @@ const Home = ({ navigation }) => {
         setRefreshing(true);
         wait(2000).then(() => setRefreshing(false));
     }, []);
+    const [emailVerifyModalVisible, setEmailVerifyModalVisible] = useState(true)
+    const [verifyLoading, setVerifyLoading] = useState(false);
+    const resendEmailVerifiy = () => {
+        let updateData = {
+            email: emailID,
+        }
+        LoginService.resendEmailVerifyToken(updateData).then((res) => {
+            setVerifyLoading(false);
+            Alert.alert('Re-Send Email Verification code!', `Code send to ${emailID}, please check and verify`, [
+                {
+                    text: 'Done',
+                }
+            ]);
+        }, error => {
+            setVerifyLoading(false)
+            Alert.alert('Request save fail!', error.message, [
+                { text: 'Retry' }
+            ]);
+            return;
+        })
+    }
+    const verifyEmail = () => {
+        let updateData = {
+            email: emailID,
+            verification_token: verifyCode
+        }
+        LoginService.emailVerify(updateData).then((res) => {
+            setVerifyLoading(false);
+            setEmailVerifyModalVisible(false);
+            Alert.alert('Email Verified Success!', '', [
+                {
+                    text: 'Done',
+                    onPress: async () => {
+                        try {
+                            navigation.navigate('MyRequests',
+                                {
+                                    userDetails: props.data.userDetails,
+                                })
+                        } catch (e) {
+                            console.log(e);
+                        }
 
+                    }
+                }
+            ]);
+        }, error => {
+            setVerifyLoading(false)
+            Alert.alert('Request save fail!', error.message, [
+                { text: 'Retry' }
+            ]);
+            return;
+        })
+    }
     return (
         <ImageBackground
             source={require("../assets/banners/banner1.png")}
@@ -104,7 +177,42 @@ const Home = ({ navigation }) => {
                 bottom: -300
             }}
         >
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={emailVerifyModalVisible}
+                onRequestClose={() => {
+                    setEmailVerifyModalVisible(!emailVerifyModalVisible)
+                }}>
+                <View style={modalStyles.centeredView}>
+                    <View style={modalStyles.modalView}>
+                        <Text style={modalStyles.title}>Your Registered Email Not Verified !</Text>
+                        <Paragraph style={modalStyles.modalText}>{`Please verify your ${emailID} email id.`}</Paragraph>
+                        <View style={modalStyles.action}>
 
+                            <TextInput
+                                placeholder="Enter Verification Code"
+                                placeholderTextColor="#666666"
+                                style={[modalStyles.textInput]}
+                                keyboardType={"number-pad"}
+                                onChangeText={(val) => setVerifyCode(val)}
+                            />
+                        </View>
+                        {verifyLoading && <View>
+                            <Image
+                                source={require('../assets/loading.png')}
+                                resizeMode="cover"
+                            />
+                            <Text>Please Wait....</Text>
+                        </View>}
+                        {!verifyLoading && <View style={{ flexDirection: 'row', marginTop: 20 }}>
+
+                            <Button mode={'contained'} color={'#ea3a3a'} style={{ marginRight: 30 }} onPress={() => { setVerifyLoading(true), resendEmailVerifiy() }}>Resend</Button>
+                            <Button mode={'contained'} color={'#17841c'} onPress={() => { setVerifyLoading(true), verifyEmail() }}>Verify</Button>
+                        </View>}
+                    </View>
+                </View>
+            </Modal>
             <ScrollView style={[styles.fixed, styles.scrollview]}
                 refreshControl={
                     <RefreshControl
@@ -128,7 +236,6 @@ const Home = ({ navigation }) => {
                         />
                         <Text>Loading....</Text>
                     </View>}
-
                     {/* {!RequestCount && !loading && <Text style={styles.noReported}>Today's Great day No Emergency Yet Reported</Text>} */}
                     {!loading && <View style={{
                         alignContent: 'center',
