@@ -96,6 +96,27 @@ const resendEmailVerifyToken = async (formData) => {
         }
     });
 }
+const forgotPassword = (email) => {
+    return request({
+        url: `user/reset/password?email=${email}`,
+        method: 'GET',
+        handleHeaders: 2
+    });
+}
+const restPasword = async (formData) => {
+    let data = qs.stringify(formData)
+    userToken = await AsyncStorage.getItem('userToken');
+    return request({
+        url: `user/reset/password`,
+        method: 'PATCH',
+        data,
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+            'Authorization': `Bearer ${userToken}`,
+        }
+    });
+}
+
 const LoginService = {
     checkphonenumber,
     checkemail,
@@ -105,7 +126,9 @@ const LoginService = {
     register,
     updateProfile,
     emailVerify,
-    resendEmailVerifyToken
+    resendEmailVerifyToken,
+    forgotPassword,
+    restPasword
 };
 
 export default LoginService;

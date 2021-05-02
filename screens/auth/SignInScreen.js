@@ -91,10 +91,6 @@ const SignInScreen = ({ route, navigation }) => {
     }
 
     const loginHandle = (data) => {
-
-        // const foundUser = Users.filter(item => {
-        //     return userName == item.username && password == item.password;
-        // });
         setLoading(true)
         let EMAIL_REGEXP = /^[a-z0-9!#$%&'*+\/=?^_`{|}~.-]+@[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)*$/i;
         if (EMAIL_REGEXP.test(data.username)) {
@@ -129,17 +125,11 @@ const SignInScreen = ({ route, navigation }) => {
                 "phonenumber": data.username,
                 "password": data.password
             }).then((res) => {
-                // console.log({userDetails: res[0],
-                //     userToken: res[1],})
-                // window.location.href = '/org/admin/bases';
-                signIn({
-                    userDetails: res[0],
-                    userToken: res[1]
-                })
                 setLoading(false)
-
-                // Keyboard.dismiss()
-                // setotpVerification(true)
+                signIn({
+                    userDetails: res.user,
+                    userToken: res.token
+                })
             }, error => {
                 setLoading(false)
                 Alert.alert('Login Fail!', error.message, [
@@ -264,7 +254,7 @@ const SignInScreen = ({ route, navigation }) => {
 
 
                 <TouchableOpacity>
-                    <Text style={{ color: '#FF6347', marginTop: 15 }} onPress={()=>navigation.navigate('ResetPassword')}>Forgot password?</Text>
+                    <Text style={{ color: '#FF6347', marginTop: 15 }} onPress={()=>navigation.navigate('ForgotPassword')}>Forgot password?</Text>
                 </TouchableOpacity>
                 {loading && <View style={{
                     flex: 1,

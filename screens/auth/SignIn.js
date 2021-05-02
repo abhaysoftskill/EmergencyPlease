@@ -25,7 +25,6 @@ import LoginService from '../../services/loginServices';
 import OTPVerification from './OTPVerification';
 
 const SignIn = ({ navigation }) => {
-
     const [data, setData] = useState({
         username: '',
         password: '',
@@ -71,29 +70,7 @@ const SignIn = ({ navigation }) => {
 
     }
 
-    const handlePasswordChange = (val) => {
-        if (val.trim().length >= 8) {
-            setData({
-                ...data,
-                password: val,
-                isValidPassword: true
-            });
-        } else {
-            setData({
-                ...data,
-                password: val,
-                isValidPassword: false
-            });
-        }
-    }
-
-    const updateSecureTextEntry = () => {
-        setData({
-            ...data,
-            secureTextEntry: !data.secureTextEntry
-        });
-    }
-
+ 
     const handleValidUser = (val) => {
         if (val.trim().length >= 4) {
             setData({
@@ -114,7 +91,6 @@ const SignIn = ({ navigation }) => {
         if (EMAIL_REGEXP.test(userName)) {
             LoginService.checkemail(userName).then((res) => {
                 // window.location.href = '/org/admin/bases';
-                console.log(res)
                 Keyboard.dismiss()
                 //    setUserDetails(res.user)
                 //     setotpVerification(true)
@@ -126,6 +102,7 @@ const SignIn = ({ navigation }) => {
                     navigation.navigate('SignUpScreen', { email: userName })
                 }
                 else {
+                  
                     setLoading(false)
                     setUserDetails(res)
                     setotpVerification(true)
@@ -147,7 +124,7 @@ const SignIn = ({ navigation }) => {
                     navigation.navigate('SignUpScreen', { phonenumber: userName })
                 }
                 else {
-                  console.log(res)
+
                     setLoading(false)
                     setUserDetails(res)
                     setotpVerification(true)
@@ -272,7 +249,7 @@ const SignIn = ({ navigation }) => {
                 </View>
             </Animatable.View>
 
-            {otpVerification && <OTPVerification closeOption={() => setotpVerification(false)} visible={otpVerification} userDetails={userDetails} />}
+            <OTPVerification closeOption={() => setotpVerification(false)} visible={otpVerification} userDetails={userDetails} />
 
         </View>
     );

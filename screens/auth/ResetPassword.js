@@ -21,15 +21,20 @@ import { useTheme } from 'react-native-paper';
 import { AuthContext } from '../../components/context';
 
 import LoginService from '../../services/loginServices';
+import AsyncStorage from '@react-native-community/async-storage';
 
 const ResetPassword = ({ route, navigation }) => {
+    let EMAIL_REGEXP = /^[a-z0-9!#$%&'*+\/=?^_`{|}~.-]+@[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)*$/i;
+   
     const [data, setData] = useState({
-        username: '',
+        email: '',
         password: '',
+        confirm_password: '',
         resetToken: '',
         check_emailInputChange: false,
         passwordTextEntry: true,
         confirm_passwordTextEntry: true,
+        check_tokenInputChange: false,
         isValidUser: true,
         isValidPassword: true,
     });
@@ -42,14 +47,14 @@ const ResetPassword = ({ route, navigation }) => {
         if (val.trim().length >= 4) {
             setData({
                 ...data,
-                username: val,
+                email: val,
                 check_emailInputChange: true,
                 isValidUser: true
             });
         } else {
             setData({
                 ...data,
-                username: val,
+                email: val,
                 check_emailInputChange: false,
                 isValidUser: false
             });
@@ -71,92 +76,100 @@ const ResetPassword = ({ route, navigation }) => {
             });
         }
     }
-
-
-    const handleValidUser = (val) => {
-        if (val.trim().length >= 4) {
+    const handleConfirmPasswordChange = (val) => {
+        setData({
+            ...data,
+            confirm_password:val,
+        });
+        console.log(val)
+        console.log(data.password)
+        if (data.password == val) {
+            setPasswordCorrect(true);
+        } else {
+            setPasswordCorrect(false);
+        }
+    }
+    const tokenInputChange = (val) => {
+        if (val.trim().length >= 5) {
             setData({
                 ...data,
-                isValidUser: true
+                resetToken: val,
+                check_tokenInputChange: true,
             });
         } else {
             setData({
                 ...data,
-                isValidUser: false
+                resetToken: val,
+                check_tokenInputChange: false,
             });
         }
     }
+ 
 
-    const loginHandle = (data) => {
+    const resetPassword = (data) => {
 
         // const foundUser = Users.filter(item => {
-        //     return userName == item.username && password == item.password;
+        //     return email == item.email && password == item.password;
         // });
         setLoading(true)
         let EMAIL_REGEXP = /^[a-z0-9!#$%&'*+\/=?^_`{|}~.-]+@[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)*$/i;
-        if (EMAIL_REGEXP.test(data.username)) {
-            LoginService.loginViaEmail({
-                "email": data.username,
-                "password": data.password
-            }).then((res) => {
+        if (EMAIL_REGEXP.test(data.email)) {
+            let updateData = {
+                "email": data.email,
+                "new_password": data.password,
+                "confirm_password": data.confirm_password,
+                "reset_password_token": data.resetToken,
+            }
+            console.log(updateData)
+            LoginService.restPasword(updateData).then((res) => {
                 // console.log({userDetails: res[0],
                 //     userToken: res[1],})
                 // window.location.href = '/org/admin/bases';
 
-                signIn({
-                    userDetails: res.user,
-                    userToken: res.token
-                })
+                AsyncStorage.removeItem('userToken');
+                AsyncStorage.removeItem('userDetails');
                 setLoading(false)
 
-                // Keyboard.dismiss()
-                // setotpVerification(true)
+                Alert.alert('Password Reset Success!', 'Password rest successfully, click ok to login.', [
+                    {
+                      text: 'Ok',
+                      onPress: async () => {
+                        try {
+                          navigation.navigate('SignIn')
+                        } catch (e) {
+                            console.log(e);
+                        }
+                       
+                    }
+                    }
+
+                ])
+               
             }, error => {
                 setLoading(false)
 
-                Alert.alert('Login Fail!', error.message, [
+                Alert.alert('Password Reset Fail!', `${error.message} Check your token in reg. email id.`, [
                     { text: 'Retry' }
                 ]);
                 return;
             })
 
         }
-        else {
-            LoginService.loginViaPhonenumber({
-                "phonenumber": data.username,
-                "password": data.password
-            }).then((res) => {
-                // console.log({userDetails: res[0],
-                //     userToken: res[1],})
-                // window.location.href = '/org/admin/bases';
-                signIn({
-                    userDetails: res[0],
-                    userToken: res[1]
-                })
-                setLoading(false)
+     else{
+        Alert.alert('Please enter valid email id', `${error.message} Check your email id.`, [
+            { text: 'Retry' }
+        ]);
+     }
 
-                // Keyboard.dismiss()
-                // setotpVerification(true)
-            }, error => {
-                setLoading(false)
-                Alert.alert('Login Fail!', error.message, [
-                    { text: 'Retry' }
-                ]);
-                return;
-            })
-
-        }
-
-
-        // if (data.username.length == 0 || data.password.length == 0) {
-        //     Alert.alert('Wrong Input!', 'Username or password field cannot be empty.', [
+        // if (data.email.length == 0 || data.password.length == 0) {
+        //     Alert.alert('Wrong Input!', 'email or password field cannot be empty.', [
         //         { text: 'Okay' }
         //     ]);
         //     return;
         // }
 
         // if (foundUser.length == 0) {
-        //     Alert.alert('Invalid User!', 'Username or password is incorrect.', [
+        //     Alert.alert('Invalid User!', 'email or password is incorrect.', [
         //         { text: 'Okay' }
         //     ]);
         //     return;
@@ -176,19 +189,10 @@ const ResetPassword = ({ route, navigation }) => {
             confirm_passwordTextEntry: !data.confirm_passwordTextEntry
         });
     }
-    const handleConfirmPasswordChange = (val) => {
-        setData({
-            ...data,
-            confirm_passwordTextEntry: val
-        });
-        if (data.password == val) {
-            setPasswordCorrect(true);
-        } else {
-            setPasswordCorrect(false);
-        }
-    }
-    const ref_input5 = useRef();
-    const ref_input6 = useRef();
+    const ref_input1 = useRef();
+    const ref_input2 = useRef();
+    const ref_input3 = useRef();
+    const ref_input4 = useRef();
     return (
         <View style={styles.container}>
             <StatusBar backgroundColor='#FF6347' barStyle="light-content" />
@@ -216,8 +220,11 @@ const ResetPassword = ({ route, navigation }) => {
                         style={[styles.textInput, {
                             color: colors.text
                         }]}
+                        onChangeText={(val) => emailInputChange(val)}
                         autoCapitalize="none"
-                        defaultValue={`${data.username}`}
+                        defaultValue={`${data.email}`}
+                        onSubmitEditing={() => ref_input2.current.focus()}
+                        ref={ref_input1}
 
                     />
                     {data.check_emailInputChange ?
@@ -234,7 +241,7 @@ const ResetPassword = ({ route, navigation }) => {
                 </View>
                 {data.isValidUser ? null :
                     <Animatable.View animation="fadeInLeft" duration={500}>
-                        <Text style={styles.errorMsg}>Username must be 4 characters long.</Text>
+                        <Text style={styles.errorMsg}>email must be 4 characters long.</Text>
                     </Animatable.View>
                 }
                 <Text style={[styles.text_footer, {
@@ -248,18 +255,18 @@ const ResetPassword = ({ route, navigation }) => {
                     />
                     <TextInput
                         placeholder="Enter New Password"
-                        secureTextEntry={data.securePasswordEntry ? true : false}
+                        secureTextEntry={data.passwordTextEntry ? true : false}
                         style={styles.textInput}
                         autoCapitalize="none"
                         onChangeText={(val) => handlePasswordChange(val)}
                         returnKeyType="next"
-                        onSubmitEditing={() => ref_input6.current.focus()}
-                        ref={ref_input5}
+                        onSubmitEditing={() => ref_input3.current.focus()}
+                        ref={ref_input2}
                     />
                     <TouchableOpacity
                         onPress={updatePasswordTextEntry}
                     >
-                        {data.securePasswordEntry ?
+                        {data.passwordTextEntry ?
                             <Feather
                                 name="eye-off"
                                 color="grey"
@@ -274,7 +281,11 @@ const ResetPassword = ({ route, navigation }) => {
                         }
                     </TouchableOpacity>
                 </View>
-
+                {data.isValidPassword ? null :
+                    <Animatable.View animation="fadeInLeft" duration={500}>
+                        <Text style={styles.errorMsg}>Password must be 8 characters long.</Text>
+                    </Animatable.View>
+                }
                 <Text style={[styles.text_footer, {
                     color: colors.text
                 }]}>Confirm New Password</Text>
@@ -290,7 +301,9 @@ const ResetPassword = ({ route, navigation }) => {
                         style={styles.textInput}
                         autoCapitalize="none"
                         onChangeText={(val) => handleConfirmPasswordChange(val)}
-                        ref={ref_input6}
+                        ref={ref_input3}
+                        onSubmitEditing={() => ref_input4.current.focus()}
+                       
                     />
                     <TouchableOpacity
                         onPress={updateConfirmPasswordTextEntry}
@@ -324,6 +337,8 @@ const ResetPassword = ({ route, navigation }) => {
                         placeholder="Reset Password Token"
                         style={styles.textInput}
                         autoCapitalize="none"
+                        onChangeText={(val) => tokenInputChange(val)}
+                        ref={ref_input4}
                     />
                        {data.resetToken ?
                         <Animatable.View
@@ -356,14 +371,14 @@ const ResetPassword = ({ route, navigation }) => {
                 {!loading && <View style={styles.button}>
                     <TouchableOpacity
                         style={styles.signIn}
-                        onPress={() => { loginHandle(data) }}
-                        disabled={data.firstname.trim().length >= 3 && data.lastname.trim().length >= 3 && 
-                            EMAIL_REGEXP.test(data.email) && 
-                            data.phonenumber.trim().length == 10 &&  passwordCorrect != '' 
-                            && passwordCorrect ? false : true}
+                        onPress={() => { resetPassword(data) }}
+                        disabled={!EMAIL_REGEXP.test(data.email) && 
+                            data.resetToken.trim().length < 5 && !passwordCorrect }
                     >
                         <LinearGradient
-                            colors={data.username.toString().length >= 3 ? ['#FFA07A', '#FF6347'] : ['#ccc', '#ccc']}
+                            colors={EMAIL_REGEXP.test(data.email) && 
+                                data.resetToken.trim().length >= 5 &&  passwordCorrect != '' 
+                                && passwordCorrect ? ['#FFA07A', '#FF6347'] : ['#ccc', '#ccc']}
                             style={styles.signIn}
                         >
                             <Text style={[styles.textSign, {
@@ -416,7 +431,7 @@ const styles = StyleSheet.create({
         paddingBottom: 50
     },
     footer: {
-        flex: 3,
+        flex: 15,
         backgroundColor: '#fff',
         borderTopLeftRadius: 30,
         borderTopRightRadius: 30,

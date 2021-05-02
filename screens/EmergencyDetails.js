@@ -34,12 +34,6 @@ const EmergencyDetails = ({ route, navigation }) => {
     const { coordinates } = useSelector(state => state.currentLocationReducer);
 
     const userDetails = route.params.userDetails;
-    console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&')
-    console.log(userDetails)
-    console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&')
-    console.log(route.params.location)
-    console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&')
-    console.log(coordinates)
     const theme = useTheme();
     let instance, defaultSelectedApp, defaultLaunchMode, launchModes;
     const [readyToHelp, setReadyToHelp] = useState(false)

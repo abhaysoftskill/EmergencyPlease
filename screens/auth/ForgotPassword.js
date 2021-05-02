@@ -25,9 +25,7 @@ import LoginService from '../../services/loginServices';
 const ForgotPassword = ({ route, navigation }) => {
     const [data, setData] = useState({
         username:'',
-        password: '',
-        check_textInputChange: false,
-        secureTextEntry: true,
+        check_usernameInputChange: false,
         isValidUser: true,
         isValidPassword: true,
     });
@@ -35,137 +33,58 @@ const ForgotPassword = ({ route, navigation }) => {
     const { colors } = useTheme();
 
     const { signIn } = useContext(AuthContext);
-
-    const textInputChange = (val) => {
+    const usernameInputChange = (val) => {
         if (val.trim().length >= 4) {
             setData({
                 ...data,
                 username: val,
-                check_textInputChange: true,
+                check_usernameInputChange: true,
                 isValidUser: true
             });
         } else {
             setData({
                 ...data,
                 username: val,
-                check_textInputChange: false,
+                check_usernameInputChange: false,
                 isValidUser: false
             });
         }
     }
 
-    const handlePasswordChange = (val) => {
-        if (val.trim().length >= 8) {
-            setData({
-                ...data,
-                password: val,
-                isValidPassword: true
-            });
-        } else {
-            setData({
-                ...data,
-                password: val,
-                isValidPassword: false
-            });
-        }
-    }
 
-    const updateSecureTextEntry = () => {
-        setData({
-            ...data,
-            secureTextEntry: !data.secureTextEntry
-        });
-    }
+    const submitEmail = (data) => {
 
-    const handleValidUser = (val) => {
-        if (val.trim().length >= 4) {
-            setData({
-                ...data,
-                isValidUser: true
-            });
-        } else {
-            setData({
-                ...data,
-                isValidUser: false
-            });
-        }
-    }
-
-    const loginHandle = (data) => {
-
-        // const foundUser = Users.filter(item => {
-        //     return userName == item.username && password == item.password;
-        // });
         setLoading(true)
         let EMAIL_REGEXP = /^[a-z0-9!#$%&'*+\/=?^_`{|}~.-]+@[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)*$/i;
         if (EMAIL_REGEXP.test(data.username)) {
-            LoginService.loginViaEmail({
-                "email": data.username,
-                "password": data.password
-            }).then((res) => {
-                // console.log({userDetails: res[0],
-                //     userToken: res[1],})
-                // window.location.href = '/org/admin/bases';
+            LoginService.forgotPassword(data.username).then((res) => {
+                Alert.alert('Token Generated successfully !', 'Please check forgot password token in your register email id.', [
+                    {
+                      text: 'Update Password',
+                      onPress: async () => {
+                        try {
+                            setLoading(false)
+                          navigation.navigate('ResetPassword')
+                        } catch (e) {
+                            console.log(e);
+                        }
+                       
+                    }
+                    }
 
-                signIn({
-                    userDetails: res.user,
-                    userToken: res.token
-                })
-                setLoading(false)
-
-                // Keyboard.dismiss()
-                // setotpVerification(true)
+                ])
             }, error => {
                 setLoading(false)
 
-                Alert.alert('Login Fail!', error.message, [
+                Alert.alert('Something went wrong!', error.message, [
                     { text: 'Retry' }
                 ]);
                 return;
             })
 
         }
-        else {
-            LoginService.loginViaPhonenumber({
-                "phonenumber": data.username,
-                "password": data.password
-            }).then((res) => {
-                // console.log({userDetails: res[0],
-                //     userToken: res[1],})
-                // window.location.href = '/org/admin/bases';
-                signIn({
-                    userDetails: res[0],
-                    userToken: res[1]
-                })
-                setLoading(false)
+     
 
-                // Keyboard.dismiss()
-                // setotpVerification(true)
-            }, error => {
-                setLoading(false)
-                Alert.alert('Login Fail!', error.message, [
-                    { text: 'Retry' }
-                ]);
-                return;
-            })
-
-        }
-
-
-        // if (data.username.length == 0 || data.password.length == 0) {
-        //     Alert.alert('Wrong Input!', 'Username or password field cannot be empty.', [
-        //         { text: 'Okay' }
-        //     ]);
-        //     return;
-        // }
-
-        // if (foundUser.length == 0) {
-        //     Alert.alert('Invalid User!', 'Username or password is incorrect.', [
-        //         { text: 'Okay' }
-        //     ]);
-        //     return;
-        // }
-        // signIn(foundUser);
     }
 
     return (
@@ -204,11 +123,12 @@ const ForgotPassword = ({ route, navigation }) => {
                         style={[styles.textInput, {
                             color: colors.text
                         }]}
+                        onChangeText={(val) => usernameInputChange(val)}
                         autoCapitalize="none"
                         defaultValue={`${data.username}`}
                         
                     />
-                    {data.check_textInputChange ?
+                    {data.check_usernameInputChange ?
                         <Animatable.View
                             animation="bounceIn"
                         >
@@ -244,7 +164,7 @@ const ForgotPassword = ({ route, navigation }) => {
                {!loading && <View style={styles.button}>
                     <TouchableOpacity
                         style={styles.signIn}
-                        onPress={() => { loginHandle(data) }}
+                        onPress={() => { submitEmail(data) }}
                         disabled={data.username.toString().length >= 3 ? false : true}
                     >
                         <LinearGradient
