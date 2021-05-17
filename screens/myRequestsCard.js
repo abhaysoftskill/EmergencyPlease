@@ -20,7 +20,7 @@ const MyRequestsCard = ({itemData}) => {
         <View style={styles.cardInfo}>
         <Text style={styles.time}>{Moment(itemData.updated_at).format('DD-MM-YYYY hh:mma')}</Text>
         <Text style={styles.cardTitle}>{itemData.services.service_name_alias}</Text>
-          <Text style={[styles.status],[itemData.requestStatus == 'closed'? styles.closeStatus:styles.activeStatus]}>
+          <Text style={[styles.status],[itemData.requestStatus == 'closed' ? styles.closeStatus : itemData.requestStatus == 'new' ? styles.newStatus :  styles.activeStatus]}>
             {itemData.requestStatus}</Text>
        
         </View>
@@ -34,17 +34,26 @@ export default MyRequestsCard;
 const styles = StyleSheet.create({
   time:{ fontSize: 16, color:'#8e8e8e'},
   status:{fontSize: 14, textTransform:'capitalize'},
+  newStatus: {
+    fontSize: 14,
+    backgroundColor: '#f66600',
+    color: '#fff',
+    padding: 5,
+    width: 100,
+    textAlign: 'center', textTransform: 'capitalize',
+    borderRadius: 50
+  },
   closeStatus:{fontSize: 10,
     backgroundColor:'#b1003b',
     color:'#fff',
-    padding:3,
+    padding:5,
     width:100,
     textAlign:'center',textTransform:'capitalize',
     borderRadius:50},
   activeStatus:{fontSize: 14, 
     backgroundColor:'#1abae8',
     color:'#fff',
-    padding:3,
+    padding:5,
     width:100,
     textAlign:'center',textTransform:'capitalize',
     borderRadius:50

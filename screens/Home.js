@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { useIsFocused, useTheme } from '@react-navigation/native';
 import { Alert, Dimensions, Image, ImageBackground, Modal, Pressable, RefreshControl, StatusBar, StyleSheet, Text, View } from 'react-native';
@@ -13,21 +13,26 @@ import { checkVersion } from 'react-native-check-version';
 import modalStyles from '../model/loginValidationModal';
 import LoginService from '../services/loginServices';
 import { Icon } from 'native-base';
+import { AuthContext } from '../components/context';
+import RequestStatus from './RequestStatus';
 const { width } = Dimensions.get("window");
 const CARD_WIDTH = width * 0.8;
 
 const Home = ({ navigation }) => {
     const { coordinates } = useSelector(state => state.currentLocationReducer);
-    const dispatch = useDispatch();
+    const stateDispatch = useDispatch();
     const isFocused = useIsFocused();
     const theme = useTheme();
     const [loading, setLoading] = useState(true);
+    const [closeAlert, setCloseAlert] = useState(true);
     const [RequestDataCount, setRequestDataCount] = useState();
     const [userDetails, setUserDetails] = useState([])
     const [emailVerified, setEmailVerified] = useState(null)
     const [emailID, setEmailID] = useState('')
     const [verifyCode, setVerifyCode] = useState('')
     const coveredArea = 5;
+    const { signOut, toggleTheme } = React.useContext(AuthContext);
+    const [myRequestData, setMyRequestData] = useState([])
 
     const requestData = async () => {
         let userDetailsData = await AsyncStorage.getItem('userDetails');
@@ -52,6 +57,12 @@ const Home = ({ navigation }) => {
         }, error => {
             return;
         })
+
+        EmergencyService.myEmergencyRequest().then((res) => {
+            setMyRequestData(res.requests)
+          }, error => {
+            return;
+          })
     }
     useEffect(() => {
         async function fetchVerson() {
@@ -64,7 +75,7 @@ const Home = ({ navigation }) => {
     }, [])
     useEffect(() => {
         if (coordinates?.length == 0) {
-            dispatch(readCurrentLocation())
+            stateDispatch(readCurrentLocation())
         }
         else if (coordinates) {
             requestData()
@@ -89,6 +100,8 @@ const Home = ({ navigation }) => {
                 let userDetailsData = await AsyncStorage.getItem('userDetails');
 
                 let data = JSON.parse(userDetailsData);
+                setEmailVerifyModalVisible(!data.email_verified)
+
                 setUserDetails(data);
                 // if (data.userGender == "" || data.bloodGroup == "") {
                 //     navigation.navigate('EditDetails', { userDetails: data })
@@ -111,10 +124,11 @@ const Home = ({ navigation }) => {
         return new Promise(resolve => setTimeout(resolve, timeout));
     }
     const onRefresh = React.useCallback(() => {
+        setCloseAlert(true)
         setRefreshing(true);
         wait(2000).then(() => setRefreshing(false));
     }, []);
-    const [emailVerifyModalVisible, setEmailVerifyModalVisible] = useState(true)
+    const [emailVerifyModalVisible, setEmailVerifyModalVisible] = useState(false)
     const [verifyLoading, setVerifyLoading] = useState(false);
     const resendEmailVerifiy = () => {
         let updateData = {
@@ -174,10 +188,13 @@ const Home = ({ navigation }) => {
                     try {
                         await AsyncStorage.removeItem('userToken');
                         await AsyncStorage.removeItem('userDetails');
+                        signOut()
+
                     } catch (e) {
                         console.log(e);
                     }
-                    dispatch({ type: 'LOGOUT' });
+                    // dispatch({ type: 'LOGOUT' });
+                    // navigation.navigate('Dashboard')
                 }
             },
             { text: 'Retry', onPress: () => { return } },
@@ -195,11 +212,9 @@ const Home = ({ navigation }) => {
                 bottom: -300
             }}
         >
-
             <Modal
                 animationType="fade"
                 transparent={true}
-                backgroundColor='red'
                 visible={emailVerifyModalVisible}
                 onRequestClose={() => {
                     setEmailVerifyModalVisible(!emailVerifyModalVisible)
@@ -209,6 +224,10 @@ const Home = ({ navigation }) => {
                     <View style={modalStyles.modalView}>
                         <Text style={modalStyles.title}>Your Registered Email Not Verified !</Text>
                         <Paragraph style={modalStyles.modalText}>{`Please verify your ${emailID} email id.`}</Paragraph>
+                        {/* <Button style={{position:'absolute', top:0, right:0}} mode={'contained'} color={'#ccc'} onPress={() => closeVerifyEmail()} > Close</Button> */}
+                        <Icon style={{ position: 'absolute', top: 0, right: 0, padding: 2, backgroundColor: '#ccc', borderRadius: 50, margin: 10 }}
+                            name='close' onPress={() => closeVerifyEmail()}
+                        />
                         <View style={modalStyles.action}>
 
                             <TextInput
@@ -230,7 +249,7 @@ const Home = ({ navigation }) => {
 
                             <Button mode={'contained'} color={'#ea3a3a'} style={{ marginRight: 10 }} onPress={() => { setVerifyLoading(true), resendEmailVerifiy() }}>Resend</Button>
                             <Button mode={'contained'} color={'#17841c'} style={{ marginRight: 10 }} onPress={() => { setVerifyLoading(true), verifyEmail() }}>Verify</Button>
-                            <Button mode={'contained'} color={'#ff7600'} onPress={() => closeVerifyEmail()} > Close</Button>
+                            {/* <Button style={{position:'absolute', top:0}} mode={'contained'} color={'#ccc'} onPress={() => closeVerifyEmail()} > Close</Button> */}
 
                         </View>}
                     </View>
@@ -243,6 +262,7 @@ const Home = ({ navigation }) => {
                         onRefresh={requestData}
                     />
                 }>
+             {!loading  && closeAlert && <RequestStatus myRequestData={myRequestData} CloseAlert={() => setCloseAlert(false)}/>}
 
                 <StatusBar barStyle={theme.dark ? 'light-content' : 'dark-content'} />
                 <View style={styles.optionContainer}>
@@ -259,7 +279,6 @@ const Home = ({ navigation }) => {
                         />
                         <Text>Loading....</Text>
                     </View>}
-                    {/* {!RequestCount && !loading && <Text style={styles.noReported}>Today's Great day No Emergency Yet Reported</Text>} */}
                     {!loading && <View style={{
                         alignContent: 'center',
                         padding: 10, flexDirection: "row", justifyContent: 'space-between'
@@ -377,6 +396,7 @@ const Home = ({ navigation }) => {
                     </TouchableOpacity>}
 
                 </View>
+            
             </ScrollView>
         </ImageBackground>
     )

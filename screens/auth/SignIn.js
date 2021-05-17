@@ -36,8 +36,10 @@ const SignIn = ({ navigation }) => {
     const [otpVerification, setotpVerification] = useState(false)
     const [userDetails, setUserDetails] = useState()
     const [loading, setLoading] = useState(false)
+    const [loginOption, setLoginOption] = useState(0)
     const { colors } = useTheme();
-
+    const active = '#ccc';
+    const inactive = '#3c4043';
     const { signIn } = useContext(AuthContext);
     let EMAIL_REGEXP = /^[a-z0-9!#$%&'*+\/=?^_`{|}~.-]+@[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)*$/i;
 
@@ -70,7 +72,7 @@ const SignIn = ({ navigation }) => {
 
     }
 
- 
+
     const handleValidUser = (val) => {
         if (val.trim().length >= 4) {
             setData({
@@ -102,7 +104,7 @@ const SignIn = ({ navigation }) => {
                     navigation.navigate('SignUpScreen', { email: userName })
                 }
                 else {
-                  
+
                     setLoading(false)
                     setUserDetails(res)
                     setotpVerification(true)
@@ -159,7 +161,7 @@ const SignIn = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-           
+
             <StatusBar backgroundColor='#FF6347' barStyle="light-content" />
             <View style={styles.header}>
                 <Text style={styles.text_header}>Welcome! </Text>
@@ -170,25 +172,44 @@ const SignIn = ({ navigation }) => {
                     backgroundColor: colors.background
                 }]}
             >
-                <Text style={[styles.text_footer, {
+
+
+
+                {loginOption !== 0 && <Text style={[styles.text_footer, {
                     color: colors.text, marginBottom: 30
-                }]}>Enter Email ID/ Phone Number</Text>
-                <View style={styles.action}>
+                }]}>
+                    {loginOption != 0 && loginOption == 1 ? 'Enter Phone Number' : loginOption == 2 ? ' Enter Email ID' : null}
+                </Text>}
+
+                {loginOption !== 0 && <View style={styles.action}>
                     <FontAwesome
-                        name="user-o"
+                        name={loginOption == 1 ? "phone" : "envelope"}
                         color={colors.text}
                         size={20}
                     />
-                    <TextInput
-                        placeholder="Enter Email ID/ Phone Number"
+                    {loginOption != 0 && loginOption == 1  && <TextInput
+                        placeholder={'Enter Phone Number'}
                         placeholderTextColor="#666666"
                         style={[styles.textInput, {
-                            color: colors.text
+                            color: colors.text, fontSize:20, letterSpacing:3
+                        }]}
+                        maxLength={10}
+                        autoCapitalize="none"
+                        keyboardType={'phone-pad'}
+                        onChangeText={(val) => textInputChange(val)}
+                        onEndEditing={(e) => handleValidUser(e.nativeEvent.text)}
+                    />}
+                     {loginOption != 0 && loginOption == 2 && <TextInput
+                        placeholder={'Enter Email ID'}
+                        placeholderTextColor="#666666"
+                        keyboardType={'email-address'}
+                        style={[styles.textInput, {
+                            color: colors.text, fontSize:15,
                         }]}
                         autoCapitalize="none"
                         onChangeText={(val) => textInputChange(val)}
                         onEndEditing={(e) => handleValidUser(e.nativeEvent.text)}
-                    />
+                    />}
                     {data.check_textInputChange ?
                         <Animatable.View
                             animation="bounceIn"
@@ -201,6 +222,7 @@ const SignIn = ({ navigation }) => {
                         </Animatable.View>
                         : null}
                 </View>
+                }
                 {data.isValidUser ? null :
                     <Animatable.View animation="fadeInLeft" duration={500}>
                         <Text style={styles.errorMsg}>Username must be Phone Number or Email ID.</Text>
@@ -212,24 +234,29 @@ const SignIn = ({ navigation }) => {
                     flex: 1,
                     justifyContent: 'center',
                     alignItems: 'center',
-                    marginTop:10
+                    marginTop: 20,
+                    position:'absolute',
+                    bottom:100,
+                    left:0,
+                    right:0,
+                    zIndex:99
                 }}>
                     <Image
                         source={require('../../assets/loading.png')}
                         // style={{ width: 200, height: 100 }}
                         resizeMode="cover"
                     />
-                    <Text>Loading....</Text>
+                    <Text>Please wait....</Text>
                 </View>}
-               {!loading && <View style={styles.button}>
+                {!loading && loginOption !== 0 && <View style={styles.button}>
                     <TouchableOpacity
                         style={styles.signIn}
                         onPress={() => { loginHandle(data.username, data.password) }}
                         disabled={data.isValidUser && data.username == ''}
-                       
+
                     >
                         <LinearGradient
-                            colors={data.isValidUser && data.username != ''? ['#FFA07A', '#FF6347'] : ['#ccc', '#ccc']}
+                            colors={data.isValidUser && data.username != '' ? ['#FFA07A', '#FF6347'] : ['#ccc', '#ccc']}
                             style={styles.signIn}
                         >
                             <Text style={[styles.textSign, {
@@ -238,8 +265,61 @@ const SignIn = ({ navigation }) => {
                         </LinearGradient>
                     </TouchableOpacity>
 
-                 
+
                 </View>}
+               <View
+                    style={{ marginTop: 50,
+                        flexDirection: "row", flexWrap: "wrap",
+                        justifyContent: 'center'
+                    }}
+                >
+                    <TouchableOpacity
+                        onPress={() => {setLoginOption(1);  setData({
+                            ...data,
+                            username: '',
+                        })}}
+                    >
+                        <View
+                            style={[styles.box, { margin: 5, borderColor:loginOption == 1 ? active : inactive,
+                                borderBottomWidth:5,
+                                borderRadius: 10, borderWidth: 1, width: 150, height: 150, alignItems: 'center', justifyContent: 'center' }]}
+                        >
+                            <FontAwesome
+                                name="phone"
+                                color={loginOption == 1 ? active : inactive}
+                                size={30}
+                                style={{ marginBottom: 10, marginTop: 10 }}
+                            />
+                            <Text style={[{
+                                flexShrink: 1,
+                                color: loginOption == 1 ? active : inactive, marginBottom: 30, fontSize: 15, textAlign: 'center'
+                            }]}>Use Phone Number</Text>
+                        </View>
+
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => {setLoginOption(2);  setData({
+                            ...data,
+                            username: '',
+                        })}}
+                    >
+                        <View
+                            style={[styles.box, { margin: 5, borderBottomWidth:5, borderColor:loginOption == 2 ? active : inactive, borderRadius: 10, borderWidth: 1, width: 150, height: 150, alignItems: 'center', justifyContent: 'center' }]}
+                        >
+                            <FontAwesome
+                                name="envelope"
+                                color={loginOption == 2 ? active : inactive}
+                                size={30}
+                                style={{ marginBottom: 10, marginTop: 10 }}
+                            />
+                            <Text style={[{
+                                flexShrink: 1,
+                                color: loginOption == 2 ? active : inactive, marginBottom: 30, fontSize: 15, textAlign: 'center'
+                            }]}>Use Email ID</Text>
+                        </View>
+
+                    </TouchableOpacity>
+                </View>
                 <View style={styles.banner}>
                     <Image
                         source={require('../../assets/banners/banner1.png')}
@@ -261,6 +341,18 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#FF6347'
+    },
+    row: {
+        flexDirection: "row",
+        flexWrap: "wrap",
+        alignContent: 'space-between',
+        borderWidth: 1
+    },
+
+    box: {
+        width: 50,
+        alignContent: "space-around",
+        height: 50,
     },
     header: {
         flex: 1,

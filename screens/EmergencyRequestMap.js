@@ -24,8 +24,6 @@ import { mapDarkStyle, mapStandardStyle } from '../model/mapData';
 
 import { useTheme } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
-import EmergencyService from '../services/emergencyServices';
-import { cos } from 'react-native-reanimated';
 import { useSelector } from 'react-redux';
 
 

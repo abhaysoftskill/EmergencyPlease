@@ -12,6 +12,8 @@ target 'EmergencyPlease' do
     :hermes_enabled => false
   )
 
+  pod 'react-native-restart', :path => '../node_modules/react-native-restart'
+
   target 'EmergencyPleaseTests' do
     inherit! :complete
     # Pods for testing

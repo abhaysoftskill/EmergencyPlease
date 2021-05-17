@@ -28,9 +28,10 @@ const OTPVerification = (props) => {
   const [text, setText] = React.useState('');
 
   const [checked, setChecked] = React.useState('first');
-  const [timeLeft, setTimeLeft] = useState(10)
+  const [timeLeft, setTimeLeft] = useState(30)
 
   useEffect(() => {
+  
     // exit early when we reach 0
     if (!timeLeft) return;
 

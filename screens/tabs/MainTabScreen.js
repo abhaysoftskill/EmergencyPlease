@@ -21,6 +21,7 @@ import EmergencyContacts from '../EmergencyContacts/EmergencyContacts';
 import EmergencyRequestMap from '../EmergencyRequestMap';
 import { SuccessStories } from '../SuccessStories/SuccessStories';
 import { Notifications } from '../Notifications/Notifications';
+import SplashScreen from '../SplashScreen';
 
 const HomeStack = createStackNavigator();
 const NotificationStack = createStackNavigator();
@@ -30,7 +31,6 @@ const Tab = createMaterialBottomTabNavigator();
 
 const MainTabScreen = () => (
   <Tab.Navigator initialRouteName="Dashboard" activeColor="#fff" barStyle={{ backgroundColor: '#FF6347' }}>
-
     <Tab.Screen
       name="Dashboard"
       component={HomeStackScreen}
@@ -225,17 +225,11 @@ const HomeStackScreen = ({ navigation }) => {
         }}
         component={FamilyFriendsDetails}
       />
-      {/* <HomeStack.Screen 
-        name="CardItemDetails"
-        component={CardItemDetails}
-        options={({route}) => ({
-          // title: route.params.title,
-          headerBackTitleVisible: false,
-          headerTitle: false,
-          headerTransparent: true,
-          headerTintColor: '#fff'
-        })}
-      /> */}
+      <HomeStack.Screen
+        name="SplashScreen"
+        options={{ headerShown: false }}
+        component={SplashScreen}
+      />
     </HomeStack.Navigator>
   );
 };
