@@ -10,9 +10,9 @@ import EmergencyService from '../services/emergencyServices';
 import { useDispatch, useSelector } from 'react-redux';
 import { readCurrentLocation } from '../redux/actions/currentLocationActions';
 import { checkVersion } from 'react-native-check-version';
-
-import modalStyles from '../model/emailVerifyModal';
+import modalStyles from '../model/loginValidationModal';
 import LoginService from '../services/loginServices';
+import { Icon } from 'native-base';
 const { width } = Dimensions.get("window");
 const CARD_WIDTH = width * 0.8;
 
@@ -45,7 +45,7 @@ const Home = ({ navigation }) => {
 
         EmergencyService.getuserprofile().then((res) => {
             setEmailID(res.email);
-            if( new Date(new Date(new Date())) > (new Date(res.updated_at) + 60000) && !res.email_verified){
+            if (new Date(new Date(new Date())) > (new Date(res.updated_at) + 60000) && !res.email_verified) {
                 setEmailVerified(res.email_verified)
             }
             AsyncStorage.setItem('userDetails', JSON.stringify(res));
@@ -150,7 +150,7 @@ const Home = ({ navigation }) => {
                         try {
                             navigation.navigate('MyRequests',
                                 {
-                                    userDetails: props.data.userDetails,
+
                                 })
                         } catch (e) {
                             console.log(e);
@@ -167,6 +167,24 @@ const Home = ({ navigation }) => {
             return;
         })
     }
+    const closeVerifyEmail = () => {
+        Alert.alert('Confirmation!', 'If you press YES, you have to Re-login with your register and verified email.', [
+            {
+                text: 'OK', onPress: async () => {
+                    try {
+                        await AsyncStorage.removeItem('userToken');
+                        await AsyncStorage.removeItem('userDetails');
+                    } catch (e) {
+                        console.log(e);
+                    }
+                    dispatch({ type: 'LOGOUT' });
+                }
+            },
+            { text: 'Retry', onPress: () => { return } },
+
+        ])
+
+    }
     return (
         <ImageBackground
             source={require("../assets/banners/banner1.png")}
@@ -177,13 +195,16 @@ const Home = ({ navigation }) => {
                 bottom: -300
             }}
         >
+
             <Modal
-                animationType="slide"
+                animationType="fade"
                 transparent={true}
+                backgroundColor='red'
                 visible={emailVerifyModalVisible}
                 onRequestClose={() => {
                     setEmailVerifyModalVisible(!emailVerifyModalVisible)
                 }}>
+
                 <View style={modalStyles.centeredView}>
                     <View style={modalStyles.modalView}>
                         <Text style={modalStyles.title}>Your Registered Email Not Verified !</Text>
@@ -207,8 +228,10 @@ const Home = ({ navigation }) => {
                         </View>}
                         {!verifyLoading && <View style={{ flexDirection: 'row', marginTop: 20 }}>
 
-                            <Button mode={'contained'} color={'#ea3a3a'} style={{ marginRight: 30 }} onPress={() => { setVerifyLoading(true), resendEmailVerifiy() }}>Resend</Button>
-                            <Button mode={'contained'} color={'#17841c'} onPress={() => { setVerifyLoading(true), verifyEmail() }}>Verify</Button>
+                            <Button mode={'contained'} color={'#ea3a3a'} style={{ marginRight: 10 }} onPress={() => { setVerifyLoading(true), resendEmailVerifiy() }}>Resend</Button>
+                            <Button mode={'contained'} color={'#17841c'} style={{ marginRight: 10 }} onPress={() => { setVerifyLoading(true), verifyEmail() }}>Verify</Button>
+                            <Button mode={'contained'} color={'#ff7600'} onPress={() => closeVerifyEmail()} > Close</Button>
+
                         </View>}
                     </View>
                 </View>

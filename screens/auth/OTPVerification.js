@@ -13,7 +13,7 @@ const OTPVerification = (props) => {
 
   const showDialog = () => setVisible(true);
 
-  const hideDialog = () =>  props.closeOption()
+  const hideDialog = () => props.closeOption()
   const containerStyle = { backgroundColor: 'white', padding: 20 };
   const [paidService, setPaidService] = useState(false);
   const [freeService, setFreeService] = useState(true);
@@ -68,7 +68,7 @@ const OTPVerification = (props) => {
               top: -10,
               zIndex: 9
 
-            }}  
+            }}
             onPress={props.closeOption} >
             <Icon
               name='close'
@@ -77,7 +77,7 @@ const OTPVerification = (props) => {
           <View style={{ flexDirection: 'row', alignItems: "flex-start", marginBottom: 20 }}>
             <Text style={{ fontSize: 18 }}>Welcome Back, </Text>
             <Text style={{ color: 'red', fontSize: 18 }}>{props.userDetails?.firstname}</Text>
-            </View>
+          </View>
           <View style={{ flexDirection: 'row', marginBottom: 10 }}>
             <Text>OTP has been sent to your registered mobile number</Text>
           </View>
@@ -127,7 +127,7 @@ const OTPVerification = (props) => {
                 labelStyle={{ fontSize: 10, paddingTop: 3, paddingBottom: 3 }}
                 disabled={timeLeft > 0}
                 onPress={() => {
-                   props.closeOption()
+                  props.closeOption()
                   // navigation.navigate('EmergencyReport', { service_name: "Blood Donor", serviceType: { bloodGroup: bloodGroup, bloodGroupType: bloodGroupType } });
                 }}>Resend OTP</Button>
             </View>
@@ -141,7 +141,7 @@ const OTPVerification = (props) => {
                 labelStyle={{ fontSize: 12, paddingTop: 3, paddingBottom: 3 }}
                 onPress={() => {
                   props.closeOption(),
-                  navigation.navigate('SignInScreen', { userDetails: props.userDetails });
+                    navigation.navigate('SignInScreen', { userDetails: props.userDetails });
                 }}>Use password</Button>
 
             </View>
@@ -151,17 +151,17 @@ const OTPVerification = (props) => {
             justifyContent: 'center',
             marginTop: 30
           }}>
-            <Button mode={'contained'} color={'#17841c'} 
+            <Button mode={'contained'} color={'#17841c'}
               onPress={() => {
-                 props.closeOption()
+                props.closeOption()
                 // navigation.navigate('EmergencyReport', { service_name: "Blood Donor", serviceType: { bloodGroup: bloodGroup, bloodGroupType: bloodGroupType } });
               }}
               disabled={text != '' ? false : true}
-              >
+            >
               Validate
               </Button>
-            </View>
-        
+          </View>
+
           {/* {verifyLoading && <View>
                             <Image
                                 source={require('../../assets/loading.png')}
