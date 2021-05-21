@@ -22,6 +22,8 @@ import EmergencyRequestMap from '../EmergencyRequestMap';
 import { SuccessStories } from '../SuccessStories/SuccessStories';
 import { Notifications } from '../Notifications/Notifications';
 import SplashScreen from '../SplashScreen';
+import SpecialServices from '../SpecialServices/SpecialServices';
+import Covid19 from '../SpecialServices/Covid19/Covid19';
 
 const HomeStack = createStackNavigator();
 const NotificationStack = createStackNavigator();
@@ -30,7 +32,18 @@ const StoryStack = createStackNavigator();
 const Tab = createMaterialBottomTabNavigator();
 
 const MainTabScreen = () => (
-  <Tab.Navigator initialRouteName="Dashboard" activeColor="#fff" barStyle={{ backgroundColor: '#FF6347' }}>
+  <Tab.Navigator initialRouteName="SpecialServices" activeColor="#fff" barStyle={{ backgroundColor: '#FF6347' }}>
+    {/* <Tab.Screen
+      name="SpecialServices"
+      component={SpecialServices}
+      options={{
+        tabBarLabel: 'Special Services',
+        tabBarColor: '#FF6347',
+        tabBarIcon: ({ color }) => (
+          <Icon name="heart" color={color} size={26} />
+        ),
+      }}
+    /> */}
     <Tab.Screen
       name="Dashboard"
       component={HomeStackScreen}
@@ -75,7 +88,7 @@ const MainTabScreen = () => (
         ),
       }}
 
-      
+
     />
   </Tab.Navigator>
 );
@@ -98,6 +111,59 @@ const HomeStackScreen = ({ navigation }) => {
           color: '#05375a'
         },
       }}>
+      <HomeStack.Screen
+        name="SpecialServices"
+        component={SpecialServices}
+        options={{
+          title: 'Special Services',
+          headerLeft: () => (
+            <View style={{ marginLeft: 10, fontWeight: 100 }}>
+              <Icon.Button
+                name="ios-menu"
+                size={25}
+                color={colors.text}
+                backgroundColor={colors.background}
+                onPress={() => navigation.openDrawer()}
+              />
+            </View>
+          ),
+          headerRight: () => (
+            <View style={{ flexDirection: 'row', marginRight: 10 }}>
+
+              <TouchableOpacity
+                style={{ paddingHorizontal: 10, marginTop: 5 }}
+              >
+                <Avatar.Image
+                  backgroundColor={'#fff'}
+                  source={require('../../assets/defaultProfile.png')}
+                  size={30}
+                />
+              </TouchableOpacity>
+            </View>
+          ),
+        }}
+      />
+
+<HomeStack.Screen
+        name="Covid19"
+        component={Covid19}
+        options={{
+          title: 'Covid-19 Vaccination Center',
+          headerLeft: () => (
+            <View style={{ marginLeft: 10, fontWeight: 100 }}>
+              <Icon.Button
+                name="ios-menu"
+                size={25}
+                color={colors.text}
+                backgroundColor={colors.background}
+                onPress={() => navigation.openDrawer()}
+              />
+            </View>
+          )
+         
+        }}
+      />
+
       <HomeStack.Screen
         name="Dashboard"
         component={Home}

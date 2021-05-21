@@ -24,7 +24,7 @@ const nearestEmergencyRequestCount = async (region) => {
         }
     });
 }
-const nearestEmergencyRequest = (lng,lat,type) => {
+const nearestEmergencyRequest = (lng, lat, type) => {
     return request({
         url: `/emergencyrequest/near?lng=${lng}&lat=${lat}&requestType=${type}`,
         method: 'GET',
@@ -54,11 +54,11 @@ const myTodayRequest = async () => {
 }
 const getAppUpdateVersion = async () => {
     userToken = await AsyncStorage.getItem('userToken');
-      return request({
+    return request({
         url: `/users/appversions`,
         method: 'GET',
         handleHeaders: 2
-    });  
+    });
 }
 const services = async () => {
     userToken = await AsyncStorage.getItem('userToken');
@@ -70,9 +70,9 @@ const services = async () => {
         }
     });
 }
-const nearservices = async (lng,lat) => {
+const nearservices = async (lng, lat) => {
     userToken = await AsyncStorage.getItem('userToken');
-     return request({
+    return request({
         url: `/service/nearservices?lng=${lng}&lat=${lat}`,
         method: 'GET',
         headers: {
@@ -83,7 +83,7 @@ const nearservices = async (lng,lat) => {
 
 const emergencyContacts = async () => {
     userToken = await AsyncStorage.getItem('userToken');
-     return request({
+    return request({
         url: `/contacts/all`,
         method: 'GET',
         headers: {
@@ -93,7 +93,7 @@ const emergencyContacts = async () => {
 }
 const stories = async () => {
     userToken = await AsyncStorage.getItem('userToken');
-     return request({
+    return request({
         url: `/stories/all`,
         method: 'GET',
         headers: {
@@ -104,9 +104,9 @@ const stories = async () => {
 const notifications = async () => {
     userToken = await AsyncStorage.getItem('userToken');
     let userDetailsData = await AsyncStorage.getItem('userDetails');
-        let data = JSON.parse(userDetailsData);
-        console.log()
-     return request({
+    let data = JSON.parse(userDetailsData);
+    console.log()
+    return request({
         url: `/notification/byusertype/${data.userType}`,
         method: 'GET',
         headers: {
@@ -117,7 +117,7 @@ const notifications = async () => {
 
 const settings = async () => {
     userToken = await AsyncStorage.getItem('userToken');
-     return request({
+    return request({
         url: `/settings/all`,
         method: 'GET',
         headers: {
@@ -127,8 +127,74 @@ const settings = async () => {
 }
 const getuserprofile = async () => {
     userToken = await AsyncStorage.getItem('userToken');
-     return request({
+    return request({
         url: `/user/getuserprofile`,
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${userToken}`
+        }
+    });
+}
+
+// Services for special service 
+//COVID-19 State, Districs wise Hospitals
+
+const getStates = async () => {
+    userToken = await AsyncStorage.getItem('userToken');
+    return request({
+        url: `/state/all`,
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${userToken}`
+        }
+    });
+}
+const getStatesById = async (id) => {
+    userToken = await AsyncStorage.getItem('userToken');
+    return request({
+        url: `/state/id/${id}`,
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${userToken}`
+        }
+    });
+}
+
+const getDistrict = async () => {
+    userToken = await AsyncStorage.getItem('userToken');
+    return request({
+        url: `/district/all`,
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${userToken}`
+        }
+    });
+}
+const getDistrictById = async (id) => {
+    userToken = await AsyncStorage.getItem('userToken');
+    return request({
+        url: `/district/id/${id}`,
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${userToken}`
+        }
+    });
+}
+
+const getDistrictByState = async (id) => {
+    userToken = await AsyncStorage.getItem('userToken');
+    return request({
+        url: `/district/bystate/${id}`,
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${userToken}`
+        }
+    });
+}
+const getHospitalByPincode = async (code) => {
+    userToken = await AsyncStorage.getItem('userToken');
+    return request({
+        url: `/hospital/pincode/${code}`,
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${userToken}`
@@ -148,7 +214,14 @@ const EmergencyService = {
     notifications,
     myTodayRequest,
     settings,
-    getuserprofile
+    getuserprofile,
+
+    getStates,
+    getStatesById,
+    getDistrict,
+    getDistrictById,
+    getDistrictByState,
+    getHospitalByPincode
 };
 
 export default EmergencyService;

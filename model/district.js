@@ -1,4 +1,4 @@
-{
+const districts = {
   "districts": [
     {
       "state_id": 1,
@@ -3783,3 +3783,5 @@
   ],
   "ttl": 24
 }
+
+export default districts
