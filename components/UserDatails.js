@@ -129,10 +129,10 @@ const UserDetails = ({ route, navigation }) => {
                     </MapView>
                 </View>
                 <Button
-        title="Ready to Help --> Navigate"
-        onPress={() => Alert.alert('Simple Button pressed')}
-        style={{marginBottom:20}}
-      />
+                    title="Ready to Help --> Navigate"
+                    onPress={() => Alert.alert('Simple Button pressed')}
+                    style={{ marginBottom: 20 }}
+                />
             </View>
         </ScrollView>
     );
@@ -169,8 +169,8 @@ const styles = StyleSheet.create({
     mapContainer: {
         height: 200,
         width: '100%',
-        marginTop:10,
-        marginBottom:20
+        marginTop: 10,
+        marginBottom: 20
 
     },
     map: {

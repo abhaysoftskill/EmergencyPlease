@@ -60,6 +60,17 @@ const getAppUpdateVersion = async () => {
         handleHeaders: 2
     });
 }
+const serviceTypes = async () => {
+    userToken = await AsyncStorage.getItem('userToken');
+    return request({
+        url: `/servicetype/all`,
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${userToken}`
+        }
+    });
+}
+
 const services = async () => {
     userToken = await AsyncStorage.getItem('userToken');
     return request({
@@ -201,12 +212,24 @@ const getHospitalByPincode = async (code) => {
         }
     });
 }
+
+const getHospitalByDistrict = async (code) => {
+    userToken = await AsyncStorage.getItem('userToken');
+    return request({
+        url: `/hospital/district/${code}`,
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${userToken}`
+        }
+    });
+}
 const EmergencyService = {
     myEmergencyRequest,
     emergencyRequest,
     nearestEmergencyRequestCount,
     nearestEmergencyRequest,
     getAppUpdateVersion,
+    serviceTypes,
     services,
     nearservices,
     emergencyContacts,
@@ -221,7 +244,8 @@ const EmergencyService = {
     getDistrict,
     getDistrictById,
     getDistrictByState,
-    getHospitalByPincode
+    getHospitalByPincode,
+    getHospitalByDistrict
 };
 
 export default EmergencyService;

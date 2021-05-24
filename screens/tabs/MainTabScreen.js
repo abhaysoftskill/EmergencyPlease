@@ -24,6 +24,8 @@ import { Notifications } from '../Notifications/Notifications';
 import SplashScreen from '../SplashScreen';
 import SpecialServices from '../SpecialServices/SpecialServices';
 import Covid19 from '../SpecialServices/Covid19/Covid19';
+import CovidVaccineCenters from '../SpecialServices/Covid19/CovidVaccineCenters';
+import Services from '../Services';
 
 const HomeStack = createStackNavigator();
 const NotificationStack = createStackNavigator();
@@ -112,6 +114,38 @@ const HomeStackScreen = ({ navigation }) => {
         },
       }}>
       <HomeStack.Screen
+        name="Services"
+        component={Services}
+        options={{
+          title: 'Services',
+          headerLeft: () => (
+            <View style={{ marginLeft: 10, fontWeight: 100 }}>
+              <Icon.Button
+                name="ios-menu"
+                size={25}
+                color={colors.text}
+                backgroundColor={colors.background}
+                onPress={() => navigation.openDrawer()}
+              />
+            </View>
+          ),
+          headerRight: () => (
+            <View style={{ flexDirection: 'row', marginRight: 10 }}>
+
+              <TouchableOpacity
+                style={{ paddingHorizontal: 10, marginTop: 5 }}
+              >
+                <Avatar.Image
+                  backgroundColor={'#fff'}
+                  source={require('../../assets/defaultProfile.png')}
+                  size={30}
+                />
+              </TouchableOpacity>
+            </View>
+          ),
+        }}
+      />
+ <HomeStack.Screen
         name="SpecialServices"
         component={SpecialServices}
         options={{
@@ -143,8 +177,7 @@ const HomeStackScreen = ({ navigation }) => {
           ),
         }}
       />
-
-<HomeStack.Screen
+      <HomeStack.Screen
         name="Covid19"
         component={Covid19}
         options={{
@@ -160,8 +193,13 @@ const HomeStackScreen = ({ navigation }) => {
               />
             </View>
           )
-         
+
         }}
+      />
+
+      <HomeStack.Screen
+        name="CovidVaccineCenters"
+        component={CovidVaccineCenters}
       />
 
       <HomeStack.Screen
@@ -201,7 +239,7 @@ const HomeStackScreen = ({ navigation }) => {
         name="EmergencyRequestMap"
         component={EmergencyRequestMap}
         options={({ route }) => ({
-          title: route.params.title,
+          title: 'Emergency Request Location',
 
           headerRight: () => (
             <View style={{ flexDirection: 'row', marginRight: 10 }}>
@@ -228,7 +266,7 @@ const HomeStackScreen = ({ navigation }) => {
           // userName: route.params.userName,
           headerBackTitleVisible: false,
           tabBarVisible: false,
-          title: 'Emergency Request',
+          title: 'Emergency Requests',
         })}
 
       />
@@ -353,7 +391,7 @@ const StoryStackScreen = ({ navigation }) => {
         // component={ProfileScreen}
         component={SuccessStories}
         options={{
-          title: 'Success Story',
+          title: 'Users Story',
           headerLeft: () => (
             <View style={{ marginLeft: 10 }}>
               <Icon.Button

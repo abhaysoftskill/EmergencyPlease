@@ -34,6 +34,7 @@ const EmergencyReport = ({ route, navigation }) => {
     const [showMap, setShowMap] = useState(false);
     const [confirm_message, setConfirm_message] = useState(false);
     const [region, setRegion] = useState(coordinates);
+    const [loading, setLoading] = useState(false);
     // const [coordinates, setCoordinates] = useState();
     const onRegionChange = updateRegion => {
         if (updateRegion.latitude.toFixed(6) === region.latitude.toFixed(6)
@@ -54,29 +55,35 @@ const EmergencyReport = ({ route, navigation }) => {
     }, [coordinates]);
 
     const confirmLocation = async () => {
+        setLoading(true);
         let epAppSettings = await AsyncStorage.getItem('epAppSettings');
         let AppSettings = JSON.parse(epAppSettings)
         EmergencyService.myTodayRequest()
             .then((res) => {
+                setTimeout(async () => {
+                    if (res.count <= AppSettings.settings[0].settings.daily_request_limit) {
+                        setLoading(false);
+                        setConfirm_message(true);
+                    }
+                    else {
+                        setLoading(false);
 
-                if (res.count <= AppSettings.settings[0].settings.daily_request_limit) {
-                    setConfirm_message(true);
-                }
-                else {
-                    Alert.alert('Daily Request Limit Exceeded !', 'You reached request limit, Please contact Emergency Please Team.', [
-                        {
-                            text: 'Okay',
-                            onPress: async () => {
-                                try {
-                                    navigation.navigate('Dashboard')
-                                } catch (e) {
-                                    console.log(e);
+                        Alert.alert('Daily Request Limit Exceeded !', 'You reached request limit, Please contact Emergency Please Team.', [
+                            {
+                                text: 'Okay',
+                                onPress: async () => {
+                                    try {
+                                        navigation.navigate('Dashboard')
+                                    } catch (e) {
+                                        console.log(e);
+                                    }
+
                                 }
-
                             }
-                        }
-                    ]);
-                }
+                        ]);
+                    }
+                }, 2000);
+
             }, error => {
                 return;
             })
@@ -137,7 +144,18 @@ const EmergencyReport = ({ route, navigation }) => {
                         }
                     ]}
                 />}
-
+                {loading && <View style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}>
+                    <Image
+                        source={require('../assets/loading.png')}
+                        // style={{ width: 200, height: 100 }}
+                        resizeMode="cover"
+                    />
+                    <Text>Please Wait....</Text>
+                </View>}
                 {!showMap && <ActivityIndicator animating={true} color={Colors.red800} />}
                 {confirm_message && <ConfirmRequest closeOption={() => setConfirm_message(false)} data={route.params} geometry={region} />}
 

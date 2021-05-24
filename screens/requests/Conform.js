@@ -4,6 +4,7 @@ import { Button, Paragraph, Dialog, Portal, Provider, Checkbox, TouchableRipple,
 import { useNavigation } from '@react-navigation/native';
 import LoginService from '../../services/loginServices';
 import EmergencyService from '../../services/emergencyServices';
+import { Image } from 'native-base';
 
 const ConfirmRequest = (props) => {
   const navigation = useNavigation();
@@ -21,6 +22,7 @@ const ConfirmRequest = (props) => {
   //   navigation.navigate('Map', { itemData: '' });
   // }
   const [isSelf, setIsSelf] = React.useState(true);
+  const [loading, setLoading] = useState(false);
 
   const onToggleSwitch = () => setIsSelf(!isSelf);
   const [data, setData] = React.useState({
@@ -30,6 +32,7 @@ const ConfirmRequest = (props) => {
   });
 
   const submitRequest = () => {
+    setLoading(true);
     let updateData = {
       "service_id": props.data.service_id,
       "requestDetails":{
@@ -54,24 +57,27 @@ const ConfirmRequest = (props) => {
     setVisible(false)
 
     EmergencyService.emergencyRequest(updateData).then((res) => {
-      Alert.alert('Request Success!', 'Your emergency request added, soon you will get help', [
-        {
-          text: 'Done',
-          onPress: async () => {
-            try {
-              navigation.navigate('MyRequests',
-                            {
-                                userDetails: props.data.userDetails,
-                            })
-            } catch (e) {
-                console.log(e);
-            }
-           
-        }
-        }
-      ]);
+      setTimeout(async () => {
+        Alert.alert('Request Success!', 'Your emergency request added, soon you will get help, Please check My Request to keep update.', [
+          {
+            text: 'Done',
+            onPress: async () => {
+              try {
+                navigation.navigate('MyRequests',
+                              {
+                                  userDetails: props.data.userDetails,
+                              })
+              } catch (e) {
+                  console.log(e);
+              }
+             
+          }
+          }
+        ]);
+      }, 2000);
+     
     }, error => {
-      console.error('onRejected function called: ' + error.message);
+     // console.error('onRejected function called: ' + error.message);
       Alert.alert('Request save fail!', error.message, [
         { text: 'Retry' }
       ]);
@@ -148,9 +154,11 @@ const ConfirmRequest = (props) => {
             </View>
           </Dialog.Content>
           <Dialog.Actions>
-            <Button mode={'contained'} color={'#ea3a3a'} onPress={() => { props.closeOption() }} style={{ marginRight: 30 }}>Cancel</Button>
-            <Button mode={'contained'} color={'#17841c'} onPress={() => submitRequest()} disabled={!data.landmark}>Submit</Button>
+          {loading && <Text>Please Wait .....</Text> }
+           {!loading && <Button mode={'contained'} color={'#ea3a3a'} onPress={() => { props.closeOption() }} style={{ marginRight: 30 }}>Cancel</Button>}
+           {!loading && <Button mode={'contained'} color={'#17841c'} onPress={() => submitRequest()} disabled={!data.landmark}>Submit</Button>}
           </Dialog.Actions>
+        
         </Dialog>
       </Portal>
     </Provider>

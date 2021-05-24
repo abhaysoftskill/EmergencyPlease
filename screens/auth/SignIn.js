@@ -256,12 +256,12 @@ const SignIn = ({ navigation }) => {
 
                     >
                         <LinearGradient
-                            colors={data.isValidUser && data.username != '' ? ['#FFA07A', '#FF6347'] : ['#ccc', '#ccc']}
+                            colors={data.isValidUser && data.username != '' ? ['#01A2D8', '#0582ac'] : ['#a3d9eb', '#a3d9eb']}
                             style={styles.signIn}
                         >
                             <Text style={[styles.textSign, {
                                 color: '#fff'
-                            }]}>Sign In</Text>
+                            }]}>Login In</Text>
                         </LinearGradient>
                     </TouchableOpacity>
 
@@ -416,7 +416,7 @@ const styles = StyleSheet.create({
         height: 50,
         justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: 10
+        borderRadius: 2
     },
     textSign: {
         fontSize: 18,

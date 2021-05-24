@@ -1,6 +1,6 @@
 {
   "name": "emergencyplease",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -49,6 +49,7 @@
     "react-redux": "^7.2.3",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
+    "rn-vertical-slider": "^2.0.2",
     "socket.io-client": "^4.0.1"
   },
   "devDependencies": {

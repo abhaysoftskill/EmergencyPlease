@@ -318,7 +318,7 @@ const Home = ({ navigation }) => {
                         <View style={[styles.innerContainer, styles.Card], { width: 130, height: 130, borderWidth: 1, borderRadius: 500, backgroundColor: '#fff' }}>
 
                             <View style={[styles.contentTitle], { height: '100%', alignItems: 'center', backgroundColor: '#00000000' }}>
-                                <Title style={[styles.requestCount], { fontSize: 30, paddingTop: 30, paddingBottom: 5, backgroundColor: '#00000000' }}>{RequestDataCount?.requests.nearRequest.length}</Title>
+                                <Title style={[styles.requestCount], { fontSize: 30, paddingTop: 30, paddingBottom: 5, backgroundColor: '#00000000', color:'#d80404' }}>{RequestDataCount?.requests.nearRequest.length}</Title>
                                 <Text style={{ fontSize: 13, }}>in 5 km </Text>
                                 <Title style={{ fontSize: 16, borderBottomWidth: 5, position: 'absolute', bottom: 0, width: '100%', textAlign: 'center', paddingHorizontal: 13, backgroundColor: 'green', color: '#fff' }}>Nearest</Title>
                             </View>

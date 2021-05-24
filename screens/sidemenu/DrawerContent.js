@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Image } from 'react-native';
+import { View, StyleSheet, Image, Alert } from 'react-native';
 import {
     useTheme,
     Avatar,
@@ -23,30 +23,51 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-export function DrawerContent(props) {
+import EmergencyService from '../../services/emergencyServices';
+import { checkVersion } from 'react-native-check-version';
+export function DrawerContent({ props, navigation }) {
 
     const paperTheme = useTheme();
-    const [userDetails, setUserDetails] = useState([])
+    const [userDetails, setUserDetails] = useState({})
     const { signOut, toggleTheme } = React.useContext(AuthContext);
+    const [services, setServices] = useState();
+    const [versionNo, setVersionNo] = useState('');
+
     useEffect(() => {
         setTimeout(async () => {
             // setIsLoading(false);
-
+console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
             try {
                 let userDetailsData = await AsyncStorage.getItem('userDetails');
                 setUserDetails(JSON.parse(userDetailsData));
-
+                console.log(JSON.parse(userDetailsData));
+               
             } catch (e) {
                 console.log(e);
             }
 
         }, 1000);
     }, []);
+    useEffect(() => {
+        EmergencyService.serviceTypes().then((res) => {
+            setServices(res.service_type)
+        }, error => {
+            return;
+        })
+        async function fetchVerson() {
+            const version = await checkVersion();
+            setVersionNo(version)
+            if (version.needsUpdate) {
+                console.log(`App has a ${version.updateType} update pending.`);
+            }
+            console.log(version)
+        }
+        fetchVerson()
+    }, [])
     return (
         <View style={{ flex: 1 }}>
-            <DrawerContentScrollView {...props}>
-                <View style={styles.drawerContent}>
-                    <View style={styles.userInfoSection}>
+            <Drawer.Section>
+            <View style={styles.userInfoSection}>
                         <View style={{ flexDirection: 'row', marginTop: 15 }}>
                             <Avatar.Image
                                 backgroundColor={'#fff'}
@@ -55,64 +76,151 @@ export function DrawerContent(props) {
                             />
                             <View style={{ marginLeft: 15, flexDirection: 'column' }}>
                                 <Title style={styles.title}>{userDetails.firstname + " " + userDetails.lastname}</Title>
-                                <Caption style={styles.caption}>({userDetails.phonenumber})</Caption>
-                                <Caption style={[userDetails.phonenumber ? styles.verifiedCaption : styles.notVerifiedCaption]}>({userDetails.phonenumber ? 'Verified' : 'Not Verified'})</Caption>
+                                <Caption style={styles.caption}>({userDetails.phonenumber}) {' '}
+                                <Text style={[userDetails.mobileverify ? styles.verifiedCaption : styles.notVerifiedCaption]}>
+                                    ({userDetails.mobileverify ? 'Verified' : 'Not Verified'})</Text></Caption>
+                                   
                             </View>
+                        </View>
+                        <View>
+                        <Caption style={{ fontSize: 14 }}>{userDetails.email}<Text style={[userDetails.email_verified ? styles.verifiedCaption : styles.notVerifiedCaption]}>
+                               {' '} ({userDetails.email_verified ? 'Verified' : 'Not Verified'})</Text></Caption>
                         </View>
 
                     </View>
-
-                    <Drawer.Section style={styles.drawerSection}>
-                        <View style={{ marginLeft: 15, flexDirection: 'column' }}>
-                            <Title style={{ fontSize: 14 }}>{userDetails.email}</Title>
-                            <Caption style={[userDetails.emailverify ? styles.verifiedCaption : styles.notVerifiedCaption]}>({userDetails.emailverify ? 'Verified' : 'Not Verified'})</Caption>
-                        </View>
-                    </Drawer.Section>
+            </Drawer.Section>
+            <DrawerContentScrollView {...props}>
+                <View style={styles.drawerContent}>
                     <Drawer.Section title="Emergency Contacts">
-
+{/* <Text>{JSON.stringify(userDetails.familyContacts)}</Text> */}
                         <View style={[styles.categoryContainer, { marginTop: 10 }]}>
-                            {/* {userDetails.immidiateContact.map(data => { */}
-                            <TouchableOpacity style={styles.categoryBtn} onPress={() => { }}>
-                                <View style={styles.categoryIcon2}>
-                                    <Fontisto name="holiday-village" size={35} color="#FF6347" />
-                                    <View style={[styles.friendsCount, { backgroundColor: '#FF6347' }]}>
-                                        <Text style={{ color: "#fff" }}>0</Text>
+                            <TouchableOpacity style={styles.categoryBtn} >
+                           
+                                <View style={[styles.categoryIcon2, { borderColor: `${(userDetails?.familyContacts?.length > 0 ? '#FF6347' : '#fdeae7')}`, backgroundColor: `${(userDetails?.familyContacts?.length > 0 ? '#d9f1df' : '#e5e5e5')}` }]}>
+                                    <Fontisto name="holiday-village" size={35} color={`${(userDetails?.familyContacts?.length > 0 ? '#FF6347' : '#8d8c8c')}`} />
+                                    <View style={[styles.friendsCount, { backgroundColor: `${(userDetails?.familyContacts?.length > 0 ? '#FF6347' : '#ccc')}` }]}>
+                                        <Text style={{ color: "#fff" }}>{userDetails?.familyContacts?.length}</Text>
                                     </View>
                                 </View>
                                 <Text style={[styles.categoryBtnTxt, { color: "#FF6347" }]}>Family</Text>
                             </TouchableOpacity>
-                            {/* })} */}
-                            <TouchableOpacity style={styles.categoryBtn} onPress={() => { }}>
-                                <View style={[styles.categoryIcon2, { borderColor: '#1a8434', backgroundColor: '#d9f1df' }]}>
-                                    <Ionicons name="md-people" size={35} color="#1a8434" />
-                                    <View style={[styles.friendsCount, { backgroundColor: '#FF6347' }]}>
-                                        <Text style={{ color: "#fff" }}>0</Text>
+                            <TouchableOpacity style={styles.categoryBtn} >
+                                <View style={[styles.categoryIcon2, {
+                                    borderColor: `${(userDetails?.friendsContacts?.length > 0 ? '#1a8434' : '#ccc')}`,
+                                    backgroundColor: `${(userDetails?.friendsContacts?.length > 0 ? '#d9f1df' : '#e5e5e5')}`
+                                }]}>
+                                    <Ionicons name="md-people" size={35} color={`${(userDetails?.friendsContacts?.length > 0 ? '#1a8434' : '#8d8c8c')}`} />
+                                    <View style={[styles.friendsCount, { backgroundColor: `${(userDetails?.friendsContacts?.length > 0 ? '#FF6347' : '#ccc')}` }]}>
+                                        <Text style={{ color: "#fff" }}>{userDetails?.friendsContacts?.length}</Text>
                                     </View>
                                 </View>
                                 <Text style={[styles.categoryBtnTxt, { color: "#1a8434" }]}>Friend</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={styles.categoryBtn} onPress={() => { }}>
-                                <View style={[styles.categoryIcon2, { borderColor: '#d21036', backgroundColor: '#f5d4db' }]}>
-                                    <Fontisto name="user-secret" size={35} color="#d21036" />
-                                    <View style={styles.friendsCount}>
-                                        <Text style={{ color: "#fff" }}>0</Text>
+                            <TouchableOpacity style={styles.categoryBtn} >
+                                <View style={[styles.categoryIcon2, {
+                                    borderColor: `${(userDetails?.officeContacts?.length > 0 ? '#d21036' : '#ccc')}`,
+                                    backgroundColor: `${(userDetails?.officeContacts?.length > 0 ? '#f5d4db' : '#e5e5e5')}`
+                                }]}>
+                                    <Fontisto name="user-secret" size={35} color={`${(userDetails?.officeContacts?.length > 0 ? '#d21036' : '#8d8c8c')}`} />
+                                    <View style={[styles.friendsCount, { backgroundColor: `${(userDetails?.officeContacts?.length > 0 ? '#FF6347' : '#ccc')}` }]}>
+                                        <Text style={{ color: "#fff" }}>{userDetails?.officeContacts?.length}</Text>
                                     </View>
                                 </View>
                                 <Text style={[styles.categoryBtnTxt, { color: "#d21036" }]}>Office</Text>
                             </TouchableOpacity>
                         </View>
 
-                        <View style={styles.banner}>
+
+                        {/* <View style={styles.banner}>
                             <Image
                                 source={require('../../assets/banners/banner1.png')}
                                 resizeMode="cover"
                                 style={{ width: '100%', height: '100%' }}
                             />
+                        </View> */}
+                    </Drawer.Section>
+                    <Drawer.Section title="Rewards & Badges">
+                        <Text style={{ fontSize: 50, textAlign: 'center', color: '#DAA520', borderBottomWidth: 3, borderBottomColor: '#DAA520', borderTopWidth: 3, borderTopColor: '#DAA520' }}>2000 <Text style={{ fontSize: 30 }}>₹</Text></Text>
+                        <View style={[styles.badgeContainer]}>
+                            <View>
+                                <Image
+                                    source={require('../../assets/badges/badge1.png')}
+                                    resizeMode="contain"
+                                    style={{ height: 80, width: 75 }}
+
+                                />
+                                <View style={styles.badgeCount}>
+                                    <Text style={{ color: "#fff" }}>{1}</Text>
+                                </View>
+                            </View>
+                            <View>
+                                <Image
+                                    source={require('../../assets/badges/badge2.png')}
+                                    resizeMode="contain"
+                                    style={{ height: 80, width: 75 }}
+
+                                />
+                                <View style={styles.badgeCount}>
+                                    <Text style={{ color: "#fff" }}>{1}</Text>
+                                </View>
+                            </View>
+                            <View>
+                                <Image
+                                    source={require('../../assets/badges/badge3.png')}
+                                    resizeMode="contain"
+                                    style={{ height: 80, width: 75 }}
+
+                                />
+                                <View style={styles.badgeCount}>
+                                    <Text style={{ color: "#fff" }}>{1}</Text>
+                                </View>
+                            </View>
+
+                        </View>
+
+
+                        {/* <View style={styles.banner}>
+    <Image
+        source={require('../../assets/banners/banner1.png')}
+        resizeMode="cover"
+        style={{ width: '100%', height: '100%' }}
+    />
+</View> */}
+                    </Drawer.Section>
+                    <Drawer.Section title="Services">
+                        <View style={{ padding: 10 }}>
+                            {services && services.map((service, index) => {
+                                return (
+                                    <View key={index}>
+                                        <TouchableOpacity onPress={() => {
+                                            service.service_type == 'covid_19' ? navigation.navigate('Covid19') : navigation.navigate('Dashboard')
+                                        }}>
+                                            <View style={styles.card} >
+                                                <View style={styles.cardImgWrapper}>
+                                                    <Image
+                                                        source={{ uri: `https://emergencyplease.com/api/src/uploads/${service.service_type}.jpg` }}
+                                                        // source={require('../assets/banners/general_emergency.jpg')}
+                                                        resizeMode="cover"
+                                                        style={styles.cardImg}
+                                                    />
+                                                    <View style={styles.cardInfo}>
+                                                        <Text style={styles.cardTitle}>{service.service_type_alias}</Text>
+                                                    </View>
+                                                </View>
+
+                                            </View>
+
+                                        </TouchableOpacity>
+                                    </View>
+                                )
+                            }
+                            )}
                         </View>
                     </Drawer.Section>
                 </View>
 
             </DrawerContentScrollView>
+
             {/* <Drawer.Section title="Preferences">
                 <TouchableRipple onPress={() => { toggleTheme() }}>
                     <View style={styles.preference}>
@@ -123,6 +231,7 @@ export function DrawerContent(props) {
                     </View>
                 </TouchableRipple>
             </Drawer.Section> */}
+
             <Drawer.Section style={styles.bottomDrawerSection}>
                 <DrawerItem
                     icon={({ color, size }) => (
@@ -133,8 +242,31 @@ export function DrawerContent(props) {
                         />
                     )}
                     label="Sign Out"
-                    onPress={() => { signOut() }}
+                    onPress={() => { 
+                        Alert.alert('Sign Out!', 'Do you want to Sign Out?', [
+                            {
+                                text: 'Yes',
+                                onPress: async () => {
+                                    try {
+                                       signOut() 
+                                    } catch (e) {
+                                        console.log(e);
+                                    }
+    
+                                }
+                            },
+                            { text: 'Cancel', onPress: () => { return } },
+                        ]);
+                    }}
                 />
+            </Drawer.Section>
+            <Drawer.Section >
+                <View style={styles.preference}>
+                    <Text>Version No : -</Text>
+                </View>
+                <View style={styles.preference}>
+                    <Text>Last Visit : -</Text>
+                </View>
             </Drawer.Section>
         </View>
     );
@@ -157,6 +289,16 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         marginTop: 20,
         marginBottom: 10,
+    },
+    badgeContainer: {
+        // flex:1,
+        flexDirection: 'row',
+        alignSelf: 'center',
+        alignContent: 'center',
+        marginBottom: 10,
+        padding: 10,
+        width: '95%',
+
     },
     categoryBtn: {
         flex: 1,
@@ -245,7 +387,57 @@ const styles = StyleSheet.create({
     preference: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingVertical: 12,
+        paddingVertical: 2,
         paddingHorizontal: 16,
+    },
+
+
+    //Service Card
+    card: {
+        height: 100,
+        // marginVertical: 10,
+        flexDirection: 'column',
+        shadowColor: '#999',
+        shadowOffset: { width: 0, height: 1 },
+        paddingVertical: 5
+    },
+    cardImgWrapper: {
+        // borderBottomWidth:20,
+        flex: 1,
+    },
+    cardImg: {
+        height: '100%',
+        width: '100%',
+        alignSelf: 'center',
+        // borderRadius: 8,
+        // borderBottomRightRadius: 0,
+        // borderTopRightRadius: 0,
+        borderBottomRightRadius: 0,
+        borderBottomLeftRadius: 0,
+    },
+    cardInfo: {
+        position: 'absolute',
+        bottom: 10,
+        right: 0,
+        flex: 2,
+        padding: 10,
+        borderColor: '#ccc',
+        backgroundColor: 'rgba(255,255,255,0.7)',
+
+
+    },
+    cardTitle: {
+        fontWeight: 'bold',
+        fontSize: 20,
+        color: '#f60101'
+    },
+    cardDetails: {
+        fontSize: 12,
+        color: '#444',
+    },
+    badgeCount: {
+        color: "#d21036", position: 'absolute', top: 5, right: 6,
+        backgroundColor: '#d21036', width: 20, height: 20, borderRadius: 50,
+        alignItems: "center", alignContent: "center", justifyContent: 'center'
     },
 });

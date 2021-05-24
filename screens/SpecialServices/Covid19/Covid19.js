@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Image, View, Text, Button, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { Image, View, Text, Button, FlatList, StyleSheet, TouchableOpacity, Keyboard } from 'react-native';
 import DropDown from 'react-native-paper-dropdown';
 import { Provider, TextInput } from 'react-native-paper';
 import { useTheme } from '@react-navigation/native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 // import statesData from '../../../model/states';
 import EmergencyService from '../../../services/emergencyServices';
+import LinearGradient from 'react-native-linear-gradient';
 const Covid19 = ({ route, navigation }) => {
   const [showStatesList, setShowStatesList] = useState(false);
   const [showDistrictList, setShowDistrictList] = useState(false);
@@ -13,7 +14,8 @@ const Covid19 = ({ route, navigation }) => {
   const [districtList, setDistrictList] = useState([]);
   const [hospitalList, setHospitalList] = useState([]);
   const [state, setState] = useState('');
-  const [disableState, setDisableState] = useState(false);
+  const [pincode, setPincode] = useState('');
+  const [disableSearch, setDisableSearch] = useState(true);
   const [district, setDistrict] = useState('');
   const theme = useTheme();
   const { colors } = useTheme();
@@ -44,9 +46,11 @@ const Covid19 = ({ route, navigation }) => {
   useEffect(() => {
     const districtListTemp = [];
     if (state != '') {
-      EmergencyService.getDistrictByState('60a627bb44955a3e18625f39').then((res) => {
+      console.log(state)
+
+      EmergencyService.getDistrictByState(state).then((res) => {
         res.districts.map((e) => districtListTemp.push({ label: e.district_name, value: e._id }));
-        console.log(districtListTemp)
+        // console.log(districtListTemp)
         setDistrictList(districtListTemp)
       }, error => {
         return;
@@ -56,27 +60,42 @@ const Covid19 = ({ route, navigation }) => {
 
   const pincodeInputChange = (val) => {
     if (val.trim().length == 6) {
-      EmergencyService.getHospitalByPincode('441906').then((res) => {
-        // res.districts.map((e) => districtListTemp.push({ label: e.district_name, value: e._id }));
-        console.log(res)
-        setHospitalList(res)
-      }, error => {
-        return;
-      })
+      Keyboard.dismiss()
+      setPincode(val);
+      setDisableSearch(false)
+
+      // EmergencyService.getHospitalByPincode('441906').then((res) => {
+      //   // res.districts.map((e) => districtListTemp.push({ label: e.district_name, value: e._id }));
+      //   console.log(res)
+      //   setHospitalList(res)
+      // }, error => {
+      //   return;
+      // })
+    }
+    else {
+      setPincode(val);
+      setDisableSearch(true)
     }
 
   }
-  const handleValidUser = (val) => {
-    console.log(val)
-    if (val.trim().length == 6) {
-      EmergencyService.getHospitalByPincode('441906').then((res) => {
-        // res.districts.map((e) => districtListTemp.push({ label: e.district_name, value: e._id }));
-        console.log(districtListTemp)
-        // setDistrictList(districtListTemp)
+  const getVaccineCenters = () => {
+    if (pincode.trim().length == 6) {
+      EmergencyService.getHospitalByPincode(pincode).then((res) => {
+        setHospitalList(res)
+        navigation.navigate('CovidVaccineCenters',{ hospitalList: res.hospitals })
       }, error => {
         return;
       })
     }
+  }
+
+  const getVaccineCentersByDistrict = () => {
+      EmergencyService.getHospitalByDistrict(district).then((res) => {
+        setHospitalList(res)
+        navigation.navigate('CovidVaccineCenters',{ hospitalList: res.hospitals })
+      }, error => {
+        return;
+      })
   }
   return (
     <>
@@ -100,7 +119,7 @@ const Covid19 = ({ route, navigation }) => {
           />}
         </View>
         {/* <Text>{JSON.stringify(districtList)}</Text> */}
-        <View style={{ marginBottom: 50 }}>
+        <View style={{ marginBottom: 20 }}>
           {districtList.length > 0 && <DropDown
             label={'District'}
             placeholder={'Select District'}
@@ -118,6 +137,24 @@ const Covid19 = ({ route, navigation }) => {
             theme={theme}
           />}
         </View>
+        <View style={styles.districtButton}>
+          <TouchableOpacity
+            style={styles.signIn}
+            onPress={() => { getVaccineCentersByDistrict() }}
+            disabled={district == ''}
+
+          >
+            <LinearGradient
+              colors={district != '' ? ['#01A2D8', '#0582ac'] : ['#a3d9eb', '#a3d9eb']}
+              style={styles.signIn}
+            >
+              <Text style={[styles.textSign, {
+                color: '#fff'
+              }]}>Search District Vaccination Center</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        </View>
+        <Text style={{ color: 'red', fontSize: 20, textAlign: 'center' }}>---- OR ----</Text>
         <Text style={{ color: 'red', fontSize: 20, textAlign: 'center' }}>You can search by Pincode</Text>
 
         {/* {data.check_textInputChange ?
@@ -135,6 +172,7 @@ const Covid19 = ({ route, navigation }) => {
         <View style={styles.action}>
 
           <TextInput
+            placeholder="Pincode"
             placeholderTextColor="#666666"
             keyboardType={'number-pad'}
             style={[styles.textInput, {
@@ -144,13 +182,28 @@ const Covid19 = ({ route, navigation }) => {
             maxLength={6}
             autoCapitalize="none"
             onChangeText={(val) => pincodeInputChange(val)}
-            // onEndEditing={(e) => handleValidUser(e.nativeEvent.text)}
+          onEndEditing={(e) => Keyboard.dismiss()}
           />
-<Text>{JSON.stringify(hospitalList)}</Text>
+
 
         </View>
+        <View style={styles.button}>
+          <TouchableOpacity
+            style={styles.signIn}
+            onPress={() => { getVaccineCenters() }}
+            disabled={disableSearch}
 
-
+          >
+            <LinearGradient
+              colors={!disableSearch ? ['#01A2D8', '#0582ac'] : ['#a3d9eb', '#a3d9eb']}
+              style={styles.signIn}
+            >
+              <Text style={[styles.textSign, {
+                color: '#fff'
+              }]}>Search Near Vaccination Center</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        </View>
       </View>
     </>
   );
@@ -190,5 +243,27 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     color: '#05375a',
   },
-
+  button: {
+    alignItems: 'center',
+    marginTop: 20
+  },
+  districtButton: {
+    alignItems: 'center',
+    marginBottom: 50
+  },
+  signIn: {
+    width: '100%',
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 5,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
+    borderBottomWidth: 5,
+    borderBottomColor: '#0d6582'
+  },
+  textSign: {
+    fontSize: 18,
+    fontWeight: 'bold'
+  }
 });
