@@ -134,6 +134,7 @@ const Home = ({ navigation }) => {
         let updateData = {
             email: emailID,
         }
+
         LoginService.resendEmailVerifyToken(updateData).then((res) => {
             setVerifyLoading(false);
             Alert.alert('Re-Send Email Verification code!', `Code send to ${emailID}, please check and verify`, [
@@ -143,7 +144,7 @@ const Home = ({ navigation }) => {
             ]);
         }, error => {
             setVerifyLoading(false)
-            Alert.alert('Request save fail!', error.message, [
+            Alert.alert('Token generated  fail!', error.message, [
                 { text: 'Retry' }
             ]);
             return;
@@ -154,6 +155,7 @@ const Home = ({ navigation }) => {
             email: emailID,
             verification_token: verifyCode
         }
+
         LoginService.emailVerify(updateData).then((res) => {
             setVerifyLoading(false);
             setEmailVerifyModalVisible(false);

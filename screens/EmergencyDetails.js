@@ -7,7 +7,8 @@ import {
     StatusBar,
     TouchableOpacity,
     ScrollView,
-    Button
+    Button,
+    Alert
 } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
@@ -27,6 +28,7 @@ import Geolocation from '@react-native-community/geolocation';
 import { check, PERMISSIONS } from 'react-native-permissions';
 import { PermissionsAndroid, Platform } from 'react-native';
 import Moment from 'moment'; // Import momentjs
+import EmergencyService from '../services/emergencyServices';
 const googleApiKey = 'AIzaSyCJPqnfIgpcbwydCoTmIIjyTpfNjX9AgWk';
 
 const EmergencyDetails = ({ route, navigation }) => {
@@ -37,6 +39,7 @@ const EmergencyDetails = ({ route, navigation }) => {
     const theme = useTheme();
     let instance, defaultSelectedApp, defaultLaunchMode, launchModes;
     const [readyToHelp, setReadyToHelp] = useState(false)
+    const [loading, setLoading] = useState(false)
 
     const navigateLocation = () => {
         if (Platform.OS === "android") {
@@ -58,7 +61,58 @@ const EmergencyDetails = ({ route, navigation }) => {
         }
     }
 
+    const readyToHelpRequest = () => {
+        setLoading(true)
+        const requestId = route.params.request_id
+        EmergencyService.readyToHelp(requestId).then((res) => {
+            setTimeout(async () => {
+                setLoading(false)
 
+                Alert.alert('Appreciation!', 'We appreciate you are the nearest to the requester, and you happy to help, Once you done with HELP you with get Reward Point & Worrior Badge. ', [
+                    {
+                        text: 'Navigate to map',
+                        onPress: async () => {
+                            try {
+                                setChangeUserCount(false)
+                                return;
+                            } catch (e) {
+                                console.log(e);
+                            }
+
+                        }
+                    },
+                    {
+                        text: 'Close',
+                        onPress: async () => {
+                            try {
+                                return;
+                            } catch (e) {
+                                console.log(e);
+                            }
+
+                        }
+                    }
+
+                ]);
+            }, 2000);
+        }, error => {
+            setLoading(false)
+            Alert.alert('Error!', error.message, [
+                {
+                    text: 'OK',
+                    onPress: async () => {
+                        try {
+                            return;
+                        } catch (e) {
+                            console.log(e);
+                        }
+
+                    }
+                }
+
+            ]);
+        })
+    }
     return (
         <ScrollView style={styles.container}>
             <StatusBar barStyle={theme.dark ? 'light-content' : 'dark-content'} />
@@ -72,10 +126,11 @@ const EmergencyDetails = ({ route, navigation }) => {
                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'flex-start', padding: 10 }}>
                     <View style={{ flex: 1 }}>
                         <View>
-                            <Text style={styles.userName}>{userDetails.firstname} {userDetails.lastname}</Text>
+                            {userDetails.userType == 'premium' && <Text style={styles.userName}>{userDetails.firstname} {userDetails.lastname}</Text>}
+                            <Text style={styles.userName}>[{userDetails.username}]</Text>
                         </View>
                     </View>
-         
+
                 </View>
             </View>
 
@@ -107,7 +162,23 @@ const EmergencyDetails = ({ route, navigation }) => {
                     <Text style={styles.categoryBtnTxt}>Gender</Text>
                 </TouchableOpacity>
             </View>
-
+            {loading && <View style={{
+                position: 'absolute',
+                width: '100%',
+                height: '100%',
+                backgroundColor: 'rgba(255,255,255,0.9)',
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+                zIndex: 999
+            }}>
+                <Image
+                    source={require('../assets/loading.png')}
+                    // style={{ width: 200, height: 100 }}
+                    resizeMode="cover"
+                />
+                <Text>Loading....</Text>
+            </View>}
             <View style={styles.cardsWrapper}>
                 <Text
                     style={{
@@ -122,7 +193,7 @@ const EmergencyDetails = ({ route, navigation }) => {
             <View style={[styles.categoryContainer, { marginTop: 10 }]}>
                 {/* {userDetails.immidiateContact.map(data => { */}
                 <TouchableOpacity style={styles.categoryBtn} onPress={() => { }}>
-                    <View style={[styles.categoryIcon2,{borderColor: `${(userDetails.familyContacts.length > 0 ? '#FF6347' : '#fdeae7')}`, backgroundColor: `${(userDetails.familyContacts.length > 0 ? '#d9f1df' : '#e5e5e5')}`}]}>
+                    <View style={[styles.categoryIcon2, { borderColor: `${(userDetails.familyContacts.length > 0 ? '#FF6347' : '#fdeae7')}`, backgroundColor: `${(userDetails.familyContacts.length > 0 ? '#d9f1df' : '#e5e5e5')}` }]}>
                         <Fontisto name="holiday-village" size={35} color={`${(userDetails.familyContacts.length > 0 ? '#FF6347' : '#8d8c8c')}`} />
                         <View style={[styles.friendsCount, { backgroundColor: `${(userDetails.familyContacts.length > 0 ? '#FF6347' : '#ccc')}` }]}>
                             <Text style={{ color: "#fff" }}>{userDetails.familyContacts.length}</Text>
@@ -132,9 +203,11 @@ const EmergencyDetails = ({ route, navigation }) => {
                 </TouchableOpacity>
                 {/* })} */}
                 <TouchableOpacity style={styles.categoryBtn} onPress={() => { }}>
-                    <View style={[styles.categoryIcon2, { borderColor: `${(userDetails.familyContacts.length > 0 ? '#1a8434' : '#ccc')}`, 
-                    backgroundColor: `${(userDetails.familyContacts.length > 0 ? '#d9f1df' : '#e5e5e5')}` }]}>
-                        <Ionicons name="md-people" size={35}  color={`${(userDetails.familyContacts.length > 0 ? '#1a8434' : '#8d8c8c')}`} />
+                    <View style={[styles.categoryIcon2, {
+                        borderColor: `${(userDetails.familyContacts.length > 0 ? '#1a8434' : '#ccc')}`,
+                        backgroundColor: `${(userDetails.familyContacts.length > 0 ? '#d9f1df' : '#e5e5e5')}`
+                    }]}>
+                        <Ionicons name="md-people" size={35} color={`${(userDetails.familyContacts.length > 0 ? '#1a8434' : '#8d8c8c')}`} />
                         <View style={[styles.friendsCount, { backgroundColor: `${(userDetails.familyContacts.length > 0 ? '#FF6347' : '#ccc')}` }]}>
                             <Text style={{ color: "#fff" }}>{userDetails.friendsContacts.length}</Text>
                         </View>
@@ -142,10 +215,12 @@ const EmergencyDetails = ({ route, navigation }) => {
                     <Text style={[styles.categoryBtnTxt, { color: "#1a8434" }]}>Friend</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.categoryBtn} onPress={() => { }}>
-                    <View style={[styles.categoryIcon2, { borderColor: `${(userDetails.familyContacts.length > 0 ? '#d21036' : '#ccc')}`, 
-                    backgroundColor: `${(userDetails.familyContacts.length > 0 ? '#f5d4db' : '#e5e5e5')}` }]}>
-                        <Fontisto name="user-secret" size={35}  color={`${(userDetails.familyContacts.length > 0 ? '#d21036' : '#8d8c8c')}`}/>
-                        <View style={[styles.friendsCount,{ backgroundColor: `${(userDetails.familyContacts.length > 0 ? '#FF6347' : '#ccc')}` }]}>
+                    <View style={[styles.categoryIcon2, {
+                        borderColor: `${(userDetails.familyContacts.length > 0 ? '#d21036' : '#ccc')}`,
+                        backgroundColor: `${(userDetails.familyContacts.length > 0 ? '#f5d4db' : '#e5e5e5')}`
+                    }]}>
+                        <Fontisto name="user-secret" size={35} color={`${(userDetails.familyContacts.length > 0 ? '#d21036' : '#8d8c8c')}`} />
+                        <View style={[styles.friendsCount, { backgroundColor: `${(userDetails.familyContacts.length > 0 ? '#FF6347' : '#ccc')}` }]}>
                             <Text style={{ color: "#fff" }}>{userDetails.officeContacts.length}</Text>
                         </View>
                     </View>
@@ -157,13 +232,13 @@ const EmergencyDetails = ({ route, navigation }) => {
             <View style={styles.button}>
                 {!readyToHelp && <Text style={[{
                     paddingHorizontal: 15, textAlign: 'center',
-                    color: '#d21036', marginBottom:10
+                    color: '#d21036', marginBottom: 10
                 }]}>Once you Ready to help, You will get navigate option to search user fast using good map.
                 </Text>}
 
                 {readyToHelp && <Text style={[{
                     paddingHorizontal: 15, textAlign: 'center',
-                    color: '#1a8434', marginBottom:10
+                    color: '#1a8434', marginBottom: 10
                 }]}>We are appreciated for your help, you can connect with other nearest emergency warrior
                 </Text>}
 
@@ -180,13 +255,13 @@ const EmergencyDetails = ({ route, navigation }) => {
                         <Text style={[styles.textSign, {
                             color: '#fff'
                         }]}>
-                             Navigate to Google Map</Text>
+                            Navigate to Google Map</Text>
                     </LinearGradient>
                 </TouchableOpacity>
                 }
                 {!readyToHelp && <TouchableOpacity
                     style={styles.signIn}
-                    onPress={() => { setReadyToHelp(true) }}
+                    onPress={() => { setReadyToHelp(true), readyToHelpRequest() }}
                 >
                     <LinearGradient
                         colors={['#1a8434', '#1a8434']}
@@ -197,7 +272,7 @@ const EmergencyDetails = ({ route, navigation }) => {
                         <Text style={[styles.textSign, {
                             color: '#fff'
                         }]}>
-                             <Text>Ready to Help</Text></Text>
+                            <Text>Ready to Help</Text></Text>
                     </LinearGradient>
                 </TouchableOpacity>
                 }
@@ -256,6 +331,8 @@ const styles = StyleSheet.create({
         fontSize: 20,
         color: '#444',
         fontWeight: 'bold',
+        letterSpacing: 3
+
     },
     container: {
         flex: 1,
@@ -323,7 +400,7 @@ const styles = StyleSheet.create({
     },
     text: {
         fontSize: 19,
-        textTransform:'capitalize'
+        textTransform: 'capitalize'
     },
     categoryIcon2: {
         borderWidth: 1,

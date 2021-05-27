@@ -24,6 +24,8 @@ import LoginService from '../../services/loginServices';
 const SignInScreen = ({ route, navigation }) => {
     const [data, setData] = useState({
         username: route.params.userDetails.phonenumber || route.params.userDetails.email,
+        phonenumber: route.params.userDetails.phonenumber,
+        email: route.params.userDetails.email,
         password: '',
         check_textInputChange: false,
         secureTextEntry: true,
@@ -98,10 +100,6 @@ const SignInScreen = ({ route, navigation }) => {
                 "email": data.username,
                 "password": data.password
             }).then((res) => {
-                // console.log({userDetails: res[0],
-                //     userToken: res[1],})
-                // window.location.href = '/org/admin/bases';
-
                 signIn({
                     userDetails: res.user,
                     userToken: res.token

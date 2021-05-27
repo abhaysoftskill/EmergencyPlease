@@ -17,7 +17,6 @@ export const EmergencyCall = ({ route, navigation }) => {
     useEffect(() => {
         {
           region && EmergencyService.nearservices(region.longitude, region.latitude).then((res) => {
-          console.log(res)
             setServiceData(res)
           }, error => {
             console.error('onRejected function called: ' + error.message);
@@ -29,6 +28,7 @@ export const EmergencyCall = ({ route, navigation }) => {
         setServiceName(service_name);
     }
     const renderItem = ({ item }) => {
+        
         return (
             <TouchableOpacity onPress={() => navigation.navigate('EmergencyRequestMap', {serviceData:item})}
             disabled={item.request.length > 0 ? false : true}

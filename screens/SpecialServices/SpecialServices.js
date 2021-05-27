@@ -19,9 +19,8 @@ const SpecialServices = ({ route, navigation }) => {
 
   }
   const renderItem = (itemData) => {
-    console.log(itemData.item.service_name)
     return (
-     itemData.item.service_name != 'accidenta'  && <TouchableOpacity onPress={() => { navigation.navigate('Covid19')}}>
+     itemData.item.service_name != 'accident'  && <TouchableOpacity onPress={() => { navigation.navigate('Covid19')}}>
       <View style={styles.card}>
         <View style={styles.cardImgWrapper}>
           <Image

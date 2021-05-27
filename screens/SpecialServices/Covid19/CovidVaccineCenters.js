@@ -12,7 +12,8 @@ import {
     Platform,
     Button,
     PermissionsAndroid,
-    Modal
+    Modal,
+    Alert
 } from "react-native";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import Moment from 'moment'; // Import momentjs
@@ -28,7 +29,7 @@ import modalStyles from '../../../model/covidCenterModal';
 import { Icon } from 'native-base';
 import LaunchNavigator from 'react-native-launch-navigator';
 const googleApiKey = 'AIzaSyCJPqnfIgpcbwydCoTmIIjyTpfNjX9AgWk';
-
+import EmergencyService from '../../../services/emergencyServices';
 const { width, height } = Dimensions.get("window");
 const CARD_HEIGHT = 220;
 const CARD_WIDTH = width * 0.8;
@@ -50,30 +51,15 @@ const CovidVaccineCenters = ({ route, navigation }) => {
     const [centerDetails, setCenterDetails] = useState('')
     const [activeUser, setActiveUser] = useState(0)
     const [changeUserCount, setChangeUserCount] = useState(false)
+    const [hospialDetails, sethospialDetails] = useState({});
+    const [updateLoading, setUpdateLoading] = useState(false)
 
     useEffect(() => {
         {
-            // region && EmergencyService.nearestEmergencyRequest(region.longitude, region.latitude, route.params.serviceName).then((res) => {
-            //   setShowMap(true);
-            //   setRequestData(res)
-            // }, error => {
-            //   console.error('onRejected function called: ' + error.message);
-            //   return;
-            // })
-            // if (coordinates?.length == 0) {
-            //     stateDispatch(readCurrentLocation())
-            // }
-            // else if (coordinates) {
-            //     setRegion({
-            //         latitude: coordinates.latitude,
-            //         latitudeDelta: latitudeDelta,
-            //         longitude: coordinates.longitude,
-            //         longitudeDelta: longitudeDelta
-            //     })
-            //     // setRegion(coordinates)
-            //     setShowMap(true)
-            // }
             region && setShowMap(true);
+            return () => {
+                setShowMap(false)
+            };
         }
     }, [region, coordinates]);
 
@@ -143,8 +129,6 @@ const CovidVaccineCenters = ({ route, navigation }) => {
     const _map = React.useRef(null);
     const _scrollView = React.useRef(null);
     const navigateLocation = (locCordinates) => {
-        console.log(coordinates)
-        console.log(locCordinates)
         if (Platform.OS === "android") {
             LaunchNavigator.setGoogleApiKey(googleApiKey);
             defaultSelectedApp = LaunchNavigator.APP.GOOGLE_MAPS;
@@ -162,10 +146,52 @@ const CovidVaccineCenters = ({ route, navigation }) => {
                 .catch((err) => console.error("Error launching navigator: " + err));
         }
     }
+    useEffect(() => {
+        centerDetails !== '' && EmergencyService.getHospitalVisit(centerDetails?._id).then((res) => {
+            sethospialDetails(res.hospital)
+            setActiveUser(res.hospital[0]?.visits[0].people_count)
+        }, error => {
+            return;
+        })
+   
 
-    const submitCrowd =(centerDetails) => {
-        console.log(centerDetails)
-        console.log(activeUser)
+    }, [centerDetails])
+    const submitCrowd = (centerDetails) => {
+        setUpdateLoading(true)
+        let updateData = {
+            "hospital_id": centerDetails?._id,
+            "people_count": activeUser,
+        }
+        EmergencyService.addhospitalvisit(updateData).then((res) => {
+
+            setTimeout(async () => {
+                setUpdateLoading(false)
+
+                Alert.alert('Count Update Success!', 'Thanks for update, It will help to other people', [
+                    {
+                        text: 'Done',
+                        onPress: async () => {
+                            try {
+                                setChangeUserCount(false)
+                                return;
+                            } catch (e) {
+                                console.log(e);
+                            }
+
+                        }
+                    }
+                ]);
+            }, 2000);
+
+        }, error => {
+            setUpdateLoading(false)
+
+            // console.error('onRejected function called: ' + error.message);
+            Alert.alert('Count Update fail!', error.message, [
+                { text: 'Retry' }
+            ]);
+            return;
+        })
     }
     return (
         <View style={styles.container}>
@@ -209,8 +235,8 @@ const CovidVaccineCenters = ({ route, navigation }) => {
                     }}
                     radius={15000}
                     strokeWidth={1}
-                    strokeColor={'green'}
-                    fillColor={'rgba(192,230,192,0.5)'}
+                    strokeColor={'red'}
+                    fillColor={'rgba(230,192,193,0.5)'}
                 />
 
                 {route.params.hospitalList && route.params.hospitalList.map((marker, index) => {
@@ -240,7 +266,9 @@ const CovidVaccineCenters = ({ route, navigation }) => {
                     );
                 })}
             </MapView>}
-
+            {route.params.hospitalList && <View>
+                <Text style={styles.totalHospital}>Total Vaccine Center - {route.params.hospitalList.length}</Text>
+            </View>}
             { showMap && <Animated.ScrollView
                 ref={_scrollView}
                 horizontal
@@ -272,6 +300,7 @@ const CovidVaccineCenters = ({ route, navigation }) => {
                     { useNativeDriver: true }
                 )}
             >
+
                 {route.params.hospitalList && route.params.hospitalList.map((marker, index) => (
                     <View style={[styles.card]} key={index}>
                         <View style={styles.requestNumber}>
@@ -345,17 +374,18 @@ const CovidVaccineCenters = ({ route, navigation }) => {
                             name='close' onPress={() => { setCenterDetails(''), setShowCenterDetails(false) }}
                         />
                         <View style={modalStyles.dataContainer}>
+
                             <View style={modalStyles.action}>
-                                <Text numberOfLines={1} style={[styles.cardtitle], { fontSize: 17, borderBottomWidth: 2, marginBottom: 10, borderBottomColor: '#d21036' }}>{centerDetails.name} </Text>
+                                <Text numberOfLines={1} style={[styles.cardtitle], { fontSize: 17, borderBottomWidth: 2, marginBottom: 10, borderBottomColor: '#d21036' }}>{centerDetails.name}</Text>
                                 <Text numberOfLines={1} style={styles.cardtitle}>Center Code - ({centerDetails.center_id}) </Text>
                                 <Text numberOfLines={1} style={[styles.cardDescription, { color: '#1a8434' }]}>Pin-Code {centerDetails.pincode}</Text>
                                 <Text numberOfLines={1} style={styles.cardtitle}>{centerDetails.block_name}</Text>
                                 <Text style={{ backgroundColor: '#1a8434', color: '#fff', paddingHorizontal: 5, borderRadius: 50, textAlign: 'center', marginBottom: 5, marginTop: 5 }}>
                                     {centerDetails.address}</Text>
                                 <Text style={{ color: '#d21036', paddingHorizontal: 5, textAlign: 'left', marginBottom: 5, marginTop: 5 }}>
-                                    District - {centerDetails.district_id}</Text>
+                                    District - {centerDetails?.district_id?.district_name}</Text>
                                 <Text style={{ color: '#d21036', paddingHorizontal: 5, textAlign: 'left', marginBottom: 5, marginTop: 5 }}>
-                                    State - {centerDetails.state_id}</Text>
+                                    State - {centerDetails?.state_id?.state_name}</Text>
                                 <View>
                                     <TouchableOpacity
                                         disabled={!changeUserCount}
@@ -375,7 +405,19 @@ const CovidVaccineCenters = ({ route, navigation }) => {
                                         </LinearGradient>
                                     </TouchableOpacity>
                                 </View>
-
+                                {updateLoading && <View style={{
+                                    flex: 1,
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    marginTop: 10
+                                }}>
+                                    <Image
+                                        source={require('../../../assets/loading.png')}
+                                        // style={{ width: 200, height: 100 }}
+                                        resizeMode="cover"
+                                    />
+                                    <Text>Updating data....</Text>
+                                </View>}
                                 <Text numberOfLines={1}
                                     style={[styles.cardDescription,
                                     { color: '#1a8434', textAlign: 'center', maxWidth: 300 }]}>Your update will help to your nearest </Text>
@@ -390,7 +432,7 @@ const CovidVaccineCenters = ({ route, navigation }) => {
                                     value={activeUser}
                                     disabled={false}
                                     min={0}
-                                    max={100}
+                                    max={1000}
                                     onChange={(value) => {
                                         setActiveUser(value)
                                         return true;
@@ -415,7 +457,9 @@ const CovidVaccineCenters = ({ route, navigation }) => {
                                 <Text style={{ textAlign: 'center' }}>{activeUser}</Text>
                             </View>
                         </View>
-
+                        <View>
+                            <Text style={{ textAlign: 'center', color:'#ac0f0f'}}>Approx <Text style={{fontSize:50}}>{activeUser} </Text>Users Visited</Text>
+                        </View>
                     </View>
                 </View>
             </Modal>
@@ -564,5 +608,11 @@ const styles = StyleSheet.create({
     textSign: {
         fontSize: 14,
         fontWeight: 'bold'
+    },
+    totalHospital: {
+        backgroundColor: 'red',
+        color: '#fff',
+        padding: 5
+
     }
 });

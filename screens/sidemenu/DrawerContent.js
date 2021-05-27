@@ -36,11 +36,9 @@ export function DrawerContent({ props, navigation }) {
     useEffect(() => {
         setTimeout(async () => {
             // setIsLoading(false);
-console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
             try {
                 let userDetailsData = await AsyncStorage.getItem('userDetails');
                 setUserDetails(JSON.parse(userDetailsData));
-                console.log(JSON.parse(userDetailsData));
                
             } catch (e) {
                 console.log(e);
@@ -140,7 +138,7 @@ console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
                         </View> */}
                     </Drawer.Section>
                     <Drawer.Section title="Rewards & Badges">
-                        <Text style={{ fontSize: 50, textAlign: 'center', color: '#DAA520', borderBottomWidth: 3, borderBottomColor: '#DAA520', borderTopWidth: 3, borderTopColor: '#DAA520' }}>2000 <Text style={{ fontSize: 30 }}>₹</Text></Text>
+                        <Text style={{ fontSize: 50, textAlign: 'center', color: '#DAA520', borderBottomWidth: 3, borderBottomColor: '#DAA520', borderTopWidth: 3, borderTopColor: '#DAA520' }}>0 <Text style={{ fontSize: 30 }}>₹</Text></Text>
                         <View style={[styles.badgeContainer]}>
                             <View>
                                 <Image
@@ -150,7 +148,7 @@ console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
 
                                 />
                                 <View style={styles.badgeCount}>
-                                    <Text style={{ color: "#fff" }}>{1}</Text>
+                                    <Text style={{ color: "#fff" }}>{0}</Text>
                                 </View>
                             </View>
                             <View>
@@ -161,7 +159,7 @@ console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
 
                                 />
                                 <View style={styles.badgeCount}>
-                                    <Text style={{ color: "#fff" }}>{1}</Text>
+                                    <Text style={{ color: "#fff" }}>{0}</Text>
                                 </View>
                             </View>
                             <View>
@@ -172,7 +170,7 @@ console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
 
                                 />
                                 <View style={styles.badgeCount}>
-                                    <Text style={{ color: "#fff" }}>{1}</Text>
+                                    <Text style={{ color: "#fff" }}>{0}</Text>
                                 </View>
                             </View>
 
@@ -267,6 +265,9 @@ console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
                 <View style={styles.preference}>
                     <Text>Last Visit : -</Text>
                 </View>
+                <View style={styles.vision}>
+                    <Text style={{fontSize:10,textAlign:'right', width:'100%', color:'#ccc'}}>Vision By - Mano-Bharat</Text>
+                </View>
             </Drawer.Section>
         </View>
     );
@@ -295,7 +296,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignSelf: 'center',
         alignContent: 'center',
-        marginBottom: 10,
         padding: 10,
         width: '95%',
 
@@ -440,4 +440,11 @@ const styles = StyleSheet.create({
         backgroundColor: '#d21036', width: 20, height: 20, borderRadius: 50,
         alignItems: "center", alignContent: "center", justifyContent: 'center'
     },
+    vision:{
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingVertical: 2,
+        paddingHorizontal: 16,
+        alignItems:'flex-end',
+    }
 });

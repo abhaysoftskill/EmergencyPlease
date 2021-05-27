@@ -4,19 +4,21 @@ const covidCenterModal = {
     fontWeight: 'bold',
     paddingBottom: 0
   },
-  dataContainer:{
+  dataContainer: {
     flex: 1,
     flexDirection: 'row',
+    maxWidth:330,padding:10,
   },
   action: {
     flexDirection: 'column',
     marginTop: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#f2f2f2',
-    paddingBottom: 5
+    paddingBottom: 5,
+    maxWidth:245,
   },
-  feedbackAction:{
-    padding:20,
+  feedbackAction: {
+    padding: 20,
   },
   textInput: {
     flex: 1,
@@ -32,7 +34,9 @@ const covidCenterModal = {
     marginTop: 22
   },
   modalView: {
-height:400,
+    height: 400,
+  //  width: 330,
+    maxWidth:330,
     // margin: 5,
     // backgroundColor: 'rgba(0,198,66,0.35)',
     backgroundColor: '#fff',

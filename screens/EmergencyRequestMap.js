@@ -25,6 +25,7 @@ import { mapDarkStyle, mapStandardStyle } from '../model/mapData';
 import { useTheme } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import { useSelector } from 'react-redux';
+import { color } from 'react-native-reanimated';
 
 
 const { width, height } = Dimensions.get("window");
@@ -86,7 +87,6 @@ const EmergencyRequestMap = ({ route, navigation }) => {
           mapIndex = index;
 
           const coordinate = route.params.serviceData.request[index].geometry.coordinates;
-          console.log(coordinate)
           _map.current.animateToRegion(
             {
               latitude: parseFloat(coordinate[0]),
@@ -259,7 +259,8 @@ const EmergencyRequestMap = ({ route, navigation }) => {
                   resizeMode="cover"
                 />
                 <View style={[styles.textContent]}>
-                  <Text numberOfLines={1} style={styles.cardtitle}>{marker.user[0].firstname} {marker.user[0].lastname}</Text>
+                {marker.user[0].userType == 'premium' && <Text numberOfLines={1} style={styles.cardtitle}>{marker.user[0].firstname} {marker.user[0].lastname}</Text>}
+                  <Text numberOfLines={1} style={styles.username}>{marker.user[0].username}</Text>
                   <Text style={{ backgroundColor: '#1a8434', color: '#fff', paddingHorizontal: 5, borderRadius: 50, textAlign: 'center', marginBottom: 5, marginTop: 5 }}>{route.params.serviceData.service_name_alias}</Text>
                   {expand == index + 1 && <View>{marker.requestType == 'ambulance_request' && <Text numberOfLines={1} style={[styles.cardDescription, { color: '#1a8434' }]}>Request for {marker.requestDetails.freeAmbulance && 'Free Ambulance'}</Text>}
                     {marker.requestType == 'ambulance_request' && marker.requestDetails.paidAmbulance && <Text numberOfLines={1} style={[styles.cardDescription, { color: '#1a8434' }]}> {marker.requestDetails.paidAmbulance == true && ' / Paid Ambulance'} </Text>}
@@ -284,6 +285,7 @@ const EmergencyRequestMap = ({ route, navigation }) => {
                     style={styles.signIn}
                     onPress={() => navigation.navigate('EmergencyDetails',
                       {
+                        request_id: marker._id,
                         userDetails: marker.user[0],
                         location: marker.geometry.coordinates,
                       })}
@@ -297,7 +299,7 @@ const EmergencyRequestMap = ({ route, navigation }) => {
                       <Text style={[styles.textSign, {
                         color: '#fff'
                       }]}>
-                        View User Details</Text>
+                       View User Details</Text>
                     </LinearGradient>
                   </TouchableOpacity>
 
@@ -418,6 +420,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     // marginTop: 5,
     fontWeight: "bold",
+  },
+  username:{
+    fontSize: 14,
+    color:'#000',
+    letterSpacing:3
   },
   cardDescription: {
     fontSize: 12,

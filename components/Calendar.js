@@ -7,7 +7,6 @@ import { Button, Dialog, Portal, Provider } from 'react-native-paper';
 import Moment from 'moment';
 const DateCalendar = (props) => {
     let dateFormat = require("dateformat");
-    console.log(Moment(new Date(), "DD-MM-YYYY").subtract(13, 'years').format('YYYY-MM-DD'))
     const [selected, setSelected] = useState('');
     const [selectedDate, setSelectedDate] = useState('');
     const [showMarkedDatesExamples, setShowMarkedDatesExamples] = useState(false);
@@ -21,16 +20,18 @@ const DateCalendar = (props) => {
         <Provider>
             <Portal>
                 <Dialog visible={true} onDismiss={hideDialog} dismissable={false}>
-                    <Dialog.Content >
+                    <Dialog.Content style={{ maxHeight: 430 }}>
                         <CalendarList
                             //   style={styles.calendar}
                             //   hideExtraDays
                             onDayPress={onDayPress}
-                            current={new Date()}
-                            minDate={'2012-05-10'}
+                            current={Moment(new Date(), "DD-MM-YYYY").subtract(13, 'years').format('YYYY-MM-DD')}
+                            minDate={Moment(new Date(), "DD-MM-YYYY").subtract(80, 'years').format('YYYY-MM-DD')}
                             maxDate={Moment(new Date(), "DD-MM-YYYY").subtract(13, 'years').format('YYYY-MM-DD')}
                             enableSwipeMonths={true}
                             disableMonthChange={false}
+                            hideArrows={false}
+
                             markedDates={{
                                 [selected]: {
                                     selected: true,

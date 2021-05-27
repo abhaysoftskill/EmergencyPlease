@@ -81,8 +81,6 @@ const ResetPassword = ({ route, navigation }) => {
             ...data,
             confirm_password:val,
         });
-        console.log(val)
-        console.log(data.password)
         if (data.password == val) {
             setPasswordCorrect(true);
         } else {

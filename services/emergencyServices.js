@@ -116,7 +116,6 @@ const notifications = async () => {
     userToken = await AsyncStorage.getItem('userToken');
     let userDetailsData = await AsyncStorage.getItem('userDetails');
     let data = JSON.parse(userDetailsData);
-    console.log()
     return request({
         url: `/notification/byusertype/${data.userType}`,
         method: 'GET',
@@ -223,6 +222,45 @@ const getHospitalByDistrict = async (code) => {
         }
     });
 }
+const getHospitalVisit = async (hospitalID) => {
+    userToken = await AsyncStorage.getItem('userToken');
+    return request({
+        url: `/hospitalvisit/${hospitalID}`,
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${userToken}`
+        }
+    });
+}
+
+const addhospitalvisit = async (formData) => {
+    let data = qs.stringify(formData)
+    userToken = await AsyncStorage.getItem('userToken');
+    return request({
+        url: `/hospitalvisit/add`,
+        method: 'POST',
+        data,
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+            'Authorization': `Bearer ${userToken}`,
+        }
+    });
+}
+
+const readyToHelp = async (requestId) => {
+    // let data = qs.stringify(formData)
+    userToken = await AsyncStorage.getItem('userToken');
+    return request({
+        url: `/help/readytohelp/${requestId}`,
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+            'Authorization': `Bearer ${userToken}`,
+        }
+    });
+}
+
+
 const EmergencyService = {
     myEmergencyRequest,
     emergencyRequest,
@@ -245,7 +283,11 @@ const EmergencyService = {
     getDistrictById,
     getDistrictByState,
     getHospitalByPincode,
-    getHospitalByDistrict
+    getHospitalByDistrict,
+
+    getHospitalVisit,
+    addhospitalvisit,
+    readyToHelp
 };
 
 export default EmergencyService;

@@ -72,7 +72,7 @@ const MainTabScreen = () => (
       name="SuccessStory"
       component={StoryStackScreen}
       options={{
-        tabBarLabel: 'Success Story',
+        tabBarLabel: 'Users Story',
         tabBarColor: '#694fad',
         tabBarIcon: ({ color }) => (
           <Icon name="ios-book" color={color} size={26} />
@@ -200,6 +200,9 @@ const HomeStackScreen = ({ navigation }) => {
       <HomeStack.Screen
         name="CovidVaccineCenters"
         component={CovidVaccineCenters}
+        options={{
+          title: 'Covid Vaccine Centers',
+        }}
       />
 
       <HomeStack.Screen

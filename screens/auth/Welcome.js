@@ -135,7 +135,7 @@ const Welcome = ({ route, navigation }) => {
                 </ScrollView>
             </Animatable.View>
             {showCalendar && <DateCalendar selectDate={(e) => { setDOB(e), setShowCalendar(false) }} closeOption={() => setShowCalendar(false)} />}
-            {showBloodGroup && <SelectBloodGroup selectBloodGroup={(e) => { console.log(e), setBloodGroup(e.bloodGroup), setBloodGroupType(e.bloodGroupType), setShowBloodGroup(false) }} closeOption={() => setShowBloodGroup(false)} />}
+            {showBloodGroup && <SelectBloodGroup selectBloodGroup={(e) => { setBloodGroup(e.bloodGroup), setBloodGroupType(e.bloodGroupType), setShowBloodGroup(false) }} closeOption={() => setShowBloodGroup(false)} />}
 
         </View>
     );

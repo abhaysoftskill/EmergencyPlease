@@ -133,7 +133,6 @@ const App = () => {
     signIn: async (foundUser) => {
       // setUserToken('fgkj');
       // setIsLoading(false);
-      console.log(foundUser)
       const userToken = String(foundUser.userToken);
       const userName = foundUser.userDetails.firstname + " " + foundUser.userDetails.lastname;
       const userDetails = JSON.stringify(foundUser.userDetails);
@@ -144,7 +143,6 @@ const App = () => {
       } catch (e) {
         console.log(e);
       }
-      // // console.log('user token: ', userToken);
       dispatch({ type: 'LOGIN', id: userName, token: userToken });
     },
     signOut: async () => {

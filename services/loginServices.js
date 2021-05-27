@@ -84,12 +84,18 @@ const emailVerify = async (formData) => {
 }
 
 const resendEmailVerifyToken = async (formData) => {
-    let data = qs.stringify(formData)
+    //  let data = qs.stringify(formData)
+   let data = qs.stringify(formData, null, { encodeURI: qs.unescape });
+
+    console.log(data)
+    console.log(data.replace("%40", "@"));
+let temp = data.replace("%40", "@")
+
     userToken = await AsyncStorage.getItem('userToken');
     return request({
-        url: `user/send/verification/email`,
-        method: 'GET',
-        data,
+        url: `user/send/verification/email`,        
+        method: 'POST',
+        temp,
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
             'Authorization': `Bearer ${userToken}`,

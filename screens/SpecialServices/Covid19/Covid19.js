@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Image, View, Text, Button, FlatList, StyleSheet, TouchableOpacity, Keyboard } from 'react-native';
+import { Image, View, Text, Button, FlatList, StyleSheet, TouchableOpacity, Keyboard, Alert } from 'react-native';
 import DropDown from 'react-native-paper-dropdown';
 import { Provider, TextInput } from 'react-native-paper';
 import { useTheme } from '@react-navigation/native';
@@ -27,35 +27,26 @@ const Covid19 = ({ route, navigation }) => {
     }, error => {
       return;
     })
-    // EmergencyService.getStatesById('60a627bb44955a3e18625f3b').then((res) => {
-    //   console.log(res)
-    // }, error => {
-    //   return;
-    // })
-    // statesData?.states.map((e) => stateListTemp.push({ label: e.state_name, value: e.state_id }));
-    // console.log(stateListTemp);
 
-    // statesData?.states.map((e) => setStatesList([...statesList, { label: e.state_name, value: e.state_id }]));
-    const unsubscribe = navigation.addListener("focus", () => {
-      setStatesList('')
-    })
-    // this will help to clear the state when navigate the screen
-    return unsubscribe;
+    // const unsubscribe = navigation.addListener("focus", () => {
+    //   setStatesList('')
+    // })
+    // return unsubscribe;
   }, [navigation])
 
   useEffect(() => {
     const districtListTemp = [];
     if (state != '') {
-      console.log(state)
-
       EmergencyService.getDistrictByState(state).then((res) => {
         res.districts.map((e) => districtListTemp.push({ label: e.district_name, value: e._id }));
-        // console.log(districtListTemp)
         setDistrictList(districtListTemp)
       }, error => {
         return;
       })
     }
+    return () => {
+      setDistrictList([])
+    };
   }, [state])
 
   const pincodeInputChange = (val) => {
@@ -64,13 +55,6 @@ const Covid19 = ({ route, navigation }) => {
       setPincode(val);
       setDisableSearch(false)
 
-      // EmergencyService.getHospitalByPincode('441906').then((res) => {
-      //   // res.districts.map((e) => districtListTemp.push({ label: e.district_name, value: e._id }));
-      //   console.log(res)
-      //   setHospitalList(res)
-      // }, error => {
-      //   return;
-      // })
     }
     else {
       setPincode(val);
@@ -82,7 +66,14 @@ const Covid19 = ({ route, navigation }) => {
     if (pincode.trim().length == 6) {
       EmergencyService.getHospitalByPincode(pincode).then((res) => {
         setHospitalList(res)
-        navigation.navigate('CovidVaccineCenters',{ hospitalList: res.hospitals })
+        if (res.hospitals.length > 0) {
+          navigation.navigate('CovidVaccineCenters', { hospitalList: res.hospitals })
+        }
+        else {
+          Alert.alert('Covid Vaccine Centers!', `No Hospital found for pincode ${pincode}, retry for other pincode`, [
+            { text: 'Retry', onPress: () => { return } },
+          ])
+        }
       }, error => {
         return;
       })
@@ -90,12 +81,19 @@ const Covid19 = ({ route, navigation }) => {
   }
 
   const getVaccineCentersByDistrict = () => {
-      EmergencyService.getHospitalByDistrict(district).then((res) => {
-        setHospitalList(res)
-        navigation.navigate('CovidVaccineCenters',{ hospitalList: res.hospitals })
-      }, error => {
-        return;
-      })
+    EmergencyService.getHospitalByDistrict(district).then((res) => {
+      setHospitalList(res)
+      if (res.hospitals.length > 0) {
+        navigation.navigate('CovidVaccineCenters', { hospitalList: res.hospitals })
+      }
+      else {
+        Alert.alert('Covid Vaccine Centers!', `No Hospital found, retry for other center`, [
+          { text: 'Retry', onPress: () => { return } },
+        ])
+      }
+    }, error => {
+      return;
+    })
   }
   return (
     <>
@@ -118,7 +116,6 @@ const Covid19 = ({ route, navigation }) => {
             theme={theme}
           />}
         </View>
-        {/* <Text>{JSON.stringify(districtList)}</Text> */}
         <View style={{ marginBottom: 20 }}>
           {districtList.length > 0 && <DropDown
             label={'District'}
@@ -157,18 +154,6 @@ const Covid19 = ({ route, navigation }) => {
         <Text style={{ color: 'red', fontSize: 20, textAlign: 'center' }}>---- OR ----</Text>
         <Text style={{ color: 'red', fontSize: 20, textAlign: 'center' }}>You can search by Pincode</Text>
 
-        {/* {data.check_textInputChange ?
-                        <Animatable.View
-                            animation="bounceIn"
-                        >
-                            <Feather
-                                name="check-circle"
-                                color="green"
-                                size={20}
-                            />
-                        </Animatable.View>
-                        : null} */}
-
         <View style={styles.action}>
 
           <TextInput
@@ -182,7 +167,7 @@ const Covid19 = ({ route, navigation }) => {
             maxLength={6}
             autoCapitalize="none"
             onChangeText={(val) => pincodeInputChange(val)}
-          onEndEditing={(e) => Keyboard.dismiss()}
+            onEndEditing={(e) => Keyboard.dismiss()}
           />
 
 
