@@ -10,19 +10,22 @@ import AmbulanceRequest from './requests/Ambulance';
 
 export const EmergencyCall = ({ route, navigation }) => {
     const { coordinates } = useSelector(state => state.currentLocationReducer);
+    const { service_type_id } = useSelector(state => state.serviceReducer);
+
     const [RequestDataCount, setRequestDataCount] = useState(route.params.RequestDataCount)
     const [serviceName, setServiceName] = useState('')
     const [serviceData, setServiceData] = useState(null)
     const [region, setRegion] = useState(coordinates);
     useEffect(() => {
         {
-          region && EmergencyService.nearservices(region.longitude, region.latitude).then((res) => {
+          region && EmergencyService.nearservicesbyservicetype(service_type_id,region.longitude, region.latitude).then((res) => {
             setServiceData(res)
           }, error => {
             console.error('onRejected function called: ' + error.message);
             return;
           })
         }
+        return () => setServiceData(null);
       }, [region,coordinates]);
     const callService = (service_name) => {
         setServiceName(service_name);
@@ -76,7 +79,7 @@ export const EmergencyCall = ({ route, navigation }) => {
                     />
                 </View>
                 {serviceName === "ambulance_request" && <AmbulanceRequest visible={serviceName === "ambulance_request" ? true : false} />}
-
+                <AmbulanceRequest visible={true} />
             </View>
 
         </>

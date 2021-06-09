@@ -23,12 +23,14 @@ import { AuthContext } from '../../components/context';
 
 import LoginService from '../../services/loginServices';
 import OTPVerification from './OTPVerification';
+import { LocalizationContext } from '../../translations/LocalizationContext';
 
 const SignIn = ({ navigation }) => {
     const [data, setData] = useState({
         username: '',
         password: '',
-        check_textInputChange: false,
+        check_phonenumberInputChange: false,
+        check_emailInputChange: false,
         secureTextEntry: true,
         isValidUser: true,
         isValidPassword: true,
@@ -40,6 +42,8 @@ const SignIn = ({ navigation }) => {
     const { colors } = useTheme();
     const active = '#ccc';
     const inactive = '#3c4043';
+    const activePhone = '#089bc7';
+    const activeEmail = '#f68c08';
     const { signIn } = useContext(AuthContext);
     let EMAIL_REGEXP = /^[a-z0-9!#$%&'*+\/=?^_`{|}~.-]+@[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)*$/i;
 
@@ -48,7 +52,7 @@ const SignIn = ({ navigation }) => {
             setData({
                 ...data,
                 username: val,
-                check_textInputChange: true,
+                check_emailInputChange: true,
                 isValidUser: true
             });
         }
@@ -57,14 +61,14 @@ const SignIn = ({ navigation }) => {
                 setData({
                     ...data,
                     username: val,
-                    check_textInputChange: true,
+                    check_phonenumberInputChange: true,
                     isValidUser: true
                 });
             } else {
                 setData({
                     ...data,
                     username: val,
-                    check_textInputChange: false,
+                    check_phonenumberInputChange: false,
                     isValidUser: false
                 });
             }
@@ -158,13 +162,13 @@ const SignIn = ({ navigation }) => {
         // }
         // signIn(foundUser);
     }
-
+    const { translations } = useContext(LocalizationContext);
     return (
         <View style={styles.container}>
 
             <StatusBar backgroundColor='#FF6347' barStyle="light-content" />
             <View style={styles.header}>
-                <Text style={styles.text_header}>Welcome! </Text>
+                <Text style={styles.text_header}>{translations.WELCOME} </Text>
             </View>
             <Animatable.View
                 animation="fadeInUpBig"
@@ -178,7 +182,7 @@ const SignIn = ({ navigation }) => {
                 {loginOption !== 0 && <Text style={[styles.text_footer, {
                     color: colors.text, marginBottom: 30
                 }]}>
-                    {loginOption != 0 && loginOption == 1 ? 'Enter Phone Number' : loginOption == 2 ? ' Enter Email ID' : null}
+                    {loginOption != 0 && loginOption == 1 ? `${translations.ENTEREMAILID}` : loginOption == 2 ? `${translations.ENTERPHONENUMBER}` : null}
                 </Text>}
 
                 {loginOption !== 0 && <View style={styles.action}>
@@ -187,11 +191,11 @@ const SignIn = ({ navigation }) => {
                         color={colors.text}
                         size={20}
                     />
-                    {loginOption != 0 && loginOption == 1  && <TextInput
-                        placeholder={'Enter Phone Number'}
+                    {loginOption != 0 && loginOption == 1 && <TextInput
+                        placeholder={`${translations.ENTERPHONENUMBER}`}
                         placeholderTextColor="#666666"
                         style={[styles.textInput, {
-                            color: colors.text, fontSize:20, letterSpacing:3
+                            color: colors.text, fontSize: 20,
                         }]}
                         maxLength={10}
                         autoCapitalize="none"
@@ -199,18 +203,18 @@ const SignIn = ({ navigation }) => {
                         onChangeText={(val) => textInputChange(val)}
                         onEndEditing={(e) => handleValidUser(e.nativeEvent.text)}
                     />}
-                     {loginOption != 0 && loginOption == 2 && <TextInput
-                        placeholder={'Enter Email ID'}
+                    {loginOption != 0 && loginOption == 2 && <TextInput
+                        placeholder={`${translations.ENTEREMAILID}`}
                         placeholderTextColor="#666666"
                         keyboardType={'email-address'}
                         style={[styles.textInput, {
-                            color: colors.text, fontSize:15,
+                            color: colors.text, fontSize: 15,
                         }]}
                         autoCapitalize="none"
                         onChangeText={(val) => textInputChange(val)}
                         onEndEditing={(e) => handleValidUser(e.nativeEvent.text)}
                     />}
-                    {data.check_textInputChange ?
+                    {data.check_phonenumberInputChange || data.check_emailInputChange ?
                         <Animatable.View
                             animation="bounceIn"
                         >
@@ -235,18 +239,20 @@ const SignIn = ({ navigation }) => {
                     justifyContent: 'center',
                     alignItems: 'center',
                     marginTop: 20,
-                    position:'absolute',
-                    bottom:100,
-                    left:0,
-                    right:0,
-                    zIndex:99
+                    position: 'absolute',
+                    backgroundColor: 'rgba(255,255,255,0.9)',
+                    bottom: 100,
+                    height: '100%',
+                    left: 0,
+                    right: 0,
+                    zIndex: 99
                 }}>
                     <Image
                         source={require('../../assets/loading.png')}
                         // style={{ width: 200, height: 100 }}
                         resizeMode="cover"
                     />
-                    <Text>Please wait....</Text>
+                    <Text>{translations.PLEASEWAIT}....</Text>
                 </View>}
                 {!loading && loginOption !== 0 && <View style={styles.button}>
                     <TouchableOpacity
@@ -261,61 +267,75 @@ const SignIn = ({ navigation }) => {
                         >
                             <Text style={[styles.textSign, {
                                 color: '#fff'
-                            }]}>Login In</Text>
+                            }]}>{translations.LOGININ}</Text>
                         </LinearGradient>
                     </TouchableOpacity>
 
 
                 </View>}
-               <View
-                    style={{ marginTop: 50,
+                <View
+                    style={{
+                        marginTop: 50,
                         flexDirection: "row", flexWrap: "wrap",
                         justifyContent: 'center'
                     }}
                 >
                     <TouchableOpacity
-                        onPress={() => {setLoginOption(1);  setData({
-                            ...data,
-                            username: '',
-                        })}}
+                        onPress={() => {
+                            setLoginOption(1); setData({
+                                ...data,
+                                username: '',
+                                check_phonenumberInputChange: false,
+                                check_emailInputChange: false
+                            })
+                        }}
                     >
                         <View
-                            style={[styles.box, { margin: 5, borderColor:loginOption == 1 ? active : inactive,
-                                borderBottomWidth:5,
-                                borderRadius: 10, borderWidth: 1, width: 150, height: 150, alignItems: 'center', justifyContent: 'center' }]}
+                            style={[styles.box, {
+                                margin: 5, borderColor: loginOption == 1 ? inactive : activePhone,
+                                borderBottomWidth: 5,
+                                borderRadius: 10, borderWidth: 1, width: 150, height: 150, alignItems: 'center', justifyContent: 'center'
+                            }]}
                         >
                             <FontAwesome
                                 name="phone"
-                                color={loginOption == 1 ? active : inactive}
+                                color={loginOption == 1 ? inactive : activePhone}
                                 size={30}
                                 style={{ marginBottom: 10, marginTop: 10 }}
                             />
                             <Text style={[{
                                 flexShrink: 1,
-                                color: loginOption == 1 ? active : inactive, marginBottom: 30, fontSize: 15, textAlign: 'center'
-                            }]}>Use Phone Number</Text>
+                                color: loginOption == 1 ? inactive : activePhone, marginBottom: 30, fontSize: 15, textAlign: 'center'
+                            }]}>{translations.USEPHONENUMBER}</Text>
                         </View>
 
                     </TouchableOpacity>
                     <TouchableOpacity
-                        onPress={() => {setLoginOption(2);  setData({
-                            ...data,
-                            username: '',
-                        })}}
+                        onPress={() => {
+                            setLoginOption(2); setData({
+                                ...data,
+                                username: '',
+                                check_emailInputChange: false,
+                                check_phonenumberInputChange: false
+                            })
+                        }}
                     >
                         <View
-                            style={[styles.box, { margin: 5, borderBottomWidth:5, borderColor:loginOption == 2 ? active : inactive, borderRadius: 10, borderWidth: 1, width: 150, height: 150, alignItems: 'center', justifyContent: 'center' }]}
+                            style={[styles.box, {
+                                margin: 5, borderBottomWidth: 5,
+                                borderColor: loginOption == 2 ? inactive : activeEmail, borderRadius: 10, borderWidth: 1, width: 150, height: 150, alignItems: 'center', justifyContent: 'center'
+                            }]}
                         >
                             <FontAwesome
                                 name="envelope"
-                                color={loginOption == 2 ? active : inactive}
+                                color={loginOption == 2 ? inactive : activeEmail}
                                 size={30}
                                 style={{ marginBottom: 10, marginTop: 10 }}
                             />
                             <Text style={[{
                                 flexShrink: 1,
-                                color: loginOption == 2 ? active : inactive, marginBottom: 30, fontSize: 15, textAlign: 'center'
-                            }]}>Use Email ID</Text>
+                                color: loginOption == 2 ? inactive : activeEmail, marginBottom: 30, fontSize: 15, textAlign: 'center'
+                            }]}>{translations.USEEMAILID}</Text>
                         </View>
 
                     </TouchableOpacity>
@@ -416,7 +436,7 @@ const styles = StyleSheet.create({
         height: 50,
         justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: 2
+        borderRadius: 5
     },
     textSign: {
         fontSize: 18,

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
     Container, List, ListItem, Left, Right,
-    Thumbnail, Body, Badge, Text, View
+    Thumbnail, Body, Badge, Text, View, Icon
 
 } from 'native-base';
 import styles from '../../model/notify';
@@ -14,15 +14,15 @@ export const Notifications = ({ navigation }) => {
     const [notificationID, setNotificationID] = useState(null)
     const [modalVisible, setModalVisible] = useState(false)
     const [notifications, setNotifications] = useState([])
-    const [, setServiceName] = useState('')
     useEffect(() => {
         EmergencyService.notifications().then((res) => {
+            console.log(res)
             setNotifications(res.notifications);
         }, error => {
             return;
         })
         const unsubscribe = navigation.addListener("focus", () => {
-            setServiceName('')
+            setNotifications([])
         })
 
         // this will help to clear the state when navigate the screen
@@ -38,7 +38,7 @@ export const Notifications = ({ navigation }) => {
     }
     return (
         <Container>
-            <List
+           {notifications?.length > 0 && <List
                 dataArray={notifications}
                 renderRow={(notification, index) =>
                     <ListItem avatar key={index} onPress={() => { openModal(), setNotificationID(index) }}>
@@ -57,7 +57,9 @@ export const Notifications = ({ navigation }) => {
                 }
                 keyExtractor={(item) => item._id}
 
-            />
+            />}
+
+            <Text style={{textAlign:'center', marginTop:50, color:'#d40707'}}> ---------- No Notification ---------</Text>
             <Modal
                 animationType="slide"
                 transparent={true}
@@ -70,12 +72,15 @@ export const Notifications = ({ navigation }) => {
                         <Text style={styles.userName}>{notifications[notificationID]?.notificationTitle}</Text>
                         <Divider />
                         <Paragraph style={styles.modalText}>{notifications[notificationID]?.notificationDesc}</Paragraph>
-                        <Pressable
+                        <Icon style={{ position: 'absolute', top: 0, right: 0, padding: 2, backgroundColor: '#ccc', borderRadius: 50, margin: 10 }}
+                            name='close' onPress={() => setModalVisible(!modalVisible)}
+                        />
+                        {/* <Pressable
                             style={[styles.button, styles.buttonClose]}
                             onPress={() => setModalVisible(!modalVisible)}
                         >
                             <Text style={styles.textStyle}>Close</Text>
-                        </Pressable>
+                        </Pressable> */}
                     </View>
                 </View>
             </Modal>

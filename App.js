@@ -44,6 +44,7 @@ import store from './redux/store';
 import CheckConnection from './utils/CheckConnection';
 import { Image } from 'react-native-animatable';
 import withCodePush from './codepush';
+import { LocalizationProvider } from './translations/LocalizationContext';
 const RootStack = createStackNavigator();
 const ErrorCard = () => {
   return (
@@ -201,7 +202,8 @@ const App = () => {
   return (
     <Provider store={store}>
     <PaperProvider theme={theme}>
-      <AuthContext.Provider value={authContext}>
+    <LocalizationProvider>
+        <AuthContext.Provider value={authContext}>
         <NavigationContainer theme={theme}>
           {loginState.userToken !== null && loginState.userToken !== 'undefined' ? (
             <Drawer.Navigator drawerContent={props => <DrawerContent {...props} />}>
@@ -215,6 +217,7 @@ const App = () => {
           }
         </NavigationContainer>
       </AuthContext.Provider>
+      </LocalizationProvider>
     </PaperProvider>
   </Provider>  
   );

@@ -1,14 +1,8 @@
 import React, { useContext, useState } from 'react';
 import {
-    View,
-    Text,
-    TouchableOpacity,
-    TextInput,
-    Platform,
-    StyleSheet,
-    StatusBar,
-    Alert,
-    Image,
+    View, Text, TouchableOpacity,
+    TextInput, Platform, StyleSheet,
+    StatusBar, Alert, Image,
     Dimensions
 } from 'react-native';
 import * as Animatable from 'react-native-animatable';
@@ -18,13 +12,11 @@ import Feather from 'react-native-vector-icons/Feather';
 
 import { useTheme } from 'react-native-paper';
 
-import { AuthContext } from '../../components/context';
-
 import LoginService from '../../services/loginServices';
 
 const ForgotPassword = ({ route, navigation }) => {
     const [data, setData] = useState({
-        username:'',
+        username: '',
         check_usernameInputChange: false,
         isValidUser: true,
         isValidPassword: true,
@@ -32,7 +24,6 @@ const ForgotPassword = ({ route, navigation }) => {
     const [loading, setLoading] = useState(false)
     const { colors } = useTheme();
 
-    const { signIn } = useContext(AuthContext);
     const usernameInputChange = (val) => {
         if (val.trim().length >= 4) {
             setData({
@@ -60,16 +51,16 @@ const ForgotPassword = ({ route, navigation }) => {
             LoginService.forgotPassword(data.username).then((res) => {
                 Alert.alert('Token Generated successfully !', 'Please check forgot password token in your register email id.', [
                     {
-                      text: 'Update Password',
-                      onPress: async () => {
-                        try {
-                            setLoading(false)
-                          navigation.navigate('ResetPassword')
-                        } catch (e) {
-                            console.log(e);
+                        text: 'Update Password',
+                        onPress: async () => {
+                            try {
+                                setLoading(false)
+                                navigation.navigate('ResetPassword')
+                            } catch (e) {
+                                console.log(e);
+                            }
+
                         }
-                       
-                    }
                     }
 
                 ])
@@ -83,7 +74,7 @@ const ForgotPassword = ({ route, navigation }) => {
             })
 
         }
-     
+
 
     }
 
@@ -91,15 +82,15 @@ const ForgotPassword = ({ route, navigation }) => {
         <View style={styles.container}>
             <StatusBar backgroundColor='#FF6347' barStyle="light-content" />
             <View style={styles.logoHeader}>
-            <Animatable.Image 
-                animation="bounceIn"
-                duraton="1500"
-            source={require('../../assets/logo.png')}
-            style={styles.logo}
-            resizeMode="stretch"
-            />
-        </View>
-         <View style={styles.header}>
+                <Animatable.Image
+                    animation="bounceIn"
+                    duraton="1500"
+                    source={require('../../assets/logo.png')}
+                    style={styles.logo}
+                    resizeMode="stretch"
+                />
+            </View>
+            <View style={styles.header}>
                 <Text style={styles.text_header}>Forgot Password!</Text>
             </View>
             <Animatable.View
@@ -126,7 +117,7 @@ const ForgotPassword = ({ route, navigation }) => {
                         onChangeText={(val) => usernameInputChange(val)}
                         autoCapitalize="none"
                         defaultValue={`${data.username}`}
-                        
+
                     />
                     {data.check_usernameInputChange ?
                         <Animatable.View
@@ -146,12 +137,18 @@ const ForgotPassword = ({ route, navigation }) => {
                     </Animatable.View>
                 }
 
-               
+
                 {loading && <View style={{
                     flex: 1,
                     justifyContent: 'center',
                     alignItems: 'center',
-                    marginTop:10
+                    //  marginTop: 20,
+                    position: 'absolute',
+                    backgroundColor: 'rgba(255,255,255,0.8)',
+                    height: '100%',
+                    left: 0,
+                    right: 0,
+                    zIndex: 99
                 }}>
                     <Image
                         source={require('../../assets/loading.png')}
@@ -161,14 +158,14 @@ const ForgotPassword = ({ route, navigation }) => {
                     <Text>Loading....</Text>
                 </View>}
 
-               {!loading && <View style={styles.button}>
+                {!loading && <View style={styles.button}>
                     <TouchableOpacity
                         style={styles.signIn}
                         onPress={() => { submitEmail(data) }}
                         disabled={data.username.toString().length >= 3 ? false : true}
                     >
                         <LinearGradient
-                            colors={data.username.toString().length >= 3 ?['#FFA07A', '#FF6347'] : ['#ccc','#ccc']}
+                            colors={data.username.toString().length >= 3 ? ['#FFA07A', '#FF6347'] : ['#ccc', '#ccc']}
                             style={styles.signIn}
                         >
                             <Text style={[styles.textSign, {
@@ -196,14 +193,14 @@ const ForgotPassword = ({ route, navigation }) => {
 };
 
 export default ForgotPassword;
-const {height} = Dimensions.get("screen");
+const { height } = Dimensions.get("screen");
 const height_logo = height * 0.28;
 
 const styles = StyleSheet.create({
     logo: {
         width: 150,
         height: 150,
-        zIndex:0
+        zIndex: 0
     },
     container: {
         flex: 1,

@@ -47,6 +47,18 @@ const loginViaPhonenumber = (formData) => {
         }
     });
 }
+const loginviaotppassword = (formData) => {
+    let data = qs.stringify(formData)
+    return request({
+        url: `/user/loginviaotppassword`,
+        method: 'POST',
+        data,
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+        }
+    });
+}
+
 
 const register = (formData) => {
     let data = qs.stringify(formData)
@@ -68,6 +80,17 @@ const updateProfile = (formData) => {
     });
 }
 
+const genderdetails = async (formData) => {
+    let data = qs.stringify(formData)
+    return request({
+        url: `user/update/registergenderdetails`,
+        method: 'PATCH',
+        data,
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+        }
+    });
+}
 
 const emailVerify = async (formData) => {
     let data = qs.stringify(formData)
@@ -84,18 +107,17 @@ const emailVerify = async (formData) => {
 }
 
 const resendEmailVerifyToken = async (formData) => {
-    //  let data = qs.stringify(formData)
-   let data = qs.stringify(formData, null, { encodeURI: qs.unescape });
+     let data = qs.stringify(formData)
+    // let data = qs.stringify(formData, null, { encodeURI: qs.unescape });
 
-    console.log(data)
-    console.log(data.replace("%40", "@"));
-let temp = data.replace("%40", "@")
+    // let temp = data.replace("%40", "@")
+    // console.log(temp)
 
     userToken = await AsyncStorage.getItem('userToken');
     return request({
-        url: `user/send/verification/email`,        
+        url: `user/send/verification/email`,
         method: 'POST',
-        temp,
+        data,
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
             'Authorization': `Bearer ${userToken}`,
@@ -123,6 +145,19 @@ const restPasword = async (formData) => {
     });
 }
 
+
+const otprequest = async (formData) => {
+    let data = qs.stringify(formData)
+   return request({
+       url: `otprequest/add`,
+       method: 'POST',
+       data,
+       headers: {
+           'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+       }
+   });
+}
+
 const LoginService = {
     checkphonenumber,
     checkemail,
@@ -134,7 +169,11 @@ const LoginService = {
     emailVerify,
     resendEmailVerifyToken,
     forgotPassword,
-    restPasword
+    restPasword,
+    genderdetails,
+
+    otprequest,
+    loginviaotppassword
 };
 
 export default LoginService;

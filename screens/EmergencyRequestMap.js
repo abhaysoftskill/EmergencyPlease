@@ -13,7 +13,6 @@ import {
   Button,
   PermissionsAndroid
 } from "react-native";
-import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import Moment from 'moment'; // Import momentjs
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -26,6 +25,7 @@ import { useTheme } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import { useSelector } from 'react-redux';
 import { color } from 'react-native-reanimated';
+import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 
 
 const { width, height } = Dimensions.get("window");
@@ -147,19 +147,19 @@ const EmergencyRequestMap = ({ route, navigation }) => {
         <Text>Loading....</Text>
       </View>}
       { showMap && route.params.serviceData && <MapView
-        ref={_map}
+        // ref={_map}
         initialRegion={
           {
-            latitude: parseFloat(region.latitude),
-            longitude: parseFloat(region.longitude),
-            latitudeDelta: latitudeDelta,
-            longitudeDelta: longitudeDelta
+            latitude: 37.78825,
+            longitude: -122.4324,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
           }
         }
         style={styles.map}
         provider={PROVIDER_GOOGLE}
         // maxZoomLevel={16}
-        // mapType='satellite'
+        mapType='satellite'
         zoomEnabled={true}
         zoomControlEnabled={true}
         showsScale={true}
@@ -319,7 +319,12 @@ export default EmergencyRequestMap;
 
 const styles = StyleSheet.create({
   map: {
-    ...StyleSheet.absoluteFillObject,
+    // ...StyleSheet.absoluteFillObject
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
   container: {
     flex: 1,

@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { Switch, Text, View, Alert, Keyboard } from 'react-native';
 import { Button, Paragraph, Dialog, Portal, Provider, Checkbox, TouchableRipple, TextInput } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useTheme } from '@react-navigation/native';
 import LoginService from '../../services/loginServices';
 import EmergencyService from '../../services/emergencyServices';
-import { Image } from 'native-base';
+import { Icon, Image } from 'native-base';
 
 const ConfirmRequest = (props) => {
+
   const navigation = useNavigation();
   const [visible, setVisible] = useState(true);
 
@@ -33,9 +34,10 @@ const ConfirmRequest = (props) => {
 
   const submitRequest = () => {
     setLoading(true);
+    props.loading(true)
     let updateData = {
       "service_id": props.data.service_id,
-      "requestDetails":{
+      "requestDetails": {
         "requestForSelf": isSelf,
         "landMark": data.landmark,
         "forName": data.name || '',
@@ -58,26 +60,31 @@ const ConfirmRequest = (props) => {
 
     EmergencyService.emergencyRequest(updateData).then((res) => {
       setTimeout(async () => {
+        props.loading(false)
+
         Alert.alert('Request Success!', 'Your emergency request added, soon you will get help, Please check My Request to keep update.', [
           {
             text: 'Done',
             onPress: async () => {
               try {
                 navigation.navigate('MyRequests',
-                              {
-                                  userDetails: props.data.userDetails,
-                              })
+                  {
+                    userDetails: props.data.userDetails,
+                  })
+               
               } catch (e) {
-                  console.log(e);
+                console.log(e);
               }
-             
-          }
+
+            }
           }
         ]);
       }, 2000);
-     
+
     }, error => {
-     // console.error('onRejected function called: ' + error.message);
+      props.loading(false)
+
+      // console.error('onRejected function called: ' + error.message);
       Alert.alert('Request save fail!', error.message, [
         { text: 'Retry' }
       ]);
@@ -91,11 +98,11 @@ const ConfirmRequest = (props) => {
           <Dialog.Title>{props.data.service_title} Request</Dialog.Title>
           <Dialog.Content >
             <View style={{
-              flexDirection: 'row', 
+              flexDirection: 'row',
               alignItems: "center",
               justifyContent: "flex-end",
             }}>
-          <Text style={{color:'red'}}>Others</Text>
+              <Text style={{ color: 'red' }}>Others</Text>
               <Switch
                 trackColor={{ false: "#767577", true: "green" }}
                 thumbColor={isSelf ? "red" : "red"}
@@ -154,11 +161,11 @@ const ConfirmRequest = (props) => {
             </View>
           </Dialog.Content>
           <Dialog.Actions>
-          {loading && <Text>Please Wait .....</Text> }
-           {!loading && <Button mode={'contained'} color={'#ea3a3a'} onPress={() => { props.closeOption() }} style={{ marginRight: 30 }}>Cancel</Button>}
-           {!loading && <Button mode={'contained'} color={'#17841c'} onPress={() => submitRequest()} disabled={!data.landmark}>Submit</Button>}
+            {loading && <Text>Please Wait .....</Text>}
+            {!loading && <Button mode={'contained'} color={'#ea3a3a'} onPress={() => { props.closeOption() }} style={{ marginRight: 30 }}>Cancel</Button>}
+            {!loading && <Button mode={'contained'} color={'#17841c'} onPress={() => submitRequest()} disabled={!data.landmark}>Submit</Button>}
           </Dialog.Actions>
-        
+
         </Dialog>
       </Portal>
     </Provider>

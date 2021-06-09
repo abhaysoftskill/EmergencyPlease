@@ -329,6 +329,7 @@ const CovidVaccineCenters = ({ route, navigation }) => {
                                             <Text numberOfLines={1} style={[styles.cardDescription, { color: '#1a8434' }]}>Pin-Code {marker.pincode}</Text>
                                             <Text numberOfLines={1} style={[styles.cardDescription, { color: '#1a8434' }]}>{marker.geometry.coordinates[0]} , {marker.geometry.coordinates[1]}</Text>
                                         </View>
+                                        <Text style={{ textAlign: 'center', color:'#ac0f0f'}}>Approx <Text style={{fontSize:50}}>{activeUser} </Text>Users Visited</Text>
 
                                     </View>
                                 </View>
@@ -370,7 +371,7 @@ const CovidVaccineCenters = ({ route, navigation }) => {
                         <Text style={modalStyles.title}>Vaccination Center Details!</Text>
                         {/* <Paragraph style={modalStyles.modalText}>{`Please verify your ${emailID} email id.`}</Paragraph> */}
                         {/* <Button style={{position:'absolute', top:0, right:0}} mode={'contained'} color={'#ccc'} onPress={() => closeVerifyEmail()} > Close</Button> */}
-                        <Icon style={{ position: 'absolute', top: 0, right: 0, padding: 2, backgroundColor: '#ccc', borderRadius: 50, margin: 10 }}
+                        <Icon style={{ position: 'absolute', top: 0, right: 0, padding: 2, backgroundColor: '#ccc', borderRadius: 50, margin: 10,zIndex: 999 }}
                             name='close' onPress={() => { setCenterDetails(''), setShowCenterDetails(false) }}
                         />
                         <View style={modalStyles.dataContainer}>
@@ -458,7 +459,7 @@ const CovidVaccineCenters = ({ route, navigation }) => {
                             </View>
                         </View>
                         <View>
-                            <Text style={{ textAlign: 'center', color:'#ac0f0f'}}>Approx <Text style={{fontSize:50}}>{activeUser} </Text>Users Visited</Text>
+                            <Text style={{ textAlign: 'center', color:'#ac0f0f'}}>Today approx <Text style={{fontSize:50}}>{activeUser} </Text>Users Visited</Text>
                         </View>
                     </View>
                 </View>

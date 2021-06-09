@@ -134,8 +134,8 @@ android {
         applicationId "com.aklogical.emergencyplease"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 2
-        versionName "2.0"
+        versionCode 4
+        versionName "4.0"
     }
     splits {
         abi {
@@ -154,6 +154,12 @@ android {
         }
         release {
             if (project.hasProperty('MYAPP_UPLOAD_STORE_FILE')) {
+                storeFile file(MYAPP_UPLOAD_STORE_FILE)
+                storePassword MYAPP_UPLOAD_STORE_PASSWORD
+                keyAlias MYAPP_UPLOAD_KEY_ALIAS
+                keyPassword MYAPP_UPLOAD_KEY_PASSWORD
+            }
+            else{
                 storeFile file(MYAPP_UPLOAD_STORE_FILE)
                 storePassword MYAPP_UPLOAD_STORE_PASSWORD
                 keyAlias MYAPP_UPLOAD_KEY_ALIAS
@@ -243,4 +249,8 @@ project.ext.vectoricons = [
     iconFontNames: [ 'MaterialIcons.ttf', 'Ionicons.ttf', 'MaterialCommunityIcons.ttf', 'FontAwesome.ttf', 'Feather.ttf', 'Fontisto.ttf' ] // Name of the font files you want to copy
 ]
 
+project.ext.react = [
+    entryFile: "index.js",
+    extraPackagerArgs: ["--sourcemap-output", "$buildDir/generated/sourcemaps/android-embrace.bundle.map"]
+]
 apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"

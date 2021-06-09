@@ -18,7 +18,7 @@ import RequestStatus from './RequestStatus';
 const { width } = Dimensions.get("window");
 const CARD_WIDTH = width * 0.8;
 
-const Home = ({ navigation }) => {
+const Home = ({ route, navigation }) => {
     const { coordinates } = useSelector(state => state.currentLocationReducer);
     const stateDispatch = useDispatch();
     const isFocused = useIsFocused();
@@ -35,11 +35,16 @@ const Home = ({ navigation }) => {
     const [myRequestData, setMyRequestData] = useState([])
 
     const requestData = async () => {
+
         let userDetailsData = await AsyncStorage.getItem('userDetails');
         EmergencyService.nearestEmergencyRequestCount(coordinates).then((res) => {
+            console.log(res)
             setRequestDataCount(res)
             setLoading(false)
         }, error => {
+            console.log(error)
+            setLoading(false)
+
             return;
         })
         EmergencyService.settings().then((res) => {
@@ -54,15 +59,17 @@ const Home = ({ navigation }) => {
                 setEmailVerified(res.email_verified)
             }
             AsyncStorage.setItem('userDetails', JSON.stringify(res));
+
+
         }, error => {
             return;
         })
 
         EmergencyService.myEmergencyRequest().then((res) => {
             setMyRequestData(res.requests)
-          }, error => {
+        }, error => {
             return;
-          })
+        })
     }
     useEffect(() => {
         async function fetchVerson() {
@@ -78,8 +85,10 @@ const Home = ({ navigation }) => {
             stateDispatch(readCurrentLocation())
         }
         else if (coordinates) {
+            console.log(coordinates)
             requestData()
         }
+        return () => setUserDetails([]);
     }, [coordinates])
 
     // useEffect(() => {
@@ -264,7 +273,7 @@ const Home = ({ navigation }) => {
                         onRefresh={requestData}
                     />
                 }>
-             {!loading  && closeAlert && <RequestStatus myRequestData={myRequestData} CloseAlert={() => setCloseAlert(false)}/>}
+                {!loading && closeAlert && <RequestStatus myRequestData={myRequestData} CloseAlert={() => setCloseAlert(false)} />}
 
                 <StatusBar barStyle={theme.dark ? 'light-content' : 'dark-content'} />
                 <View style={styles.optionContainer}>
@@ -320,7 +329,7 @@ const Home = ({ navigation }) => {
                         <View style={[styles.innerContainer, styles.Card], { width: 130, height: 130, borderWidth: 1, borderRadius: 500, backgroundColor: '#fff' }}>
 
                             <View style={[styles.contentTitle], { height: '100%', alignItems: 'center', backgroundColor: '#00000000' }}>
-                                <Title style={[styles.requestCount], { fontSize: 30, paddingTop: 30, paddingBottom: 5, backgroundColor: '#00000000', color:'#d80404' }}>{RequestDataCount?.requests.nearRequest.length}</Title>
+                                <Title style={[styles.requestCount], { fontSize: 30, paddingTop: 30, paddingBottom: 5, backgroundColor: '#00000000', color: '#d80404' }}>{RequestDataCount?.requests.nearRequest.length}</Title>
                                 <Text style={{ fontSize: 13, }}>in 5 km </Text>
                                 <Title style={{ fontSize: 16, borderBottomWidth: 5, position: 'absolute', bottom: 0, width: '100%', textAlign: 'center', paddingHorizontal: 13, backgroundColor: 'green', color: '#fff' }}>Nearest</Title>
                             </View>
@@ -335,7 +344,7 @@ const Home = ({ navigation }) => {
                                 <Button icon="walk" mode="contained" color="red" style={{ position: 'absolute', bottom: 10 }}
                                     onPress={() => navigation.navigate('EmergencyCall',
                                         {
-                                            RequestDataCount: RequestDataCount,
+                                            RequestDataCount: RequestDataCount
                                         })}
                                     disabled={RequestDataCount?.requests.nearRequest.length == 0}
                                 >
@@ -351,6 +360,7 @@ const Home = ({ navigation }) => {
                         onPress={() => navigation.navigate('EmergencyServices',
                             {
                                 userDetails: userDetails,
+                                serviceTypeID: route.params.serviceTypeID
                             })}
 
                     >
@@ -398,7 +408,7 @@ const Home = ({ navigation }) => {
                     </TouchableOpacity>}
 
                 </View>
-            
+
             </ScrollView>
         </ImageBackground>
     )

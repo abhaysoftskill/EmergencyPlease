@@ -13,7 +13,7 @@ const DateCalendar = (props) => {
 
     const onDayPress = day => {
         setSelected(day.dateString)
-        setSelectedDate(dateFormat(new Date(day.dateString), "dd-mmm-yyyy"));
+        setSelectedDate(dateFormat(new Date(day.dateString), "dd-mm-yyyy"));
     };
     const hideDialog = () => setVisible(false);
     return (

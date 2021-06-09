@@ -28,7 +28,8 @@ export default Card;
 
 const styles = StyleSheet.create({
   card: {
-    height: 100,
+    // height: 100,
+    flex:1,
     marginVertical: 10,
     flexDirection: 'row',
     shadowColor: '#999',

@@ -27,7 +27,6 @@ const longitudeDelta = 0.02;
 
 const EmergencyReport = ({ route, navigation }) => {
     // const userDetails = route.params.userDetails;
-
     const userDetails = route.params.userDetails;
     const theme = useTheme();
     const { coordinates } = useSelector(state => state.currentLocationReducer);
@@ -52,41 +51,49 @@ const EmergencyReport = ({ route, navigation }) => {
         if (coordinates) {
             setShowMap(true)
         }
+        return () => { setShowMap(false) };
     }, [coordinates]);
 
     const confirmLocation = async () => {
-        setLoading(true);
         let epAppSettings = await AsyncStorage.getItem('epAppSettings');
+        let userDetailsData = await AsyncStorage.getItem('userDetails');
         let AppSettings = JSON.parse(epAppSettings)
-        EmergencyService.myTodayRequest()
-            .then((res) => {
-                setTimeout(async () => {
-                    if (res.count <= AppSettings.settings[0].settings.daily_request_limit) {
-                        setLoading(false);
-                        setConfirm_message(true);
-                    }
-                    else {
-                        setLoading(false);
+        let userDetails = JSON.parse(userDetailsData)
+        if (userDetails.userType == 'supersystemadmin') {
+            setLoading(false);
+            setConfirm_message(true);
+        }
+        else {
+            EmergencyService.myTodayRequest()
+                .then((res) => {
+                    setTimeout(async () => {
+                        if (res.count <= AppSettings.settings[0].settings.daily_request_limit) {
+                            setLoading(false);
+                            setConfirm_message(true);
+                        }
+                        else {
+                            setLoading(false);
 
-                        Alert.alert('Daily Request Limit Exceeded !', 'You reached request limit, Please contact Emergency Please Team.', [
-                            {
-                                text: 'Okay',
-                                onPress: async () => {
-                                    try {
-                                        navigation.navigate('Dashboard')
-                                    } catch (e) {
-                                        console.log(e);
+                            Alert.alert('Daily Request Limit Exceeded !', 'You reached request limit, Please contact Emergency Please Team.', [
+                                {
+                                    text: 'Okay',
+                                    onPress: async () => {
+                                        try {
+                                            navigation.navigate('Dashboard')
+                                        } catch (e) {
+                                            console.log(e);
+                                        }
+
                                     }
-
                                 }
-                            }
-                        ]);
-                    }
-                }, 2000);
+                            ]);
+                        }
+                    }, 2000);
 
-            }, error => {
-                return;
-            })
+                }, error => {
+                    return;
+                })
+        }
     }
 
     return (
@@ -120,7 +127,7 @@ const EmergencyReport = ({ route, navigation }) => {
                     <Text style={styles.markerText}> You are Here</Text>
                 </Animated.View>}
                 {showMap && <SafeAreaView style={styles.footer}>
-                    <Button icon="location-enter" mode="contained" onPress={() => confirmLocation()} color='#05375a' size=''
+                    <Button icon="location-enter" mode="contained" onPress={() => { setLoading(true), confirmLocation() }} color='#05375a' size=''
                     >
                         Confirm Location  </Button>
                 </SafeAreaView>}
@@ -144,23 +151,31 @@ const EmergencyReport = ({ route, navigation }) => {
                         }
                     ]}
                 />}
-                {loading && <View style={{
-                    flex: 1,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                }}>
-                    <Image
-                        source={require('../assets/loading.png')}
-                        // style={{ width: 200, height: 100 }}
-                        resizeMode="cover"
-                    />
-                    <Text>Please Wait....</Text>
-                </View>}
+
                 {!showMap && <ActivityIndicator animating={true} color={Colors.red800} />}
-                {confirm_message && <ConfirmRequest closeOption={() => setConfirm_message(false)} data={route.params} geometry={region} />}
+                {confirm_message && <ConfirmRequest loading={(e) => setLoading(e)} closeOption={() => setConfirm_message(false)} data={route.params} geometry={region} />}
 
             </View>
+            {loading && <View style={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+                //  marginTop: 20,
+                position: 'absolute',
+                backgroundColor: 'rgba(255,255,255,0.8)',
+                height: '100%',
+                left: 0,
+                right: 0,
+                zIndex: 99
 
+            }}>
+                <Image
+                    source={require('../assets/loading.png')}
+                    // style={{ width: 200, height: 100 }}
+                    resizeMode="cover"
+                />
+                <Text>Please Wait....</Text>
+            </View>}
         </View>
     );
 };
@@ -175,7 +190,6 @@ const scaleStyle = {
     ],
 };
 const styles = StyleSheet.create({
-
     userprofile: {
         borderWidth: 0,
         width: 100,

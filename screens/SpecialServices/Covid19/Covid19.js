@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Image, View, Text, Button, FlatList, StyleSheet, TouchableOpacity, Keyboard, Alert } from 'react-native';
+import {Image, View, Text, Button, FlatList, StyleSheet, TouchableOpacity, Keyboard, Alert } from 'react-native';
 import DropDown from 'react-native-paper-dropdown';
-import { Provider, TextInput } from 'react-native-paper';
+import { Provider,TextInput } from 'react-native-paper';
 import { useTheme } from '@react-navigation/native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 // import statesData from '../../../model/states';
@@ -159,6 +159,7 @@ const Covid19 = ({ route, navigation }) => {
           <TextInput
             placeholder="Pincode"
             placeholderTextColor="#666666"
+            mode='outlined'
             keyboardType={'number-pad'}
             style={[styles.textInput, {
               color: colors.text, fontSize: 30,
@@ -168,6 +169,8 @@ const Covid19 = ({ route, navigation }) => {
             autoCapitalize="none"
             onChangeText={(val) => pincodeInputChange(val)}
             onEndEditing={(e) => Keyboard.dismiss()}
+            theme={{ colors: { primary: '#FF6347',underlineColor:'transparent',}}}
+
           />
 
 
@@ -213,7 +216,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#f2f2f2',
     paddingBottom: 5,
-    marginTop: 30
+    marginTop: 30,
   },
   actionError: {
     flexDirection: 'row',
@@ -224,9 +227,9 @@ const styles = StyleSheet.create({
   },
   textInput: {
     flex: 1,
-    marginTop: Platform.OS === 'ios' ? 0 : -12,
-    paddingLeft: 20,
-    color: '#05375a',
+    // marginTop: Platform.OS === 'ios' ? 0 : -12,
+    // paddingLeft: 20,
+    color: '#05375a'
   },
   button: {
     alignItems: 'center',

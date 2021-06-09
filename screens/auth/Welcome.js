@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     View,
     Text,
@@ -9,7 +9,8 @@ import {
     Platform,
     StyleSheet,
     ScrollView,
-    StatusBar
+    StatusBar,
+    Alert
 } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
@@ -19,12 +20,13 @@ import { RadioButton } from 'react-native-paper';
 import DateCalendar from '../../components/Calendar';
 import SelectBloodGroup from '../../components/BloodGroup';
 import { authStack } from '../../utils/navigations/Routes';
+import LoginService from '../../services/loginServices';
 
 const Welcome = ({ route, navigation }) => {
     let dateFormat = require("dateformat");
-  
+
     const [gender, setGender] = React.useState('male');
-    const [dob, setDOB] = React.useState(dateFormat(new Date(), "dd-mmm-yyyy"));
+    const [dob, setDOB] = React.useState(dateFormat(new Date(), "dd-mm-yyyy"));
 
     const [showBloodGroup, setShowBloodGroup] = useState(false);
     const [bloodGroup, setBloodGroup] = useState('A');
@@ -32,18 +34,57 @@ const Welcome = ({ route, navigation }) => {
     const [showCalendar, setShowCalendar] = React.useState(false);
     const [data, setData] = React.useState({
         ...route.params.userDetails,
-        gender:gender,
-        dob:dob,
-        bloodGroup:bloodGroup,
-        bloodGroupType:bloodGroupType
-});
-
-
+        gender: gender,
+        dob: dob,
+        bloodGroup: bloodGroup,
+        bloodGroupType: bloodGroupType
+    });
+    useEffect(() => {
+        setData({
+            ...route.params.userDetails,
+            gender: gender,
+            dob: dob,
+            bloodGroup: bloodGroup,
+            bloodGroupType: bloodGroupType
+        })
+    }, [dob, gender, bloodGroup, bloodGroupType])
+    const updateDetails = () => {
+        const updateData = {
+            gender: data.gender,
+            dob: data.dob,
+            bloodGroup: data.bloodGroup + data.bloodGroupType,
+            email:data.email
+        }
+        LoginService.genderdetails(updateData).then((res) => {
+            setTimeout(async () => {
+                Alert.alert(`Profile updated!'`, 'Re-Login with your credentials', [
+                    {
+                        text: 'Ok',
+                        onPress: async () => {
+                            try {
+                                navigation.navigate('SignIn', { userDetails: data })
+                            } catch (e) {
+                                console.log(e);
+                            }
+    
+                        }
+                    }
+    
+                ])
+              }, 2000);
+           
+        }, error => {
+            Alert.alert('Profile updated!', error.message, [
+                { text: 'Retry' }
+            ]);
+            return;
+        })
+    }
     return (
         <View style={styles.container}>
             <StatusBar backgroundColor='#FF6347' barStyle="light-content" />
             <View style={styles.header}>
-            <Text style={styles.text_header}>Welcome!</Text>
+                <Text style={styles.text_header}>Welcome!</Text>
                 <Text style={styles.text_header}>{data.firstname + " " + data.lastname}</Text>
             </View>
             <Animatable.View
@@ -77,11 +118,25 @@ const Welcome = ({ route, navigation }) => {
                                 <Text style={{ fontSize: 16, color: '#888' }}>{'Female'}</Text>
                             </View>
                         </View>
-                      
+
                     </View>
                     <View style={styles.action}>
-                        <Text style={styles.text_footer}>Birth Date</Text>
-                        <Text style={[styles.text_footer, { marginLeft: 40, color: '#8e8e8e', fontSize: 16 }]}>{dob}</Text>
+                        <Text style={[styles.text_footer]}>Birth Date</Text>
+                        {/* <Text style={[styles.text_footer, { marginLeft: 40, color: '#8e8e8e', fontSize: 16 }]}>{dob}</Text> */}
+                        <View>
+                            <TextInput
+                                placeholder=""
+                                style={styles.textInput}
+                                autoCapitalize="none"
+                                value={dob}
+                                onChangeText={(val) => {
+                                    setDOB(val)
+                                }}
+                                returnKeyType="next"
+
+                            // style={{ marginLeft: 50 }}
+                            />
+                        </View>
                         <FontAwesome
                             name="calendar"
                             color="#05375a"
@@ -116,7 +171,7 @@ const Welcome = ({ route, navigation }) => {
                         <TouchableOpacity
                             style={styles.signIn, styles.signButton}
                             // onPress={() => { navigation.navigate('FamilyFriends', { userDetails: data }) }}
-                            onPress={() => { navigation.navigate('SignIn', {  userDetails: data }) }}
+                            onPress={() => { updateDetails() }}
                         >
                             <LinearGradient
                                 colors={['#FFA07A', '#FF6347']}
@@ -134,7 +189,7 @@ const Welcome = ({ route, navigation }) => {
 
                 </ScrollView>
             </Animatable.View>
-            {showCalendar && <DateCalendar selectDate={(e) => { setDOB(e), setShowCalendar(false) }} closeOption={() => setShowCalendar(false)} />}
+            {showCalendar && <DateCalendar selectDate={(e) => { console.log(e), setDOB(e), setShowCalendar(false) }} closeOption={() => setShowCalendar(false)} />}
             {showBloodGroup && <SelectBloodGroup selectBloodGroup={(e) => { setBloodGroup(e.bloodGroup), setBloodGroupType(e.bloodGroupType), setShowBloodGroup(false) }} closeOption={() => setShowBloodGroup(false)} />}
 
         </View>
@@ -172,6 +227,7 @@ const styles = StyleSheet.create({
         fontSize: 18
     },
     action: {
+        flex:1,
         flexDirection: 'row',
         marginTop: 10,
         borderBottomWidth: 1,
@@ -179,7 +235,7 @@ const styles = StyleSheet.create({
         paddingBottom: 5
     },
     textInput: {
-        flex: 1,
+        // flex: 1,
         marginTop: Platform.OS === 'ios' ? 0 : -12,
         paddingLeft: 10,
         color: '#05375a',

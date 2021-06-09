@@ -1,10 +1,14 @@
 import React, { useState, useEffect, useReducer } from 'react';
 import { FlatList, ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
+
 import { Image, ImageBackground, StyleSheet, Text, View } from 'react-native';
 import EmergencyService from '../services/emergencyServices';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { readCurrentLocation } from '../redux/actions/currentLocationActions';
+import { serviceTypeAdd } from '../redux/actions/actions';
+import strings from '../translations/translations';
+import { Button } from 'react-native-paper';
 
 
 const Services = ({ navigation }) => {
@@ -20,21 +24,32 @@ const Services = ({ navigation }) => {
     }, error => {
       return;
     })
-  }
 
+    
+  }
+// const changeLanguage = () => {
+//   console.log('%%%%%%%%%%%%555')
+//   strings.setLanguage('fr')
+
+// }
   useEffect(() => {
+  //  strings.setLanguage('en')
     if (coordinates?.length == 0) {
       stateDispatch(readCurrentLocation())
     }
     else if (coordinates) {
       requestData()
     }
+   // return () =>  RNLocalize.removeEventListener('change', handleLocalizationChange());
+
   }, [coordinates])
 
   const getServiceList = (itemData) => {
     return (
       <TouchableOpacity onPress={() => {
-        itemData.item.service_type == 'covid_19' ? navigation.navigate('Covid19') : navigation.navigate('Dashboard')
+        stateDispatch(serviceTypeAdd(itemData.item._id)),
+          itemData.item.service_type == 'covid_19' ? navigation.navigate('Covid19', { serviceTypeID: itemData.item._id }) : navigation.navigate('Dashboard', { serviceTypeID: itemData.item._id })
+
       }}>
         <View style={styles.card}>
           <View style={styles.cardImgWrapper}>
@@ -56,17 +71,32 @@ const Services = ({ navigation }) => {
       </TouchableOpacity>
     );
   };
+
+
+  //////////////////////////////////////////
+
+
+  const lang = [
+    // lazy requires (metro bundler does not support symlinks)
+    {shortform:'en', longform:'English'},
+    {shortform:'ar', longform:'Arebic'},
+    {shortform:'fr', longform:'French'},
+   ];
+
+  
   return (
-   
 
-      <View style={styles.container}>
-        <FlatList
-          data={services?.service_type}
-          renderItem={getServiceList}
-          keyExtractor={item => item.service_type}
-        />
 
-      </View>
+    <View style={styles.container}>
+      {/* <Button onPress={() => changeLanguage()} >Text</Button> */}
+      {/* <Text style={styles.value}>{strings.hello}</Text> */}
+      <FlatList
+        data={services?.service_type}
+        renderItem={getServiceList}
+        keyExtractor={item => item.service_type}
+      />
+
+    </View>
   )
 }
 
@@ -78,21 +108,19 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '90%',
     alignSelf: 'center',
-    height:'100%'
+    height: '100%'
   },
   card: {
     height: 120,
-    // marginVertical: 10,
     flexDirection: 'row',
     shadowColor: '#999',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.8,
     shadowRadius: 2,
     elevation: 5,
-    
+
   },
   cardImgWrapper: {
-    // borderBottomWidth:20,
     flex: 1,
   },
   cardImg: {
@@ -100,8 +128,6 @@ const styles = StyleSheet.create({
     width: '100%',
     alignSelf: 'center',
     borderRadius: 8,
-    // borderBottomRightRadius: 0,
-    // borderTopRightRadius: 0,
     borderBottomRightRadius: 0,
     borderBottomLeftRadius: 0,
   },

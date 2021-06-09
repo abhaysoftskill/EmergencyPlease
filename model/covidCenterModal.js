@@ -2,7 +2,7 @@ const covidCenterModal = {
   title: {
     color: 'red',
     fontWeight: 'bold',
-    paddingBottom: 0
+    paddingBottom: 0,
   },
   dataContainer: {
     flex: 1,

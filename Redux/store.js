@@ -5,9 +5,11 @@ import commonReducer from "./reducers/commonReducer";
 // import { persistReducer } from "redux-persist";
 import AsyncStorage from "@react-native-community/async-storage";
 import currentLocationReducer from "./reducers/currentLocationReducer";
+import serviceReducer from "./reducers/serviceReducer";
 
 const rootReducer = combineReducers({
     commonReducer: commonReducer,
+    serviceReducer: serviceReducer,
     currentLocationReducer:currentLocationReducer,
 });
 

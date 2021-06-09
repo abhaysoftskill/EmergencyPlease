@@ -41,7 +41,9 @@ export const SuccessStories = ({navigation}) => {
         <View>
             {/* https://medium.com/enappd/how-to-make-stories-ui-like-instagram-and-whatsapp-in-react-native-3e84abac6ee9 */}
             {/* https://github.com/mdshadman/InstaWhatsAppStories/blob/master/App/Components/Styles.js */}
-            {stories?.map((story, index) => {
+        {/* <Text>{JSON.stringify(stories)}</Text> */}
+            
+            {stories && stories?.map((story, index) => {
                 return (
                     <Card style={styles.cardStyle} key={index}>
                         <CardItem style={styles.profileView}>
@@ -52,8 +54,8 @@ export const SuccessStories = ({navigation}) => {
                                     </View>
                                 </View>
                                 <Body>
-                                    <Text style={styles.fontWeightStyle}>{story.User[0].firstname} {story.User[0].lastname}</Text>
-                                    <Text style={styles.userDesc} numberOfLines={1}>@ {story.User[0].username}</Text>
+                                    <Text style={styles.fontWeightStyle}>{story?.User[0]?.firstname || 'unknown'} {story?.User[0]?.lastname}</Text>
+                                    <Text style={styles.userDesc} numberOfLines={1}>@ {story?.User[0]?.username || 'unknown' }</Text>
                                 </Body>
                             </Left>
 
@@ -62,15 +64,14 @@ export const SuccessStories = ({navigation}) => {
                         <CardItem>
                             <Body>
                                 <Text>
-                                     {story.story}
+                                     {story?.story}
                                 </Text>
                             </Body>
                         </CardItem>
 
                     </Card>
                 );
-            })
-            }
+            })}
         </View>
 
 

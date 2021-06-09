@@ -1,11 +1,14 @@
+import { useTheme } from '@react-navigation/native';
+import { Icon } from 'native-base';
 import React, { useState, useEffect } from 'react';
 import { View, FlatList, StyleSheet } from 'react-native';
 import EmergencyService from '../services/emergencyServices';
 import MyRequestsCard from './myRequestsCard';
 
 const MyRequests = ({ route, navigation }) => {
+  const { colors } = useTheme();
   const [myRequestData, setMyRequestData] = useState([])
-
+ 
   const renderItem = ({ item }) => {
     return (
       <MyRequestsCard
@@ -24,6 +27,7 @@ const MyRequests = ({ route, navigation }) => {
   }
   useEffect(() => {
     requestData()
+    return () => {setMyRequestData([])}
   }, [])
   return (
     <>

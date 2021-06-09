@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Image, Alert } from 'react-native';
+import React, { useContext, useEffect, useState } from 'react';
+import { View, StyleSheet, Image, Alert, Modal, Text } from 'react-native';
 import {
     useTheme,
     Avatar,
@@ -7,16 +7,17 @@ import {
     Caption,
     Paragraph,
     Drawer,
-    Text,
     TouchableRipple,
-    Switch
+    Switch,
+    RadioButton
 } from 'react-native-paper';
 import {
     DrawerContentScrollView,
     DrawerItem
 } from '@react-navigation/drawer';
-
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import modalStyles from '../../model/languageStyleModal';
 
 import { AuthContext } from '../../components/context';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -25,26 +26,36 @@ import Fontisto from 'react-native-vector-icons/Fontisto';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import EmergencyService from '../../services/emergencyServices';
 import { checkVersion } from 'react-native-check-version';
+import { useDispatch } from 'react-redux';
+import { serviceTypeAdd } from '../../redux/actions/actions';
+import { LocalizationContext } from '../../translations/LocalizationContext';
 export function DrawerContent({ props, navigation }) {
-
+    const {translations, appLanguage, setAppLanguage} = useContext(
+        LocalizationContext,
+      );
     const paperTheme = useTheme();
     const [userDetails, setUserDetails] = useState({})
     const { signOut, toggleTheme } = React.useContext(AuthContext);
     const [services, setServices] = useState();
     const [versionNo, setVersionNo] = useState('');
+    const [showLanguage, setShowLanguage] = useState(false);
+    const [language, setLanguage] = useState('first');
 
+    const stateDispatch = useDispatch();
     useEffect(() => {
         setTimeout(async () => {
             // setIsLoading(false);
             try {
                 let userDetailsData = await AsyncStorage.getItem('userDetails');
                 setUserDetails(JSON.parse(userDetailsData));
-               
+
             } catch (e) {
                 console.log(e);
             }
 
         }, 1000);
+        return () => setUserDetails({});
+
     }, []);
     useEffect(() => {
         EmergencyService.serviceTypes().then((res) => {
@@ -54,46 +65,53 @@ export function DrawerContent({ props, navigation }) {
         })
         async function fetchVerson() {
             const version = await checkVersion();
-            setVersionNo(version)
+            setVersionNo(version?.version)
             if (version.needsUpdate) {
                 console.log(`App has a ${version.updateType} update pending.`);
             }
             console.log(version)
         }
-        fetchVerson()
+        fetchVerson();
+        return () => setServices('');
+
     }, [])
+    const handleSetLanguage = async language => {
+        setLanguage(language)
+        setAppLanguage(language);
+        setShowLanguage(false)
+      };
     return (
         <View style={{ flex: 1 }}>
             <Drawer.Section>
-            <View style={styles.userInfoSection}>
-                        <View style={{ flexDirection: 'row', marginTop: 15 }}>
-                            <Avatar.Image
-                                backgroundColor={'#fff'}
-                                source={require('../../assets/defaultProfile.png')}
-                                size={50}
-                            />
-                            <View style={{ marginLeft: 15, flexDirection: 'column' }}>
-                                <Title style={styles.title}>{userDetails.firstname + " " + userDetails.lastname}</Title>
-                                <Caption style={styles.caption}>({userDetails.phonenumber}) {' '}
+                <View style={styles.userInfoSection}>
+                    <View style={{ flexDirection: 'row', marginTop: 15 }}>
+                        <Avatar.Image
+                            backgroundColor={'#fff'}
+                            source={require('../../assets/defaultProfile.png')}
+                            size={50}
+                        />
+                        <View style={{ marginLeft: 15, flexDirection: 'column' }}>
+                            <Title style={styles.title}>{userDetails.firstname + " " + userDetails.lastname}</Title>
+                            <Caption style={styles.caption}>({userDetails.phonenumber}) {' '}
                                 <Text style={[userDetails.mobileverify ? styles.verifiedCaption : styles.notVerifiedCaption]}>
                                     ({userDetails.mobileverify ? 'Verified' : 'Not Verified'})</Text></Caption>
-                                   
-                            </View>
-                        </View>
-                        <View>
-                        <Caption style={{ fontSize: 14 }}>{userDetails.email}<Text style={[userDetails.email_verified ? styles.verifiedCaption : styles.notVerifiedCaption]}>
-                               {' '} ({userDetails.email_verified ? 'Verified' : 'Not Verified'})</Text></Caption>
-                        </View>
 
+                        </View>
                     </View>
+                    <View>
+                        <Caption style={{ fontSize: 14 }}>{userDetails.email}<Text style={[userDetails.email_verified ? styles.verifiedCaption : styles.notVerifiedCaption]}>
+                            {' '} ({userDetails.email_verified ? 'Verified' : 'Not Verified'})</Text></Caption>
+                    </View>
+
+                </View>
             </Drawer.Section>
             <DrawerContentScrollView {...props}>
                 <View style={styles.drawerContent}>
                     <Drawer.Section title="Emergency Contacts">
-{/* <Text>{JSON.stringify(userDetails.familyContacts)}</Text> */}
+                        {/* <Text>{JSON.stringify(userDetails.familyContacts)}</Text> */}
                         <View style={[styles.categoryContainer, { marginTop: 10 }]}>
                             <TouchableOpacity style={styles.categoryBtn} >
-                           
+
                                 <View style={[styles.categoryIcon2, { borderColor: `${(userDetails?.familyContacts?.length > 0 ? '#FF6347' : '#fdeae7')}`, backgroundColor: `${(userDetails?.familyContacts?.length > 0 ? '#d9f1df' : '#e5e5e5')}` }]}>
                                     <Fontisto name="holiday-village" size={35} color={`${(userDetails?.familyContacts?.length > 0 ? '#FF6347' : '#8d8c8c')}`} />
                                     <View style={[styles.friendsCount, { backgroundColor: `${(userDetails?.familyContacts?.length > 0 ? '#FF6347' : '#ccc')}` }]}>
@@ -137,6 +155,54 @@ export function DrawerContent({ props, navigation }) {
                             />
                         </View> */}
                     </Drawer.Section>
+                    <Drawer.Section title="Language">
+                        <View>
+                            <Text onPress={() => setShowLanguage(!showLanguage)}>
+                                {language}</Text>
+                        </View>
+
+                    </Drawer.Section>
+                    <Modal
+                        animationType="fade"
+                        transparent={true}
+                        visible={showLanguage}
+                        onRequestClose={() => {
+                            setShowLanguage(!showLanguage)
+                        }}>
+
+                        <View style={modalStyles.centeredView}>
+                            <View style={modalStyles.modalView}>
+                                  {/* <Icon style={{ position: 'absolute', top: 0, right: 0, padding: 2, backgroundColor: '#ccc', borderRadius: 50, margin: 10 }}
+                            name='close' onPress={() => closeVerifyEmail()}
+                        /> */}
+            
+                                <Text style={modalStyles.title}>Choose a different language</Text>
+                                <Icon
+                            name="close"
+                            color={'#000'}
+                            size={25}
+                            onPress={() =>{console.log('&&&&&&&&&&&&'), setShowLanguage(false)}}
+                            style={{position: 'absolute', zIndex:999, top: 5, right: 5, padding: 2, backgroundColor: '#ccc', borderRadius: 50, }}
+                        />
+                                <View style={{ alignItems:'flex-start'}} >
+                                    <RadioButton.Group
+                                        onValueChange={value => {handleSetLanguage(value)}}
+                                        value={language}
+                                    >
+                                        {translations.getAvailableLanguages().map(item => ( <View key={item} style={{ flexDirection: 'row',alignItems:'center', justifyContent:'flex-start' }}>
+                                            <RadioButton value={item} 
+                                            status={language === item ? 'checked' : 'unchecked'} 
+                                            />
+                                        <Text style={{ marginLeft: 10  }}>{item}</Text>
+
+                                        </View>
+                                        ))}
+                                       
+                                    </RadioButton.Group>
+                                </View>
+                            </View>
+                        </View>
+                    </Modal>
                     <Drawer.Section title="Rewards & Badges">
                         <Text style={{ fontSize: 50, textAlign: 'center', color: '#DAA520', borderBottomWidth: 3, borderBottomColor: '#DAA520', borderTopWidth: 3, borderTopColor: '#DAA520' }}>0 <Text style={{ fontSize: 30 }}>₹</Text></Text>
                         <View style={[styles.badgeContainer]}>
@@ -170,34 +236,26 @@ export function DrawerContent({ props, navigation }) {
 
                                 />
                                 <View style={styles.badgeCount}>
-                                    <Text style={{ color: "#fff" }}>{0}</Text>
+                                    <Text style={{ color: "#fff" }}>0</Text>
                                 </View>
                             </View>
 
                         </View>
-
-
-                        {/* <View style={styles.banner}>
-    <Image
-        source={require('../../assets/banners/banner1.png')}
-        resizeMode="cover"
-        style={{ width: '100%', height: '100%' }}
-    />
-</View> */}
                     </Drawer.Section>
-                    <Drawer.Section title="Services">
+                    {/* <Drawer.Section title="Services">
                         <View style={{ padding: 10 }}>
                             {services && services.map((service, index) => {
                                 return (
                                     <View key={index}>
                                         <TouchableOpacity onPress={() => {
-                                            service.service_type == 'covid_19' ? navigation.navigate('Covid19') : navigation.navigate('Dashboard')
+                                            stateDispatch(serviceTypeAdd(service._id)),
+                                                service.service_type == 'covid_19' ? navigation.navigate('Covid19', { serviceTypeID: service._id }) : navigation.navigate('Dashboard', { serviceTypeID: service._id })
                                         }}>
+
                                             <View style={styles.card} >
                                                 <View style={styles.cardImgWrapper}>
                                                     <Image
                                                         source={{ uri: `https://emergencyplease.com/api/src/uploads/${service.service_type}.jpg` }}
-                                                        // source={require('../assets/banners/general_emergency.jpg')}
                                                         resizeMode="cover"
                                                         style={styles.cardImg}
                                                     />
@@ -214,7 +272,7 @@ export function DrawerContent({ props, navigation }) {
                             }
                             )}
                         </View>
-                    </Drawer.Section>
+                    </Drawer.Section> */}
                 </View>
 
             </DrawerContentScrollView>
@@ -233,6 +291,20 @@ export function DrawerContent({ props, navigation }) {
             <Drawer.Section style={styles.bottomDrawerSection}>
                 <DrawerItem
                     icon={({ color, size }) => (
+                        <FontAwesome
+                            name="comments"
+                            color="#05375a"
+                            size={20}
+                        />
+                    )}
+                    label="Feedback"
+                    onPress={() => {
+                    }}
+                    style={{ backgroundColor: '#e8e8e8' }}
+
+                />
+                <DrawerItem
+                    icon={({ color, size }) => (
                         <Icon
                             name="exit-to-app"
                             color={color}
@@ -240,17 +312,17 @@ export function DrawerContent({ props, navigation }) {
                         />
                     )}
                     label="Sign Out"
-                    onPress={() => { 
+                    onPress={() => {
                         Alert.alert('Sign Out!', 'Do you want to Sign Out?', [
                             {
                                 text: 'Yes',
                                 onPress: async () => {
                                     try {
-                                       signOut() 
+                                        signOut()
                                     } catch (e) {
                                         console.log(e);
                                     }
-    
+
                                 }
                             },
                             { text: 'Cancel', onPress: () => { return } },
@@ -260,13 +332,13 @@ export function DrawerContent({ props, navigation }) {
             </Drawer.Section>
             <Drawer.Section >
                 <View style={styles.preference}>
-                    <Text>Version No : -</Text>
+                    <Text style={{ fontSize: 10, textAlign: 'left', width: '100%', color: '#ccc' }}>Version No : - {versionNo}</Text>
                 </View>
-                <View style={styles.preference}>
+                {/*  <View style={styles.preference}>
                     <Text>Last Visit : -</Text>
-                </View>
+                </View> */}
                 <View style={styles.vision}>
-                    <Text style={{fontSize:10,textAlign:'right', width:'100%', color:'#ccc'}}>Vision By - Mano-Bharat</Text>
+                    <Text style={{ fontSize: 10, textAlign: 'right', width: '100%', color: '#ccc' }}>Vision By - Mano-Bharat</Text>
                 </View>
             </Drawer.Section>
         </View>
@@ -440,11 +512,11 @@ const styles = StyleSheet.create({
         backgroundColor: '#d21036', width: 20, height: 20, borderRadius: 50,
         alignItems: "center", alignContent: "center", justifyContent: 'center'
     },
-    vision:{
+    vision: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         paddingVertical: 2,
         paddingHorizontal: 16,
-        alignItems:'flex-end',
+        alignItems: 'flex-end',
     }
 });

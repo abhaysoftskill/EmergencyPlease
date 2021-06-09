@@ -81,10 +81,33 @@ const services = async () => {
         }
     });
 }
+const servicebyservicetype = async (serviceID) => {
+
+    userToken = await AsyncStorage.getItem('userToken');
+    return request({
+        url: `/service/servicebyservicetype/${serviceID}`,
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${userToken}`
+        }
+    });
+}
+
 const nearservices = async (lng, lat) => {
     userToken = await AsyncStorage.getItem('userToken');
     return request({
         url: `/service/nearservices?lng=${lng}&lat=${lat}`,
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${userToken}`
+        }
+    });
+}
+
+const nearservicesbyservicetype = async (serviceID,lng, lat) => {
+    userToken = await AsyncStorage.getItem('userToken');
+    return request({
+        url: `/service/nearservicesbyservicetype/${serviceID}?lng=${lng}&lat=${lat}`,
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${userToken}`
@@ -269,6 +292,8 @@ const EmergencyService = {
     getAppUpdateVersion,
     serviceTypes,
     services,
+    servicebyservicetype,
+    nearservicesbyservicetype,
     nearservices,
     emergencyContacts,
     stories,

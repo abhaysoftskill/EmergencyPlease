@@ -1,8 +1,8 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import {
     View,
     Text,
-    Button,
+
     TouchableOpacity,
     Dimensions,
     TextInput,
@@ -10,27 +10,41 @@ import {
     StyleSheet,
     ScrollView,
     StatusBar,
-    Alert
+    Alert,
+    Modal
 } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 import LoginService from '../../services/loginServices';
+import modalStyles from '../../model/loginValidationModal';
+import { Paragraph } from 'react-native-paper';
+import { Icon } from 'native-base';
 
+import { Button } from 'react-native-paper';
+import VerifyPhonenumber from './VerifyPhonenumber';
 const SignUpScreen = ({ route, navigation }) => {
     let EMAIL_REGEXP = /^[a-z0-9!#$%&'*+\/=?^_`{|}~.-]+@[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)*$/i;
-
+    const [verifyContact, setVerifyContact] = useState(false)
     const [data, setData] = React.useState({
-        username:'',
+        username: '',
         firstname: '',
         lastname: '',
         password: '',
         confirm_password: '',
         phonenumber: route.params.phonenumber,
-        email:route.params.email
+        email: route.params.email,
+        secureTextEntry:true,
+        confirm_secureTextEntry:true
+    });
+
+    const [securePasssword, setSecurePasssword] = React.useState({
+        secureTextEntry:true,
+        confirm_secureTextEntry:true
     });
     const [passwordCorrect, setPasswordCorrect] = React.useState('');
+    const [phoneVerfied, setPhoneVerfied] = React.useState(false);
     const textInputFirstNameChange = (val) => {
         setData({
             ...data,
@@ -77,19 +91,19 @@ const SignUpScreen = ({ route, navigation }) => {
     }
 
     const updateSecureTextEntry = () => {
-        setData({
-            ...data,
-            secureTextEntry: !data.secureTextEntry
+        setSecurePasssword({
+            ...securePasssword,
+            secureTextEntry: !securePasssword.secureTextEntry
         });
     }
 
     const updateConfirmSecureTextEntry = () => {
-        setData({
-            ...data,
-            confirm_secureTextEntry: !data.confirm_secureTextEntry
+        setSecurePasssword({
+            ...securePasssword,
+            confirm_secureTextEntry: !securePasssword.confirm_secureTextEntry
         });
     }
-    const RegisterUser = () =>{
+    const RegisterUser = () => {
         data.username = (data.firstname.slice(0, 3) + data.lastname.slice(0, 3)).toLowerCase();
         //,{ navigation.navigate('Welcome', { userDetails: data }) }
         LoginService.register(data).then((res) => {
@@ -117,7 +131,7 @@ const SignUpScreen = ({ route, navigation }) => {
         //     "phonenumber": "9960732626",
         //     "dob": "1989-12-18T00:00:00.000Z"
         // } })
-}
+    }
     const ref_input1 = useRef();
     const ref_input2 = useRef();
     const ref_input3 = useRef();
@@ -202,13 +216,40 @@ const SignUpScreen = ({ route, navigation }) => {
                             style={styles.textInput}
                             autoCapitalize="none"
                             defaultValue={data.phonenumber}
-                            editable={route.params.phonenumber? false : true}
+                            editable={route.params.phonenumber ? false : true}
                             keyboardType='decimal-pad'
                             ref={ref_input3}
                             returnKeyType="next"
                             onSubmitEditing={() => ref_input4.current.focus()}
                             onChangeText={(val) => textInputPhoneNumberChange(val)}
+                        // style={{ borderWidth: 1 }}
                         />
+                        {phoneVerfied && <Animatable.View
+                            animation="bounceIn"
+                        >
+                            <Feather
+                                name="check-circle"
+                                color="green"
+                                size={20}
+                            />
+                        </Animatable.View>}
+                        {phoneVerfied && <Text style={{ color: '#0c6604' }}> Verified </Text>}
+
+                        {!phoneVerfied && <TouchableOpacity
+                            style={styles.phoneVerify, styles.phoneVerifyButton}
+                            onPress={() => setVerifyContact(true)}
+                            disabled={data.phonenumber.trim().length == 10 ? false : true}
+                        >
+                            <LinearGradient
+                                colors={data.phonenumber.trim().length == 10 ? ['#118407', '#0c6604'] : ['#b3ebac', '#82b27c']}
+                                style={[styles.phoneVerify]}
+                            >
+                                <Text style={[styles.textVerify, {
+                                    color: '#fff'
+                                }]}>Verify</Text>
+                            </LinearGradient>
+
+                        </TouchableOpacity>}
                         {data.check_textInputChange ?
                             <Animatable.View
                                 animation="bounceIn"
@@ -259,7 +300,7 @@ const SignUpScreen = ({ route, navigation }) => {
                         />
                         <TextInput
                             placeholder="Enter Your Password"
-                            secureTextEntry={data.secureTextEntry ? true : false}
+                            secureTextEntry={securePasssword.secureTextEntry ? true : false}
                             style={styles.textInput}
                             autoCapitalize="none"
                             onChangeText={(val) => handlePasswordChange(val)}
@@ -270,7 +311,7 @@ const SignUpScreen = ({ route, navigation }) => {
                         <TouchableOpacity
                             onPress={updateSecureTextEntry}
                         >
-                            {data.secureTextEntry ?
+                            {securePasssword.secureTextEntry ?
                                 <Feather
                                     name="eye-off"
                                     color="grey"
@@ -294,7 +335,7 @@ const SignUpScreen = ({ route, navigation }) => {
                         />
                         <TextInput
                             placeholder="Confirm Your Password"
-                            secureTextEntry={data.confirm_secureTextEntry ? true : false}
+                            secureTextEntry={securePasssword.confirm_secureTextEntry ? true : false}
                             style={styles.textInput}
                             autoCapitalize="none"
                             onChangeText={(val) => handleConfirmPasswordChange(val)}
@@ -303,7 +344,7 @@ const SignUpScreen = ({ route, navigation }) => {
                         <TouchableOpacity
                             onPress={updateConfirmSecureTextEntry}
                         >
-                            {data.secureTextEntry ?
+                            {securePasssword.confirm_secureTextEntry ?
                                 <Feather
                                     name="eye-off"
                                     color="grey"
@@ -321,12 +362,16 @@ const SignUpScreen = ({ route, navigation }) => {
 
                     <View style={styles.textPrivate}>
                         <Text style={styles.color_textPrivate}>
-                            By signing up you agree to our
-                </Text>
+                            By signing up you agree to our</Text>
                         <Text style={[styles.color_textPrivate, { fontWeight: 'bold' }]}>{" "}Terms of service</Text>
                         <Text style={styles.color_textPrivate}>{" "}and</Text>
                         <Text style={[styles.color_textPrivate, { fontWeight: 'bold' }]}>{" "}Privacy policy</Text>
+                        
                     </View>
+                    <View>
+                            <Text style={{color:'#c2015a'}}>
+                               Phone number verification is mandatory*</Text>
+                        </View>
                     <View style={[styles.button, {
                         flex: 1,
                         flexDirection: 'row-reverse',
@@ -335,16 +380,16 @@ const SignUpScreen = ({ route, navigation }) => {
                         <TouchableOpacity
                             style={styles.signIn, styles.signButton}
                             onPress={() => RegisterUser()}
-                            disabled={data.firstname.trim().length >= 3 && data.lastname.trim().length >= 3 && 
-                                EMAIL_REGEXP.test(data.email) && 
-                                data.phonenumber.trim().length == 10 &&  passwordCorrect != '' 
+                            disabled={data.firstname.trim().length >= 3 && data.lastname.trim().length >= 3 &&
+                                EMAIL_REGEXP.test(data.email) &&
+                                data.phonenumber.trim().length == 10 && passwordCorrect != ''
                                 && passwordCorrect ? false : true}
                         >
                             <LinearGradient
-                              colors={data.firstname.trim().length >= 3 && data.lastname.trim().length >= 3 && 
-                                EMAIL_REGEXP.test(data.email) && 
-                                data.phonenumber.trim().length == 10 &&  passwordCorrect != '' 
-                                && passwordCorrect ?['#FFA07A', '#FF6347'] : ['#ccc','#ccc']}
+                                colors={data.firstname.trim().length >= 3 && data.lastname.trim().length >= 3 &&
+                                    EMAIL_REGEXP.test(data.email) &&
+                                    data.phonenumber.trim().length == 10 && passwordCorrect != ''
+                                    && passwordCorrect && phoneVerfied ? ['#FFA07A', '#FF6347'] : ['#ccc', '#ccc']}
                                 style={[styles.signIn]}
                             >
                                 <Text style={[styles.textSign, {
@@ -354,7 +399,7 @@ const SignUpScreen = ({ route, navigation }) => {
 
                         </TouchableOpacity>
                         <TouchableOpacity
-                            onPress={() => navigation.goBack()}
+                            onPress={() => { setPhoneVerfied(false), navigation.goBack() }}
                             style={[styles.signIn, {
                                 borderColor: '#FF6347',
                                 borderWidth: 1,
@@ -368,6 +413,7 @@ const SignUpScreen = ({ route, navigation }) => {
                         </TouchableOpacity>
 
                     </View>
+                    <VerifyPhonenumber phoneVerfied={() => setPhoneVerfied(true)} verifyContact={verifyContact} phonenumber={data.phonenumber} closeOption={() => setVerifyContact(false)} />
                 </ScrollView>
             </Animatable.View>
         </View>
@@ -446,5 +492,23 @@ const styles = StyleSheet.create({
     },
     color_textPrivate: {
         color: 'grey'
-    }
+    },
+    phoneVerify: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 5,
+
+    },
+    phoneVerifyButton: {
+        // width: '50%',
+        marginLeft: 30
+
+    },
+    textVerify: {
+        fontSize: 14,
+        paddingHorizontal: 30,
+        paddingVertical: 8,
+        fontWeight: 'bold'
+    },
 });
