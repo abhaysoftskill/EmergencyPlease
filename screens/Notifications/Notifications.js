@@ -59,7 +59,7 @@ export const Notifications = ({ navigation }) => {
 
             />}
 
-            <Text style={{textAlign:'center', marginTop:50, color:'#d40707'}}> ---------- No Notification ---------</Text>
+            <Text style={{textAlign:'center', marginTop:50, color:'#ccc'}}> ---------- No Notification ---------</Text>
             <Modal
                 animationType="slide"
                 transparent={true}

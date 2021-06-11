@@ -49,7 +49,7 @@ const Services = ({ navigation }) => {
       <TouchableOpacity onPress={() => {
         stateDispatch(serviceTypeAdd(itemData.item._id)),
           itemData.item.service_type == 'covid_19' ? navigation.navigate('Covid19', { serviceTypeID: itemData.item._id }) : navigation.navigate('Dashboard', { serviceTypeID: itemData.item._id })
-
+        
       }}>
         <View style={styles.card}>
           <View style={styles.cardImgWrapper}>

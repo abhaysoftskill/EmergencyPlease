@@ -29,7 +29,7 @@ import { check, PERMISSIONS } from 'react-native-permissions';
 import { PermissionsAndroid, Platform } from 'react-native';
 import Moment from 'moment'; // Import momentjs
 import EmergencyService from '../services/emergencyServices';
-const googleApiKey = 'AIzaSyCJPqnfIgpcbwydCoTmIIjyTpfNjX9AgWk';
+const googleApiKey = 'AIzaSyDJcvYM3l-gbKi3Te2w8XZhllT71uE1204';
 
 const EmergencyDetails = ({ route, navigation }) => {
     // Moment.locale('IST');

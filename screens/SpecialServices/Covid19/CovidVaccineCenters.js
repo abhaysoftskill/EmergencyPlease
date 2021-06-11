@@ -28,7 +28,7 @@ import { readCurrentLocation } from '../../../redux/actions/currentLocationActio
 import modalStyles from '../../../model/covidCenterModal';
 import { Icon } from 'native-base';
 import LaunchNavigator from 'react-native-launch-navigator';
-const googleApiKey = 'AIzaSyCJPqnfIgpcbwydCoTmIIjyTpfNjX9AgWk';
+const googleApiKey = 'AIzaSyDJcvYM3l-gbKi3Te2w8XZhllT71uE1204';
 import EmergencyService from '../../../services/emergencyServices';
 const { width, height } = Dimensions.get("window");
 const CARD_HEIGHT = 220;
@@ -329,7 +329,7 @@ const CovidVaccineCenters = ({ route, navigation }) => {
                                             <Text numberOfLines={1} style={[styles.cardDescription, { color: '#1a8434' }]}>Pin-Code {marker.pincode}</Text>
                                             <Text numberOfLines={1} style={[styles.cardDescription, { color: '#1a8434' }]}>{marker.geometry.coordinates[0]} , {marker.geometry.coordinates[1]}</Text>
                                         </View>
-                                        <Text style={{ textAlign: 'center', color:'#ac0f0f'}}>Approx <Text style={{fontSize:50}}>{activeUser} </Text>Users Visited</Text>
+                                        {/* <Text style={{ textAlign: 'center', color:'#ac0f0f'}}>Approx <Text style={{fontSize:50}}>{activeUser} </Text>Users Visited</Text> */}
 
                                     </View>
                                 </View>

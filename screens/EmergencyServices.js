@@ -14,6 +14,7 @@ const EmergencyServices = ({ route, navigation }) => {
   const [EmergencyServiceData, setEmergencyServiceData] = useState([])
   const [serviceName, setServiceName] = useState('')
   const [services, setServices] = useState({});
+
   const callService = (service) => {
     // if(service_name === 'accident_reported'){
     //   navigation.navigate('EmergencyReport', { service_name:"accident_reported",service_title:"Accident", userDetails: route.params.userDetails});
@@ -28,10 +29,10 @@ const EmergencyServices = ({ route, navigation }) => {
     //  console.log(modalData)
     //  console.log(typeof(JSON.parse(modalData)))
       setEmergencyServiceData(modalData)
-    setShowEmergencyServiceModal(true)
+    // setShowEmergencyServiceModal(true)
 
     }
-    // navigation.navigate('EmergencyReport', { service_id: service._id, service_title: service.service_name_alias, userDetails: route.params.userDetails });
+    navigation.navigate('EmergencyReport', { service_id: service._id, service_title: service.service_name_alias, userDetails: route.params.userDetails });
 
   }
   const renderItem = ({ item }) => {
@@ -49,9 +50,9 @@ const EmergencyServices = ({ route, navigation }) => {
     }, error => {
       return;
     })
-    const unsubscribe = navigation.addListener("focus", () => {
+    const unsubscribe = navigation.addListener("blur", () => {
       setServiceName('')
-      setServices({})
+      // setServices({})
     })
     // this will help to clear the state when navigate the screen
     return unsubscribe;

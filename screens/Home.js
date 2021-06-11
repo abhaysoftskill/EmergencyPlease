@@ -15,6 +15,7 @@ import LoginService from '../services/loginServices';
 import { Icon } from 'native-base';
 import { AuthContext } from '../components/context';
 import RequestStatus from './RequestStatus';
+import Loader from '../components/Loading';
 const { width } = Dimensions.get("window");
 const CARD_WIDTH = width * 0.8;
 
@@ -38,11 +39,9 @@ const Home = ({ route, navigation }) => {
 
         let userDetailsData = await AsyncStorage.getItem('userDetails');
         EmergencyService.nearestEmergencyRequestCount(coordinates).then((res) => {
-            console.log(res)
             setRequestDataCount(res)
             setLoading(false)
         }, error => {
-            console.log(error)
             setLoading(false)
 
             return;
@@ -223,6 +222,9 @@ const Home = ({ route, navigation }) => {
                 bottom: -300
             }}
         >
+            <StatusBar backgroundColor='#FF6347' barStyle="light-content" />
+
+
             <Modal
                 animationType="fade"
                 transparent={true}
@@ -249,13 +251,13 @@ const Home = ({ route, navigation }) => {
                                 onChangeText={(val) => setVerifyCode(val)}
                             />
                         </View>
-                        {verifyLoading && <View>
+                        {/* {verifyLoading && <View>
                             <Image
                                 source={require('../assets/loading.png')}
                                 resizeMode="cover"
                             />
                             <Text>Please Wait....</Text>
-                        </View>}
+                        </View>} */}
                         {!verifyLoading && <View style={{ flexDirection: 'row', marginTop: 20 }}>
 
                             <Button mode={'contained'} color={'#ea3a3a'} style={{ marginRight: 10 }} onPress={() => { setVerifyLoading(true), resendEmailVerifiy() }}>Resend</Button>
@@ -273,23 +275,12 @@ const Home = ({ route, navigation }) => {
                         onRefresh={requestData}
                     />
                 }>
-                {!loading && closeAlert && <RequestStatus myRequestData={myRequestData} CloseAlert={() => setCloseAlert(false)} />}
+                {/* {!loading && closeAlert && <RequestStatus myRequestData={myRequestData} CloseAlert={() => setCloseAlert(false)} />} */}
 
-                <StatusBar barStyle={theme.dark ? 'light-content' : 'dark-content'} />
+              
                 <View style={styles.optionContainer}>
-                    {!RequestDataCount && loading && <View style={{
-                        flex: 1,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        height: 300
-                    }}>
-                        <Image
-                            source={require('../assets/loading.png')}
-                            // style={{ width: 200, height: 100 }}
-                            resizeMode="cover"
-                        />
-                        <Text>Loading....</Text>
-                    </View>}
+                  
+                   {!RequestDataCount && loading && <Loader />}
                     {!loading && <View style={{
                         alignContent: 'center',
                         padding: 10, flexDirection: "row", justifyContent: 'space-between'
@@ -355,33 +346,136 @@ const Home = ({ route, navigation }) => {
 
 
                     </View>}
-
-                    {!loading && <TouchableOpacity
-                        onPress={() => navigation.navigate('EmergencyServices',
-                            {
-                                userDetails: userDetails,
-                                serviceTypeID: route.params.serviceTypeID
-                            })}
-
+                    <View
+                        style={{
+                            flexDirection: "row",
+                            justifyContent: 'space-between', marginTop: 10,
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                        }}
                     >
-                        <Card style={[styles.needHelp]}>
-                            <Card.Content>
+
+                        <View
+                            style={[styles.box, {
+                                backgroundColor: '#bd0707',
+                                width: 150, height: 150, alignItems: 'center', justifyContent: 'center',
+                                borderRadius: 150,
+                                borderWidth: 8,
+                                borderColor: '#920606'
+                            }]}
+                        >
+                            <View style={styles.innerContainer}>
+
+                                <View style={{ color: '#fff' }}>
+                                    <Title style={{ color: '#fff', fontSize: 40, lineHeight: 50 }}>SOS</Title>
+                                </View>
+                            </View>
+                            {userDetails.userGender == 'female' && <View>
+                                <Paragraph style={{ color: '#fff', fontSize: 11 }}>For Female</Paragraph>
+
+                            </View>}
+                        </View>
+
+                        
+                    </View>
+
+                    {/* <View style={{ flex: 1, paddingHorizontal: 5, borderWidth:1 }}> */}
+                    <View
+                        style={{
+                            flex: 1,
+                            flexDirection: "row", flexWrap: "wrap", justifyContent: 'space-between', marginTop: 20,
+                        }}
+                    >
+
+                        {!loading && <TouchableOpacity
+                            onPress={() => navigation.navigate('EmergencyServices',
+                                {
+                                    userDetails: userDetails,
+                                    serviceTypeID: route.params.serviceTypeID
+                                })}
+                        >
+                            <View
+                                style={[styles.box, {
+                                    backgroundColor: '#FF6347',
+                                    width: 170, height: 80, alignItems: 'center', justifyContent: 'center'
+                                }]}
+                            >
+
                                 <View style={styles.innerContainer}>
-                                    <Ionicons name="md-person" size={55} color="#fff" />
+                                    {/* <Ionicons name="md-person" size={35} color="#fff" /> */}
 
                                     <View style={{ color: '#fff' }}>
                                         <Title style={{ color: '#fff' }}>I Need Help</Title>
-                                        <Paragraph style={{ color: '#fff' }}>Request to Emergency Team</Paragraph>
-                                    </View>
-                                    <View style={styles.navigate} >
-                                        <Ionicons name="md-radio" size={40} color="#fff" />
                                     </View>
                                 </View>
-                            </Card.Content>
+                                <View>
+                                    <Paragraph style={{ color: '#fff', fontSize: 11 }}>Request to Emergency Team</Paragraph>
 
-                        </Card>
-                    </TouchableOpacity>}
-                    {!loading && <TouchableOpacity
+                                </View>
+                            </View>
+                        </TouchableOpacity>}
+                        {!loading && <TouchableOpacity
+                            onPress={() => navigation.navigate('EmergencyServices',
+                                {
+                                    userDetails: userDetails,
+                                    serviceTypeID: route.params.serviceTypeID
+                                })}
+                        >
+                            <View
+                                style={[styles.box, {
+                                    backgroundColor: 'green',
+                                    width: 170, height: 80, alignItems: 'center', justifyContent: 'center'
+                                }]}
+                            >
+
+                                <View style={styles.innerContainer}>
+
+                                    <View style={{ color: '#fff' }}>
+                                        <Title style={{ color: '#fff' }}>Nearest Services</Title>
+                                    </View>
+                                </View>
+                                <View>
+                                    <Paragraph style={{ color: '#fff', fontSize: 11 }}>Get Nearest Service Status</Paragraph>
+
+                                </View>
+                            </View>
+                        </TouchableOpacity>}
+                         {!loading && <TouchableOpacity
+                            onPress={() => navigation.navigate('MyRequests',
+                                {
+                                    userDetails: userDetails,
+                                })}
+                        >
+                            <View
+                                style={[styles.box, {
+                                    backgroundColor: '#e6ae07',
+                                    width: 350, height: 80, alignItems: 'center', justifyContent: 'center'
+                                }]}
+                            >
+
+                                <View style={styles.innerContainer}>
+
+                                    <View style={{ color: '#fff' }}>
+                                        <Title style={{ color: '#fff' }}>My Requests </Title>
+                                    </View>
+                                </View>
+                                <View>
+                                    <Paragraph style={{ color: '#fff', fontSize: 11 }}>Get your's Requests</Paragraph>
+
+                                </View>
+                                
+                            </View>
+                        </TouchableOpacity>}
+                       
+
+                    
+                    </View>
+
+                 
+
+                    {/* </View> */}
+
+                    {/* {!loading && <TouchableOpacity
                         onPress={() => navigation.navigate('MyRequests',
                             {
                                 // roomId:'abhayTest'
@@ -405,7 +499,7 @@ const Home = ({ route, navigation }) => {
                             </Card.Content>
 
                         </Card>
-                    </TouchableOpacity>}
+                    </TouchableOpacity>} */}
 
                 </View>
 
@@ -419,18 +513,18 @@ export default Home;
 const styles = StyleSheet.create({
     requestCount: { fontSize: 30 },
     containter: {
-        width: Dimensions.get("window").width, //for full screen
-        height: Dimensions.get("window").height //for full screen
+        width: Dimensions.get("window").width , //for full screen
+        height: Dimensions.get("window").height -140 //for full screen
     },
     fixed: {
-        position: "absolute",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0
+        // position: "absolute",
+        // top: 0,
+        // left: 0,
+        // right: 0,
+        // bottom: 0
     },
     scrollview: {
-        backgroundColor: 'transparent'
+        backgroundColor: 'transparent',
     },
     friendsCount: {
         color: "#d21036", position: 'absolute', top: -12, right: -15,
@@ -491,7 +585,7 @@ const styles = StyleSheet.create({
     },
     optionContainer: {
         // borderColor:'red',
-        // height:'100%',
+        // height:100,
         flex: 1,
     },
     noReported: {
@@ -501,7 +595,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         marginBottom: '10%',
         borderBottomWidth: 2,
-        borderColor: 'red',
+        // borderColor: 'red',
         padding: 10
 
     },
@@ -513,9 +607,17 @@ const styles = StyleSheet.create({
         borderBottomWidth: 10
     },
     needHelp: {
-        marginTop: '10%',
+        marginTop: 20,
+        width: '100%',
+        // padding:3,
         backgroundColor: '#FF6347',
         color: '#fff'
+    },
+    box: {
+        // width: 50,
+        alignContent: "space-around",
+        // height: 50,
+        margin: 5
     },
     myRequest: {
         marginTop: '10%',
@@ -558,7 +660,7 @@ const styles = StyleSheet.create({
     },
     scrollView: {
         position: "absolute",
-        bottom: 10,
+        bottom: 0,
         left: 0,
         right: 0,
         paddingVertical: 10,

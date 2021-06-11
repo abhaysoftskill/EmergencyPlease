@@ -11,7 +11,6 @@ import EmergencyDetails from '../EmergencyDetails';
 import Home from '../Home';
 import EmergencyServices from '../EmergencyServices';
 import EmergencyReport from '../EmergencyReport';
-import { EmergencyConnect } from '../EmergencyConnect';
 import { EmergencyCall } from '../EmergencyCall';
 import { ComingSoon } from '../../components/ComingSoon';
 import Details from '../update/Details';
@@ -309,14 +308,7 @@ const HomeStackScreen = ({ navigation }) => {
           // headerBackTitleVisible: false
         })}
       />
-      <HomeStack.Screen
-        name="EmergencyConnect"
-        component={EmergencyConnect}
-        options={({ route }) => ({
-          // title: route.params.title,
-          // headerBackTitleVisible: false
-        })}
-      />
+     
       <HomeStack.Screen
         name="EditDetails"
         options={{
