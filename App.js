@@ -45,6 +45,7 @@ import CheckConnection from './utils/CheckConnection';
 import { Image } from 'react-native-animatable';
 import withCodePush from './codepush';
 import { LocalizationProvider } from './translations/LocalizationContext';
+
 const RootStack = createStackNavigator();
 const ErrorCard = () => {
   return (

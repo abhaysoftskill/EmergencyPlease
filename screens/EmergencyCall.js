@@ -79,7 +79,7 @@ export const EmergencyCall = ({ route, navigation }) => {
                     />
                 </View>
                 {serviceName === "ambulance_request" && <AmbulanceRequest visible={serviceName === "ambulance_request" ? true : false} />}
-                <AmbulanceRequest visible={true} />
+                {/* <AmbulanceRequest visible={true} /> */}
             </View>
 
         </>

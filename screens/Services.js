@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useReducer } from 'react';
 import { FlatList, ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 
-import { Image, ImageBackground, StyleSheet, Text, View } from 'react-native';
+import { Image, ImageBackground, PermissionsAndroid, Platform, StyleSheet, Text, View } from 'react-native';
 import EmergencyService from '../services/emergencyServices';
 
 import { useDispatch, useSelector } from 'react-redux';
@@ -9,7 +9,8 @@ import { readCurrentLocation } from '../redux/actions/currentLocationActions';
 import { serviceTypeAdd } from '../redux/actions/actions';
 import strings from '../translations/translations';
 import { Button } from 'react-native-paper';
-
+import Contacts from 'react-native-contacts';
+import { addContact } from '../redux/actions/contactsActions';
 
 const Services = ({ navigation }) => {
   const { coordinates } = useSelector(state => state.currentLocationReducer);
@@ -32,6 +33,29 @@ const Services = ({ navigation }) => {
 //   strings.setLanguage('fr')
 
 // }
+const loadContacts = () => {
+  Contacts.getAll()
+    .then(contacts => {
+      contacts.sort((a, b) => {
+        if (a.displayName > b.displayName) {
+          return 1;
+        }
+        if (a.displayName < b.displayName) {
+          return -1;
+        }
+        return 0;
+      });
+      stateDispatch(addContact(contacts))
+
+    })
+    .catch(e => {
+      // setLoading(false);
+    });
+
+ 
+
+  Contacts.checkPermission();
+}
   useEffect(() => {
   //  strings.setLanguage('en')
     if (coordinates?.length == 0) {
@@ -39,6 +63,17 @@ const Services = ({ navigation }) => {
     }
     else if (coordinates) {
       requestData()
+    }
+
+    if (Platform.OS === "android") {
+      PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_CONTACTS, {
+        title: "Contacts",
+        message: "This app would like to view your contacts."
+      }).then(() => {
+        loadContacts();
+      });
+    } else {
+      loadContacts();
     }
    // return () =>  RNLocalize.removeEventListener('change', handleLocalizationChange());
 

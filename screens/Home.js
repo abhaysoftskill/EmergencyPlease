@@ -18,7 +18,6 @@ import RequestStatus from './RequestStatus';
 import Loader from '../components/Loading';
 const { width } = Dimensions.get("window");
 const CARD_WIDTH = width * 0.8;
-
 const Home = ({ route, navigation }) => {
     const { coordinates } = useSelector(state => state.currentLocationReducer);
     const stateDispatch = useDispatch();
@@ -80,6 +79,10 @@ const Home = ({ route, navigation }) => {
         fetchVerson()
     }, [])
     useEffect(() => {
+        // Contacts.getAll().then(contacts => {
+        //     // contacts returned
+        //     console.log(contacts)
+        //   })
         if (coordinates?.length == 0) {
             stateDispatch(readCurrentLocation())
         }
@@ -346,7 +349,7 @@ const Home = ({ route, navigation }) => {
 
 
                     </View>}
-                    <View
+                    {!loading &&  <View
                         style={{
                             flexDirection: "row",
                             justifyContent: 'space-between', marginTop: 10,
@@ -367,17 +370,16 @@ const Home = ({ route, navigation }) => {
                             <View style={styles.innerContainer}>
 
                                 <View style={{ color: '#fff' }}>
-                                    <Title style={{ color: '#fff', fontSize: 40, lineHeight: 50 }}>SOS</Title>
+                                    <Title style={{ color: '#fff', fontSize: 40, lineHeight: 50 }}>Help</Title>
                                 </View>
                             </View>
-                            {userDetails.userGender == 'female' && <View>
-                                <Paragraph style={{ color: '#fff', fontSize: 11 }}>For Female</Paragraph>
-
-                            </View>}
+                            <View>
+                                <Paragraph style={{ color: 'rgba(255,255,255,0.75)', fontSize: 20 }}>now</Paragraph>
+                            </View>
                         </View>
 
                         
-                    </View>
+                    </View>}
 
                     {/* <View style={{ flex: 1, paddingHorizontal: 5, borderWidth:1 }}> */}
                     <View
@@ -388,7 +390,7 @@ const Home = ({ route, navigation }) => {
                     >
 
                         {!loading && <TouchableOpacity
-                            onPress={() => navigation.navigate('EmergencyServices',
+                            onPress={() => navigation.navigate('EmergencyRequestServices',
                                 {
                                     userDetails: userDetails,
                                     serviceTypeID: route.params.serviceTypeID

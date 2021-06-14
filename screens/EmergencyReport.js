@@ -1,6 +1,6 @@
 
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useContext } from 'react';
 import {
     View,
     Text,
@@ -22,10 +22,12 @@ import ConfirmRequest from './requests/Conform';
 import { useSelector } from 'react-redux';
 import EmergencyService from '../services/emergencyServices';
 import AsyncStorage from '@react-native-community/async-storage';
+import { LocalizationContext } from '../translations/LocalizationContext';
 const latitudeDelta = 0.02;
 const longitudeDelta = 0.02;
 
 const EmergencyReport = ({ route, navigation }) => {
+    const { translations } = useContext(LocalizationContext);
     // const userDetails = route.params.userDetails;
     const userDetails = route.params.userDetails;
     const theme = useTheme();
@@ -124,7 +126,7 @@ const EmergencyReport = ({ route, navigation }) => {
                         style={[styles.marker, scaleStyle]}
                         resizeMode="cover"
                     />
-                    <Text style={styles.markerText}> You are Here</Text>
+                    <Text style={styles.markerText}> {translations.YOUAREHERE}</Text>
                 </Animated.View>}
                 {showMap && <SafeAreaView style={styles.footer}>
                     <Button icon="location-enter" mode="contained" onPress={() => { setLoading(true), confirmLocation() }} color='#05375a' size=''

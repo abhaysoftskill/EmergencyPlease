@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, FlatList, StyleSheet, StatusBar, Alert } from 'react-native';
+import { View, Text, Button, FlatList, StyleSheet, StatusBar } from 'react-native';
 import { data } from '../model/data';
 import Card from '../components/Card';
 import AmbulanceRequest from './requests/Ambulance';
@@ -8,7 +8,7 @@ import EmergencyService from '../services/emergencyServices';
 import { useSelector } from 'react-redux';
 import EmergencyServiceModal from './requests/EmergencyServiceModal';
 
-const EmergencyServices = ({ route, navigation }) => {
+const EmergencyRequestServices = ({ route, navigation }) => {
   const { service_type_id } = useSelector(state => state.serviceReducer);
   const [ShowEmergencyServiceModal, setShowEmergencyServiceModal] = useState(false)
   const [EmergencyServiceData, setEmergencyServiceData] = useState([])
@@ -32,10 +32,7 @@ const EmergencyServices = ({ route, navigation }) => {
     // setShowEmergencyServiceModal(true)
 
     }
-    console.log(service)
-   
- 
-    navigation.navigate('EmergencyServicesMap', {serviceData:service});
+    navigation.navigate('EmergencyReport', { service_id: service._id, service_title: service.service_name_alias, userDetails: route.params.userDetails });
 
   }
   const renderItem = ({ item }) => {
@@ -47,7 +44,7 @@ const EmergencyServices = ({ route, navigation }) => {
     );
   };
   useEffect(() => {
-    EmergencyService.serviceservicebyservicetype(service_type_id).then((res) => {
+    EmergencyService.requestservicebyservicetype(service_type_id).then((res) => {
       setServices(res)
       // console.log(res)
     }, error => {
@@ -86,7 +83,7 @@ const EmergencyServices = ({ route, navigation }) => {
   );
 };
 
-export default EmergencyServices;
+export default EmergencyRequestServices;
 
 const styles = StyleSheet.create({
   container: {

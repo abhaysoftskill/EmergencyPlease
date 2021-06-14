@@ -5,7 +5,7 @@ const translations = {
   'English': {
     WELCOME: 'Welcome !',
     CHANGELANGUAGE:'Change Language',
-
+    YOUAREHERE:'You are here',
     SPLASHTEXT:'Emergency Please are always with you.',
     PLEASEWAIT:'Please Wait',
     ENTERMOBILENO:'Enter your 10 digit mobile number',
@@ -34,6 +34,7 @@ const translations = {
   'हिन्दी': {
     WELCOME: 'स्वागत हैं।',
     CHANGELANGUAGE:'भाषा बदलें',
+    YOUAREHERE:'आप यहाँ हैं',
 
     SPLASHTEXT:'Emergency Please हमेशा आपके साथ हैं।',
     PLEASEWAIT:'कृपया प्रतीक्षा करें',
@@ -68,6 +69,8 @@ const translations = {
   'मराठी': {
     WELCOME: 'स्वागत आहे',
     CHANGELANGUAGE:'भाषा बदला',
+    YOUAREHERE:'आपण येथे आहात',
+
     SPLASHTEXT:'Emergency Please आपल्याबरोबर नेहमीच असते.',
     PLEASEWAIT:'कृपया थांबा',
 

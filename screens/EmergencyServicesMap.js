@@ -11,7 +11,9 @@ import {
   Dimensions,
   Platform,
   Button,
-  PermissionsAndroid
+  PermissionsAndroid,
+  Alert,
+  Linking
 } from "react-native";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import Moment from 'moment'; // Import momentjs
@@ -26,6 +28,7 @@ import { useTheme } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import { useSelector } from 'react-redux';
 import { color } from 'react-native-reanimated';
+import EmergencyService from '../services/emergencyServices';
 
 
 const { width, height } = Dimensions.get("window");
@@ -33,7 +36,7 @@ const CARD_HEIGHT = 220;
 const CARD_WIDTH = width * 0.8;
 const SPACING_FOR_CARD_INSET = width * 0.1 - 10;
 
-const EmergencyRequestMap = ({ route, navigation }) => {
+const EmergencyServicesMap = ({ route, navigation }) => {
   // Moment.locale('IST');
   const theme = useTheme();
   const { coordinates } = useSelector(state => state.currentLocationReducer);
@@ -42,26 +45,49 @@ const EmergencyRequestMap = ({ route, navigation }) => {
   const [region, setRegion] = useState(coordinates);
   const [requestData, setRequestData] = useState();
   const [locationStatus, setLocationStatus] = useState('');
-  const latitudeDelta = 0.08;
-  const longitudeDelta = 0.08;
+  const latitudeDelta = 0.2;
+  const longitudeDelta = 0.2;
   const [expand, setExpand] = useState(0)
-  const EmergencyType = {
-    "accident_reported": "Accident",
-    "ambulance_request": "Call for Ambulance",
-    "heart_attack": "Heart Attack",
-    "blood_donor": "Blood Required"
-  }
+  const makeCall = (e) => {
+    let phoneNumber = ''
+
+    if (Platform.OS === 'android') {
+      phoneNumber = `tel:${e.contact_number}`
+    }
+    else {
+      phoneNumber = `telprompt:${e.contact_number}`
+    }
+
+    Linking.openURL(phoneNumber);
+  };
   useEffect(() => {
     {
-      // region && EmergencyService.nearestEmergencyRequest(region.longitude, region.latitude, route.params.serviceName).then((res) => {
-      //   setShowMap(true);
-      //   setRequestData(res)
-      // }, error => {
-      //   console.error('onRejected function called: ' + error.message);
-      //   return;
-      // })
+      region && EmergencyService.nearserviceproviderbyservicetype(region.longitude, region.latitude, route.params.serviceData._id).then((res) => {
+        setRequestData(res);
+        if(res.providers.length == 0){
+          Alert.alert('No Service Provider Near You!', `No service provider registered now, will check and update your request. `, [
+            {
+                text: 'OK',
+                onPress: async () => {
+                  try {
+                      navigation.navigate('Services')
+                  } catch (e) {
+                      console.log(e);
+                  }
 
-      region && setShowMap(true);
+              }
+            }
+        ]);
+        }
+        else{
+          setShowMap(true);
+        }
+      }, error => {
+        console.error('onRejected function called: ' + error.message);
+        return;
+      })
+
+      // region && setShowMap(true);
     }
   }, [region, coordinates]);
 
@@ -86,7 +112,7 @@ const EmergencyRequestMap = ({ route, navigation }) => {
         if (mapIndex !== index) {
           mapIndex = index;
 
-          const coordinate = route.params.serviceData.request[index].geometry.coordinates;
+          const coordinate = requestData.providers[index].geometry.coordinates;
           _map.current.animateToRegion(
             {
               latitude: parseFloat(coordinate[0]),
@@ -101,7 +127,7 @@ const EmergencyRequestMap = ({ route, navigation }) => {
     });
   });
 
-  const interpolations = route.params.serviceData && route.params.serviceData.request.map((marker, index) => {
+  const interpolations = requestData && requestData.providers.map((marker, index) => {
     const inputRange = [
       (index - 1) * CARD_WIDTH,
       index * CARD_WIDTH,
@@ -146,7 +172,7 @@ const EmergencyRequestMap = ({ route, navigation }) => {
         />
         <Text>Loading....</Text>
       </View>}
-      {showMap && route.params.serviceData && <MapView
+      { showMap && requestData && <MapView
         ref={_map}
         initialRegion={
           {
@@ -171,13 +197,14 @@ const EmergencyRequestMap = ({ route, navigation }) => {
             latitude: region.latitude,
             longitude: region.longitude,
           }}
-          radius={5000}
+          radius={50000}
           strokeWidth={1}
           strokeColor={'red'}
           fillColor={'rgba(230,192,193,0.5)'}
         />
 
-        {route.params.serviceData && route.params.serviceData.request.map((marker, index) => {
+        {requestData && requestData.providers.map((marker, index) => {
+          console.log(index)
           const scaleStyle = {
             transform: [
               {
@@ -192,12 +219,12 @@ const EmergencyRequestMap = ({ route, navigation }) => {
             }} onPress={(e) => onMarkerPress(e)}>
               <Animated.View style={[styles.markerWrap]}>
                 <Animated.Image
-                  source={require('../assets/map_marker.png')}
+                  source={{ uri: `https://emergencyplease.com/api/src/uploads/${marker.services[0].service_name}.jpg` }}
                   style={[styles.marker, scaleStyle]}
                   resizeMode="cover"
                 />
                 <View style={styles.markerNumber}>
-                  <Text style={{ color: "#000" }}>{index + 1}</Text>
+                  <Text style={{ color: "#fff", fontSize:10 }}>{index + 1}</Text>
                 </View>
               </Animated.View>
             </MapView.Marker>
@@ -205,7 +232,7 @@ const EmergencyRequestMap = ({ route, navigation }) => {
         })}
       </MapView>}
 
-      {showMap && <Animated.ScrollView
+      { showMap && <Animated.ScrollView
         ref={_scrollView}
         horizontal
         pagingEnabled
@@ -236,16 +263,12 @@ const EmergencyRequestMap = ({ route, navigation }) => {
           { useNativeDriver: true }
         )}
       >
-        {route.params.serviceData && route.params.serviceData.request.map((marker, index) => (
+        {requestData && requestData.providers.map((marker, index) => (
           <View style={[styles.card]} key={index}>
             <View style={styles.requestNumber}>
               <Text style={{ color: "#fff" }}>{index + 1}</Text>
             </View>
-            <View style={styles.expand}>
-              {expand != index + 1 && <Ionicons name="md-chevron-down-sharp" size={35} color="#8e8e8e" onPress={() => setExpand(index + 1)} />}
-              {expand == index + 1 && <Ionicons name="md-chevron-up" size={35} color="#8e8e8e" onPress={() => setExpand(0)} />}
 
-            </View>
             <View style={{
               flex: 1,
               flexDirection: 'column',
@@ -254,41 +277,26 @@ const EmergencyRequestMap = ({ route, navigation }) => {
             }}>
               <View style={{ flex: 1, flexDirection: 'row' }}>
                 <Image
-                  source={require('../assets/defaultProfile.png')}
+                  source={{ uri: `https://emergencyplease.com/api/src/uploads/${marker.services[0].service_name}.jpg` }}
+
                   style={styles.cardImage}
                   resizeMode="cover"
                 />
                 <View style={[styles.textContent]}>
-                  {marker.user[0].userType == 'premium' && <Text numberOfLines={1} style={styles.cardtitle}>Name: - {marker.user[0].firstname} {marker.user[0].lastname}</Text>}
-                  <Text numberOfLines={1} style={styles.username}>UserID - {marker.user[0].username}</Text>
-                  <Text style={{ backgroundColor: '#1a8434', color: '#fff', paddingHorizontal: 5, borderRadius: 50, textAlign: 'center', marginBottom: 5, marginTop: 5 }}>{route.params.serviceData.service_name_alias}</Text>
-                  {expand == index + 1 && <View>{marker.requestType == 'ambulance_request' && <Text numberOfLines={1} style={[styles.cardDescription, { color: '#1a8434' }]}>Request for {marker.requestDetails.freeAmbulance && 'Free Ambulance'}</Text>}
-                    {marker.requestType == 'ambulance_request' && marker.requestDetails.paidAmbulance && <Text numberOfLines={1} style={[styles.cardDescription, { color: '#1a8434' }]}> {marker.requestDetails.paidAmbulance == true && ' / Paid Ambulance'} </Text>}
-                    {marker.user[0].bloodGroup != '' && <Text numberOfLines={1} style={[styles.cardDescription, { color: '#1a8434' }]}>Blood Group <Text style={{ color: '#d21036' }}>{marker.user[0].bloodGroup}</Text></Text>}
-                    {marker.requestDetails.bloodGroup != '' && <Text numberOfLines={1} style={[styles.cardDescription, { color: '#1a8434' }]}>Requested BloodGroup <Text style={{ color: '#d21036' }}>{marker.requestDetails.bloodGroup} {marker.requestDetails.bloodGroupType} </Text></Text>}
-                  </View>}
+                <Text numberOfLines={1} style={styles.cardtitle}>{marker.providerDetails.name} </Text>
+                <Text style={{color: '#8e8e8e'}}>Address: - {marker.providerDetails.address} </Text>
+                <Text style={{color: '#8e8e8e'}}>Email: - {marker.providerDetails.email} </Text>
+                  <Text style={{color: '#8e8e8e'}}>Contact: - {marker.providerDetails.contact} </Text>
+                  {/* <Text style={{ backgroundColor: '#1a8434', color: '#fff', paddingHorizontal: 5, borderRadius: 50, textAlign: 'center', marginBottom: 5, marginTop: 5 }}>{route.params.serviceData.service_name_alias}</Text> */}
+
                 </View>
               </View>
-              {expand == index + 1 && <View style={{ flex: 1, flexDirection: 'row' }}>
 
-                <View style={{ flex: 1, padding: 10 }}>
-                  <Text numberOfLines={1} style={[styles.cardDescription, { fontSize: 14, color: '#d21036' }]}>Request Before</Text>
-                  <Text style={styles.time}>{Moment(marker.updated_at).startOf('minutes').fromNow()} (<Text style={styles.time}>{Moment(marker.updated_at).local().calendar()}</Text>)</Text>
-                  {/* <Text numberOfLines={1} style={styles.cardDescription}>{marker.helpingUser} Users ready to help</Text> */}
-
-                </View>
-
-              </View>}
               <View style={{ flex: 1 }}>
                 <View style={styles.button}>
                   <TouchableOpacity
                     style={styles.signIn}
-                    onPress={() => navigation.navigate('EmergencyDetails',
-                      {
-                        request_id: marker._id,
-                        userDetails: marker.user[0],
-                        location: marker.geometry.coordinates,
-                      })}
+                    onPress={() => makeCall(marker.providerDetails.contact)}
                   >
                     <LinearGradient
                       colors={['#d21036', '#d21036']}
@@ -299,7 +307,7 @@ const EmergencyRequestMap = ({ route, navigation }) => {
                       <Text style={[styles.textSign, {
                         color: '#fff'
                       }]}>
-                        View User Details</Text>
+                        Call Now</Text>
                     </LinearGradient>
                   </TouchableOpacity>
 
@@ -315,7 +323,7 @@ const EmergencyRequestMap = ({ route, navigation }) => {
   );
 };
 
-export default EmergencyRequestMap;
+export default EmergencyServicesMap;
 
 const styles = StyleSheet.create({
   map: {
@@ -334,8 +342,8 @@ const styles = StyleSheet.create({
     alignItems: "center", alignContent: "center", justifyContent: 'center'
   },
   markerNumber: {
-    color: "#d21036", position: 'absolute', top: 10, right: 15,
-    backgroundColor: '#fff', width: 20, height: 20, borderRadius: 50,
+    color: "#d21036", position: 'absolute', top: 0, right: 0,
+    backgroundColor: '#d21036', borderColor:'#fff', borderWidth:1, width: 15, height: 15, borderRadius: 50, 
     alignItems: "center", alignContent: "center", justifyContent: 'center'
   },
   searchBox: {
@@ -437,8 +445,10 @@ const styles = StyleSheet.create({
     height: 50,
   },
   marker: {
-    width: 30,
-    height: 30,
+    width: 25,
+    height: 25,
+    borderRadius: 50,
+    // marginBottom:10
   },
   button: {
     alignItems: 'center',

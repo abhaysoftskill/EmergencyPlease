@@ -81,18 +81,38 @@ const services = async () => {
         }
     });
 }
-const servicebyservicetype = async (serviceID) => {
+const requestservicebyservicetype = async (serviceID) => {
 
     userToken = await AsyncStorage.getItem('userToken');
     return request({
-        url: `/service/servicebyservicetype/${serviceID}`,
+        url: `/service/requestservicebyservicetype/${serviceID}`,
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${userToken}`
         }
     });
 }
+const serviceservicebyservicetype = async (serviceID) => {
 
+    userToken = await AsyncStorage.getItem('userToken');
+    return request({
+        url: `/service/serviceservicebyservicetype/${serviceID}`,
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${userToken}`
+        }
+    });
+}
+const nearserviceproviderbyservicetype = async (lng, lat,id) => {
+    userToken = await AsyncStorage.getItem('userToken');
+    return request({
+        url: `/servicesproviders/nearprovidersbyservicetype/${id}?lng=${lng}&lat=${lat}`,
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${userToken}`
+        }
+    });
+}
 const nearservices = async (lng, lat) => {
     userToken = await AsyncStorage.getItem('userToken');
     return request({
@@ -292,7 +312,9 @@ const EmergencyService = {
     getAppUpdateVersion,
     serviceTypes,
     services,
-    servicebyservicetype,
+    requestservicebyservicetype,
+    serviceservicebyservicetype,
+    nearserviceproviderbyservicetype,
     nearservicesbyservicetype,
     nearservices,
     emergencyContacts,

@@ -39,7 +39,7 @@ export function DrawerContent({ props, navigation }) {
     const [services, setServices] = useState();
     const [versionNo, setVersionNo] = useState('');
     const [showLanguage, setShowLanguage] = useState(false);
-    const [language, setLanguage] = useState('first');
+    const [language, setLanguage] = useState(appLanguage);
 
     const stateDispatch = useDispatch();
     useEffect(() => {
@@ -156,9 +156,16 @@ export function DrawerContent({ props, navigation }) {
                         </View> */}
                     </Drawer.Section>
                     <Drawer.Section title="Language">
-                        <View>
-                            <Text onPress={() => setShowLanguage(!showLanguage)}>
-                                {language}</Text>
+                        <View style={{paddingHorizontal:15, paddingVertical:15,  flexDirection:'row'}}>
+                            <Text style={{fontSize:15,  width:'90%',flex: 3, color:'#FF6347'}} onPress={() => setShowLanguage(!showLanguage)}>
+                                {language}
+                               </Text>
+                               <Text  style={{ textAlign:'right', flex: 1}} onPress={() => setShowLanguage(!showLanguage)}><FontAwesome
+                            name="caret-down"
+                            color="#05375a"
+                            size={20}
+                           
+                        /></Text>
                         </View>
 
                     </Drawer.Section>
@@ -181,7 +188,7 @@ export function DrawerContent({ props, navigation }) {
                             name="close"
                             color={'#000'}
                             size={25}
-                            onPress={() =>{console.log('&&&&&&&&&&&&'), setShowLanguage(false)}}
+                            onPress={() =>{setShowLanguage(false)}}
                             style={{position: 'absolute', zIndex:999, top: 5, right: 5, padding: 2, backgroundColor: '#ccc', borderRadius: 50, }}
                         />
                                 <View style={{ alignItems:'flex-start'}} >
@@ -298,7 +305,7 @@ export function DrawerContent({ props, navigation }) {
                         />
                     )}
                     label="Feedback"
-                    onPress={() => {
+                    onPress={() => { navigation.navigate('Feedback')
                     }}
                     style={{ backgroundColor: '#e8e8e8' }}
 

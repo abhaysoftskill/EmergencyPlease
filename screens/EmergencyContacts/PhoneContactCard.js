@@ -2,7 +2,7 @@ import React from 'react';
 import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import Avatar from './Avatar';
 
-const EmerContactCard = ({itemData, onPress}) => {
+const PhoneContactCard = ({itemData, onPress}) => {
   const {
     itemContainer,
     leftElementContainer,
@@ -27,11 +27,11 @@ const EmerContactCard = ({itemData, onPress}) => {
           <Avatar
                     img={
                       itemData.hasThumbnail
-                        ? { uri: itemData?.contact_name_alias }
+                        ? { uri: itemData?.thumbnailPath }
                         : undefined
                     }
                     placeholder={getAvatarInitials(
-                      `${itemData.contact_name_alias}`
+                      `${itemData.displayName}`
                     )}
                     width={40}
                     height={40}
@@ -39,22 +39,22 @@ const EmerContactCard = ({itemData, onPress}) => {
           </View>
             <View style={rightSectionContainer}>
               <View style={mainTitleContainer}>
-                <Text style={titleStyle}>{itemData.contact_name_alias}</Text>
+                <Text style={titleStyle}>{itemData.displayName}</Text>
                 {/* {phoneNumbers ? phoneNumbers.map((phone_number, index) => (
                   <Text key={index} style={descriptionStyle}>{phone_number.number}</Text>
 
                 )) : (
                   <View />
                 )} */}
-                  {itemData.contact_number?  <Text style={descriptionStyle}>{itemData.contact_number}</Text> : (
+                  {itemData.phoneNumbers.length > 0 ?  <Text style={descriptionStyle}>{itemData.phoneNumbers[0].number}</Text> : (
                   <View />
                 )}
               </View>
               <View style={rightTextContainer}>
                 {/* {rightText ? <Text>{rightText}</Text> : <View />} */}
                 {/* <Button mode={'outlined'} color={'green'}  labelStyle={{ marginRight: 10, fontSize: 10}} onPress={() => { setVerifyLoading(true), resendEmailVerifiy() }}>Share Link</Button> */}
-                <Text style={{marginRight: 12, fontSize: 10, backgroundColor:'red', 
-                textAlign:'center', paddingHorizontal:10, paddingVertical:5, borderRadius:50, color:'#fff'}}>Call for Emergency</Text>
+                <Text style={{marginRight: 12, fontSize: 10, backgroundColor:'green', 
+                textAlign:'center', paddingHorizontal:10, paddingVertical:5, borderRadius:50, color:'#fff'}}>Share App</Text>
               </View>
 
               {/* {rightElement ? (
@@ -70,7 +70,7 @@ const EmerContactCard = ({itemData, onPress}) => {
   );
 };
 
-export default EmerContactCard;
+export default PhoneContactCard;
 
 const styles = StyleSheet.create({
   card: {

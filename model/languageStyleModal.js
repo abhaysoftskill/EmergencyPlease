@@ -1,8 +1,8 @@
 const languageStyleModal = {
   title: {
     padding: 10,
-    backgroundColor:'#e8e8e8',
-    color:'#000',
+    backgroundColor:'#FF6347',
+    color:'#fff',
     borderBottomWidth:1,
     borderBottomColor:'#ccc',
 

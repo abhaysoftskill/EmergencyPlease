@@ -25,6 +25,9 @@ import SpecialServices from '../SpecialServices/SpecialServices';
 import Covid19 from '../SpecialServices/Covid19/Covid19';
 import CovidVaccineCenters from '../SpecialServices/Covid19/CovidVaccineCenters';
 import Services from '../Services';
+import EmergencyRequestServices from '../EmergencyRequestServices';
+import EmergencyServicesMap from '../EmergencyServicesMap';
+import Feedback from '../Feedback';
 
 const HomeStack = createStackNavigator();
 const NotificationStack = createStackNavigator();
@@ -282,12 +285,44 @@ const HomeStackScreen = ({ navigation }) => {
         })}
       />
       <HomeStack.Screen
-        name="EmergencyServices"
-        component={EmergencyServices}
+        name="EmergencyRequestServices"
+        component={EmergencyRequestServices}
         options={({ route }) => ({
           title: 'Emergency Services',
           // headerBackTitleVisible: false
         })}
+      />
+      <HomeStack.Screen
+        name="EmergencyServices"
+        component={EmergencyServices}
+        options={({ route }) => ({
+          title: 'Nearest Services',
+          // headerBackTitleVisible: false
+        })}
+      />
+      
+      <HomeStack.Screen
+        name="EmergencyServicesMap"
+        component={EmergencyServicesMap}
+        options={({ route }) => ({
+          title: 'Services Location',
+
+          headerRight: () => (
+            <View style={{ flexDirection: 'row', marginRight: 10 }}>
+
+              <TouchableOpacity
+                style={{ paddingHorizontal: 10, marginTop: 5 }}
+              >
+                <Avatar.Image
+                  backgroundColor={'#fff'}
+                  source={require('../../assets/defaultProfile.png')}
+                  size={30}
+                />
+              </TouchableOpacity>
+            </View>
+          ),
+        })}
+
       />
       <HomeStack.Screen
         name="MyRequests"
@@ -328,6 +363,17 @@ const HomeStackScreen = ({ navigation }) => {
         name="SplashScreen"
         options={{ headerShown: false }}
         component={SplashScreen}
+      />
+       <HomeStack.Screen
+        name="Feedback"
+        component={Feedback}
+        options={({ route }) => ({
+          // userName: route.params.userName,
+          headerBackTitleVisible: false,
+          tabBarVisible: false,
+          title: 'Suggestion/Feedback',
+        })}
+
       />
     </HomeStack.Navigator>
   );

@@ -6,11 +6,13 @@ import commonReducer from "./reducers/commonReducer";
 import AsyncStorage from "@react-native-community/async-storage";
 import currentLocationReducer from "./reducers/currentLocationReducer";
 import serviceReducer from "./reducers/serviceReducer";
+import contactsReducer from "./reducers/contactsReducer";
 
 const rootReducer = combineReducers({
     commonReducer: commonReducer,
     serviceReducer: serviceReducer,
     currentLocationReducer:currentLocationReducer,
+    contactsReducer:contactsReducer
 });
 
 const config = {
