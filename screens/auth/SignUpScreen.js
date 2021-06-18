@@ -36,7 +36,22 @@ const SignUpScreen = ({ route, navigation }) => {
         phonenumber: route.params.phonenumber,
         email: route.params.email,
         secureTextEntry:true,
-        confirm_secureTextEntry:true
+        confirm_secureTextEntry:true ,
+        familyContacts:[
+            { "name": "", "contact": "", "edit": false },
+            { "name": "", "contact": "", "edit": false },
+            { "name": "", "contact": "", "edit": false },
+        ],
+        friendsContacts:[
+            { "name": "", "contact": "", "edit": false },
+            { "name": "", "contact": "", "edit": false },
+            { "name": "", "contact": "", "edit": false },
+        ],
+        officeContacts  : [
+            { "name": "", "contact": "", "edit": false },
+            { "name": "", "contact": "", "edit": false },
+            { "name": "", "contact": "", "edit": false },
+        ]
     });
 
     const [securePasssword, setSecurePasssword] = React.useState({

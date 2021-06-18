@@ -11,6 +11,14 @@ import com.facebook.soloader.SoLoader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import com.rt2zz.reactnativecontacts.ReactNativeContacts; // <--- import
+import com.microsoft.codepush.react.CodePush;
+
+
+//firebase package
+import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
+import io.invertase.firebase.links.RNFirebaseLinksPackage;
+import io.invertase.firebase.config.RNFirebaseRemoteConfigPackage;
+import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -28,12 +36,21 @@ public class MainApplication extends Application implements ReactApplication {
           // Packages that cannot be autolinked yet can be added manually here, for example:
           // packages.add(new MyReactNativePackage());
           // packages.add(new ReactNativeContacts());
+          packages.add(new RNFirebaseMessagingPackage());
+          packages.add(new RNFirebaseLinksPackage());
+          packages.add(new RNFirebaseRemoteConfigPackage());
+          packages.add(new RNFirebaseNotificationsPackage());
           return packages;
         }
 
         @Override
         protected String getJSMainModuleName() {
           return "index";
+        }
+
+         @Override
+        protected String getJSBundleFile() {
+            return CodePush.getJSBundleFile();
         }
       };
 

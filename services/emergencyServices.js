@@ -103,7 +103,7 @@ const serviceservicebyservicetype = async (serviceID) => {
         }
     });
 }
-const nearserviceproviderbyservicetype = async (lng, lat,id) => {
+const nearserviceproviderbyservicetype = async (lng, lat, id) => {
     userToken = await AsyncStorage.getItem('userToken');
     return request({
         url: `/servicesproviders/nearprovidersbyservicetype/${id}?lng=${lng}&lat=${lat}`,
@@ -124,7 +124,7 @@ const nearservices = async (lng, lat) => {
     });
 }
 
-const nearservicesbyservicetype = async (serviceID,lng, lat) => {
+const nearservicesbyservicetype = async (serviceID, lng, lat) => {
     userToken = await AsyncStorage.getItem('userToken');
     return request({
         url: `/service/nearservicesbyservicetype/${serviceID}?lng=${lng}&lat=${lat}`,
@@ -303,6 +303,46 @@ const readyToHelp = async (requestId) => {
     });
 }
 
+const getnearestevents = async (lng, lat, type) => {
+    userToken = await AsyncStorage.getItem('userToken');
+    return request({
+        url: `/events/near?lng=${lng}&lat=${lat}`,
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${userToken}`
+        }
+    });
+}
+
+
+const shareFeedback = async (formData) => {
+    let data = qs.stringify(formData)
+    userToken = await AsyncStorage.getItem('userToken');
+    return request({
+        url: `/feedback/add`,
+        method: 'POST',
+        data,
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+            'Authorization': `Bearer ${userToken}`,
+        }
+    });
+}
+
+const updateEmergencyContactDetails = async (formData) => {
+    let data = qs.stringify(formData)
+    userToken = await AsyncStorage.getItem('userToken');
+
+    return request({
+        url: `user/update/emergencycontactdetails`,
+        method: 'PATCH',
+        data,
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+            'Authorization': `Bearer ${userToken}`,
+        }
+    });
+}
 
 const EmergencyService = {
     myEmergencyRequest,
@@ -334,7 +374,11 @@ const EmergencyService = {
 
     getHospitalVisit,
     addhospitalvisit,
-    readyToHelp
+    readyToHelp,
+
+    getnearestevents,
+    shareFeedback,
+    updateEmergencyContactDetails
 };
 
 export default EmergencyService;

@@ -10,6 +10,7 @@ import { Modal, Dimensions, Alert, Pressable } from 'react-native';
 import { Divider, Paragraph } from 'react-native-paper';
 import EmergencyService from '../../services/emergencyServices';
 import Moment from 'moment';
+// import PushController from '../../push_notification/PushController';
 export const Notifications = ({ navigation }) => {
     const [notificationID, setNotificationID] = useState(null)
     const [modalVisible, setModalVisible] = useState(false)
@@ -84,6 +85,7 @@ export const Notifications = ({ navigation }) => {
                     </View>
                 </View>
             </Modal>
+        {/* <PushController/> */}
         </Container>
 
 

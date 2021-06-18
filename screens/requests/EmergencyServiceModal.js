@@ -6,6 +6,7 @@ import ModalInputs from './ModalInputs';
 import { data } from '../../model/data';
 
 const EmergencyServiceModal = (props) => {
+  console.log(props.data)
   const navigation = useNavigation();
   const [visible, setVisible] = useState(true);
 
@@ -19,7 +20,8 @@ const EmergencyServiceModal = (props) => {
   //   setVisible(false);
   //   navigation.navigate('Map', { itemData: '' });
   // }
-  const [modalData, setModalData] = useState(JSON.parse(props.data) || [])
+  const [serviceData, setServiceData] = useState(props.data)
+  const [modalData, setModalData] = useState(JSON.parse(props.data.modalData) || [])
 
   const updateValue = (type, value, index, changeIndex) => {
     let updateData = [...modalData];
@@ -27,22 +29,22 @@ const EmergencyServiceModal = (props) => {
     if (type == 'radio') {
       let updateD = newdata.data.map(item => ({ ...item, checked: false }))
       updateD[changeIndex].checked = true;
-      updateData[index] = { "type": "radio", "label":newdata.label,"flex":newdata.flex, "data": updateD }
+      updateData[index] = { "type": "radio", "label": newdata.label, "flex": newdata.flex, "data": updateD }
       setModalData(updateData);
 
     }
-    else if(type == 'checkbox'){
+    else if (type == 'checkbox') {
       newdata.data[changeIndex].checked = value
       updateData[index] = newdata;
       setModalData(updateData);
 
     }
-    else{
+    else {
       newdata.value = value;
       updateData[index] = newdata;
       setModalData(updateData);
     }
-    
+
   }
 
   return (
@@ -63,9 +65,30 @@ const EmergencyServiceModal = (props) => {
             </ScrollView>
           </Dialog.ScrollArea>
           <Dialog.Actions>
-            
+
             <Button mode={'contained'} color={'#ea3a3a'} onPress={() => { props.closeOption() }} style={{ marginRight: 30 }}>Cancel</Button>
-            <Button mode={'contained'} color={'#17841c'} onPress={() => { setVisible(false); navigation.navigate('EmergencyReport', { service_name: "ambulance_request", service_title: "Ambulance", serviceType: { paidService: paidService, freeService: freeService }, userDetails: props.userDetails }) }}>Done</Button>
+            <Button mode={'contained'} color={'#17841c'} onPress={() => {
+              let tempJSON = []
+              modalData.map((e) => {
+                if(e.type == 'radio'){
+                  if(e.data.length > 0){
+                    e.data.map((d) => {
+                       if(d.checked == true){
+                         return tempJSON.push({label:e.label, value: d.value})
+                       }else return
+                    })
+                  }
+                }
+              })
+              setVisible(false); navigation.navigate('EmergencyReport', {
+                service_id: props.data.service_id,
+                service_name: props.data.service_name,
+                service_name_alias: props.data.service_name_alias,
+                details: tempJSON,
+                userDetails: props.userDetails
+              })
+            }}>Done</Button>
+
           </Dialog.Actions>
         </Dialog>
       </Portal>

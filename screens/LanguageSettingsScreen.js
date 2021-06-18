@@ -60,6 +60,34 @@ export const LanguageSettingsScreen = ({ navigation }) => {
           <Text style={[{
             flexShrink: 1,
             color: '#9c9999', fontSize: 15, textAlign: 'center', marginRight: 10
+          }]}>हिन्दी
+            </Text>
+        </View>
+
+        <View
+          style={[styles.box, {
+            backgroundColor: '#eae7e7',
+            width: 150, height: 80, alignItems: 'center', justifyContent: 'center'
+          }]}
+        >
+
+          <Text style={[{
+            flexShrink: 1,
+            color: '#9c9999', fontSize: 15, textAlign: 'center', marginRight: 10
+          }]}>मराठी
+            </Text>
+        </View>
+
+        <View
+          style={[styles.box, {
+            backgroundColor: '#eae7e7',
+            width: 150, height: 80, alignItems: 'center', justifyContent: 'center'
+          }]}
+        >
+
+          <Text style={[{
+            flexShrink: 1,
+            color: '#9c9999', fontSize: 15, textAlign: 'center', marginRight: 10
           }]}>ગુજરતી
             </Text>
         </View>

@@ -11,53 +11,60 @@ import strings from '../translations/translations';
 import { Button } from 'react-native-paper';
 import Contacts from 'react-native-contacts';
 import { addContact } from '../redux/actions/contactsActions';
+import Loader from '../components/Loading';
 
 const Services = ({ navigation }) => {
   const { coordinates } = useSelector(state => state.currentLocationReducer);
   const stateDispatch = useDispatch();
   // Usestate for servicetype 
   const [services, setServices] = useState({});
+  const [loading, setloading] = useState(false);
 
   const requestData = async () => {
+    setloading(true)
     // Call service type api *******************
     EmergencyService.serviceTypes().then((res) => {
       setServices(res)
+      setloading(false)
+
     }, error => {
+      setloading(false)
+
       return;
     })
 
-    
+
   }
-// const changeLanguage = () => {
-//   console.log('%%%%%%%%%%%%555')
-//   strings.setLanguage('fr')
+  // const changeLanguage = () => {
+  //   console.log('%%%%%%%%%%%%555')
+  //   strings.setLanguage('fr')
 
-// }
-const loadContacts = () => {
-  Contacts.getAll()
-    .then(contacts => {
-      contacts.sort((a, b) => {
-        if (a.displayName > b.displayName) {
-          return 1;
-        }
-        if (a.displayName < b.displayName) {
-          return -1;
-        }
-        return 0;
+  // }
+  const loadContacts = () => {
+    Contacts.getAll()
+      .then(contacts => {
+        contacts.sort((a, b) => {
+          if (a.displayName > b.displayName) {
+            return 1;
+          }
+          if (a.displayName < b.displayName) {
+            return -1;
+          }
+          return 0;
+        });
+        stateDispatch(addContact(contacts))
+
+      })
+      .catch(e => {
+        // setLoading(false);
       });
-      stateDispatch(addContact(contacts))
 
-    })
-    .catch(e => {
-      // setLoading(false);
-    });
 
- 
 
-  Contacts.checkPermission();
-}
+    Contacts.checkPermission();
+  }
   useEffect(() => {
-  //  strings.setLanguage('en')
+    //  strings.setLanguage('en')
     if (coordinates?.length == 0) {
       stateDispatch(readCurrentLocation())
     }
@@ -66,16 +73,25 @@ const loadContacts = () => {
     }
 
     if (Platform.OS === "android") {
-      PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_CONTACTS, {
-        title: "Contacts",
-        message: "This app would like to view your contacts."
-      }).then(() => {
-        loadContacts();
-      });
+      // PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_CONTACTS, {
+      //   title: "Contacts",
+      //   message: "This app would like to view your contacts."
+      // }).then(() => {
+      //   loadContacts();
+      // });
+      PermissionsAndroid.requestMultiple(
+        [ PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        PermissionsAndroid.PERMISSIONS.READ_CONTACTS
+        ]).then(() => {
+          const coordinates  = useSelector(state => state.currentLocationReducer);
+          loadContacts();
+          return { coordinates }
+
+        });
     } else {
       loadContacts();
     }
-   // return () =>  RNLocalize.removeEventListener('change', handleLocalizationChange());
+    // return () =>  RNLocalize.removeEventListener('change', handleLocalizationChange());
 
   }, [coordinates])
 
@@ -84,7 +100,7 @@ const loadContacts = () => {
       <TouchableOpacity onPress={() => {
         stateDispatch(serviceTypeAdd(itemData.item._id)),
           itemData.item.service_type == 'covid_19' ? navigation.navigate('Covid19', { serviceTypeID: itemData.item._id }) : navigation.navigate('Dashboard', { serviceTypeID: itemData.item._id })
-        
+
       }}>
         <View style={styles.card}>
           <View style={styles.cardImgWrapper}>
@@ -108,28 +124,18 @@ const loadContacts = () => {
   };
 
 
-  //////////////////////////////////////////
-
-
-  const lang = [
-    // lazy requires (metro bundler does not support symlinks)
-    {shortform:'en', longform:'English'},
-    {shortform:'ar', longform:'Arebic'},
-    {shortform:'fr', longform:'French'},
-   ];
-
-  
   return (
 
 
     <View style={styles.container}>
       {/* <Button onPress={() => changeLanguage()} >Text</Button> */}
       {/* <Text style={styles.value}>{strings.hello}</Text> */}
-      <FlatList
+      {loading && <Loader />}
+      {!loading && <FlatList
         data={services?.service_type}
         renderItem={getServiceList}
         keyExtractor={item => item.service_type}
-      />
+      />}
 
     </View>
   )

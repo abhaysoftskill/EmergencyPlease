@@ -35,17 +35,18 @@ const ConfirmRequest = (props) => {
   const submitRequest = () => {
     setLoading(true);
     props.loading(true)
+    console.log(props.data)
     let updateData = {
       "service_id": props.data.service_id,
       "requestDetails": {
+        "request_service_id":props.data.service_id,
+        "request_service_name":props.data.service_name,
+        "request_service_name_alias":props.data.service_name_alias,
+        "details":props.data.details || [],
         "requestForSelf": isSelf,
         "landMark": data.landmark,
         "forName": data.name || '',
         "forContact": data.phonenumber || '',
-        "bloodGroupType": props.data.serviceType?.bloodGroupType || '',
-        "bloodGroup": props.data.serviceType?.bloodGroup || '',
-        "paidAmbulance": props.data.serviceType?.paidService || false,
-        "freeAmbulance": props.data.serviceType?.freeService || false
       },
       "geometry": {
         "type": "point",
@@ -95,7 +96,7 @@ const ConfirmRequest = (props) => {
     <Provider>
       <Portal>
         <Dialog visible={visible} onDismiss={hideDialog} dismissable={false}>
-          <Dialog.Title>{props.data.service_title} Request</Dialog.Title>
+          <Dialog.Title>Request for {props.data.service_name_alias}</Dialog.Title>
           <Dialog.Content >
             <View style={{
               flexDirection: 'row',

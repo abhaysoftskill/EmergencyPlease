@@ -349,7 +349,7 @@ const Home = ({ route, navigation }) => {
 
 
                     </View>}
-                    {!loading &&  <View
+                    {!loading && false &&  <View
                         style={{
                             flexDirection: "row",
                             justifyContent: 'space-between', marginTop: 10,
@@ -463,6 +463,33 @@ const Home = ({ route, navigation }) => {
                                 </View>
                                 <View>
                                     <Paragraph style={{ color: '#fff', fontSize: 11 }}>Get your's Requests</Paragraph>
+
+                                </View>
+                                
+                            </View>
+                        </TouchableOpacity>}
+                       
+                        {!loading && <TouchableOpacity
+                            onPress={() => navigation.navigate('EmergencyEvents',
+                                {
+                                    userDetails: userDetails,
+                                })}
+                        >
+                            <View
+                                style={[styles.box, {
+                                    backgroundColor: '#ac0f0f',
+                                    width: 350, height: 80, alignItems: 'center', justifyContent: 'center'
+                                }]}
+                            >
+
+                                <View style={styles.innerContainer}>
+
+                                    <View style={{ color: '#fff' }}>
+                                        <Title style={{ color: '#fff' }}>Emergency Help Event Near You</Title>
+                                    </View>
+                                </View>
+                                <View>
+                                    <Paragraph style={{ color: '#fff', fontSize: 11, textAlign:'center' }}>Know your nearest Help Event, like Blood Donation, Fire Safty & more....</Paragraph>
 
                                 </View>
                                 

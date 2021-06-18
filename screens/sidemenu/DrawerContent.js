@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, StyleSheet, Image, Alert, Modal, Text } from 'react-native';
+import { View, StyleSheet, Image, Alert, Modal, Text, Linking } from 'react-native';
 import {
     useTheme,
     Avatar,
@@ -67,9 +67,22 @@ export function DrawerContent({ props, navigation }) {
             const version = await checkVersion();
             setVersionNo(version?.version)
             if (version.needsUpdate) {
-                console.log(`App has a ${version.updateType} update pending.`);
+                Alert.alert('Need Update App!', 'You need to update app', [
+                    {
+                        text: 'Update',
+                        onPress: async () => {
+                            try {
+                                Linking.openURL("market://details?id=com.aklogical.emergencyplease");
+                                return;
+                            } catch (e) {
+                                console.log(e);
+                            }
+
+                        }
+                    },
+                ]);
             }
-            console.log(version)
+           
         }
         fetchVerson();
         return () => setServices('');
@@ -82,13 +95,14 @@ export function DrawerContent({ props, navigation }) {
       };
     return (
         <View style={{ flex: 1 }}>
-            <Drawer.Section>
+            <Drawer.Section onPress>
                 <View style={styles.userInfoSection}>
                     <View style={{ flexDirection: 'row', marginTop: 15 }}>
                         <Avatar.Image
                             backgroundColor={'#fff'}
                             source={require('../../assets/defaultProfile.png')}
                             size={50}
+                            
                         />
                         <View style={{ marginLeft: 15, flexDirection: 'column' }}>
                             <Title style={styles.title}>{userDetails.firstname + " " + userDetails.lastname}</Title>
@@ -110,9 +124,10 @@ export function DrawerContent({ props, navigation }) {
                     <Drawer.Section title="Emergency Contacts">
                         {/* <Text>{JSON.stringify(userDetails.familyContacts)}</Text> */}
                         <View style={[styles.categoryContainer, { marginTop: 10 }]}>
-                            <TouchableOpacity style={styles.categoryBtn} >
+                            <TouchableOpacity style={styles.categoryBtn} 
+                            onPress={() => navigation.navigate('EditfamilyDetails')} >
 
-                                <View style={[styles.categoryIcon2, { borderColor: `${(userDetails?.familyContacts?.length > 0 ? '#FF6347' : '#fdeae7')}`, backgroundColor: `${(userDetails?.familyContacts?.length > 0 ? '#d9f1df' : '#e5e5e5')}` }]}>
+                                <View style={[styles.categoryIcon2, { borderColor: `${(userDetails?.familyContacts?.length > 0 ? '#FF6347' : '#fdeae7')}`, backgroundColor: `${(userDetails?.familyContacts?.length > 0 ? '#f7c9c1' : '#e5e5e5')}` }]}>
                                     <Fontisto name="holiday-village" size={35} color={`${(userDetails?.familyContacts?.length > 0 ? '#FF6347' : '#8d8c8c')}`} />
                                     <View style={[styles.friendsCount, { backgroundColor: `${(userDetails?.familyContacts?.length > 0 ? '#FF6347' : '#ccc')}` }]}>
                                         <Text style={{ color: "#fff" }}>{userDetails?.familyContacts?.length}</Text>
@@ -120,7 +135,8 @@ export function DrawerContent({ props, navigation }) {
                                 </View>
                                 <Text style={[styles.categoryBtnTxt, { color: "#FF6347" }]}>Family</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={styles.categoryBtn} >
+                            <TouchableOpacity style={styles.categoryBtn} 
+                             onPress={() => navigation.navigate('EditfamilyDetails')} >
                                 <View style={[styles.categoryIcon2, {
                                     borderColor: `${(userDetails?.friendsContacts?.length > 0 ? '#1a8434' : '#ccc')}`,
                                     backgroundColor: `${(userDetails?.friendsContacts?.length > 0 ? '#d9f1df' : '#e5e5e5')}`
@@ -132,7 +148,8 @@ export function DrawerContent({ props, navigation }) {
                                 </View>
                                 <Text style={[styles.categoryBtnTxt, { color: "#1a8434" }]}>Friend</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={styles.categoryBtn} >
+                            <TouchableOpacity style={styles.categoryBtn} 
+                             onPress={() => navigation.navigate('EditfamilyDetails')} >
                                 <View style={[styles.categoryIcon2, {
                                     borderColor: `${(userDetails?.officeContacts?.length > 0 ? '#d21036' : '#ccc')}`,
                                     backgroundColor: `${(userDetails?.officeContacts?.length > 0 ? '#f5d4db' : '#e5e5e5')}`
@@ -300,14 +317,14 @@ export function DrawerContent({ props, navigation }) {
                     icon={({ color, size }) => (
                         <FontAwesome
                             name="comments"
-                            color="#05375a"
+                            color="#fff"
                             size={20}
                         />
                     )}
                     label="Feedback"
                     onPress={() => { navigation.navigate('Feedback')
                     }}
-                    style={{ backgroundColor: '#e8e8e8' }}
+                    style={{ backgroundColor: '#ffa400', color:'#fff' }}
 
                 />
                 <DrawerItem

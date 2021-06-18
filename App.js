@@ -7,11 +7,7 @@
  */
 
 import React, { useEffect, useReducer, useState } from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-} from 'react-native';
+import {  StyleSheet,  View,  Text, PermissionsAndroid, Platform} from 'react-native';
 
 import {
   NavigationContainer,
@@ -26,9 +22,7 @@ import {
 } from 'react-native-paper';
 const Drawer = createDrawerNavigator();
 
-import {
-  Colors,
-} from 'react-native/Libraries/NewAppScreen';
+import {  Colors} from 'react-native/Libraries/NewAppScreen';
 
 import { AuthContext } from './components/context';
 
@@ -45,6 +39,16 @@ import CheckConnection from './utils/CheckConnection';
 import { Image } from 'react-native-animatable';
 import withCodePush from './codepush';
 import { LocalizationProvider } from './translations/LocalizationContext';
+
+// const androidConfig ={
+//   clientId: Global.clientIdAndroid,
+//   appId: Global.appIdAndroid,
+//   apiKey: Global.apiKeyAndroid,
+//   databaseURL: Global.databaseURL,
+//   storageBucket: Global.storageBucket,
+//   messagingSenderId: Global.messagingSenderId,
+//   projectId: Global.projectId
+// }
 
 const RootStack = createStackNavigator();
 const ErrorCard = () => {
@@ -128,7 +132,7 @@ const App = () => {
         };
     }
   };
-
+ 
   const [loginState, dispatch] = useReducer(loginReducer, initialLoginState);
 
   const authContext = React.useMemo(() => ({
@@ -290,5 +294,5 @@ const styles = StyleSheet.create({
   },
 });
 
-// export default withCodePush(App);
-export default App;
+export default withCodePush(App);
+// export default App;

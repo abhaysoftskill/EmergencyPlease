@@ -9,7 +9,8 @@ import {
     StatusBar,
     Alert,
     Keyboard,
-    Image
+    Image,
+    PermissionsAndroid
 } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
@@ -26,6 +27,16 @@ import OTPVerification from './OTPVerification';
 import { LocalizationContext } from '../../translations/LocalizationContext';
 
 const SignIn = ({ navigation }) => {
+    if (Platform.OS === "android") {
+        PermissionsAndroid.requestMultiple(
+          [ PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+          PermissionsAndroid.PERMISSIONS.READ_CONTACTS
+          ]).then(() => {
+            // loadContacts();
+          });
+      } else {
+        // loadContacts();
+      }
     const [data, setData] = useState({
         username: '',
         password: '',

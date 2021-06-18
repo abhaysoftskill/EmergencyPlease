@@ -193,7 +193,7 @@ const EmergencyDetails = ({ route, navigation }) => {
             <View style={[styles.categoryContainer, { marginTop: 10 }]}>
                 {/* {userDetails.immidiateContact.map(data => { */}
                 <TouchableOpacity style={styles.categoryBtn} onPress={() => { }}>
-                    <View style={[styles.categoryIcon2, { borderColor: `${(userDetails.familyContacts.length > 0 ? '#FF6347' : '#fdeae7')}`, backgroundColor: `${(userDetails.familyContacts.length > 0 ? '#d9f1df' : '#e5e5e5')}` }]}>
+                    <View style={[styles.categoryIcon2, { borderColor: `${(userDetails.familyContacts.length > 0 ? '#FF6347' : '#fdeae7')}`, backgroundColor: `${(userDetails.familyContacts.length > 0 ? '#f7c9c1' : '#e5e5e5')}` }]}>
                         <Fontisto name="holiday-village" size={35} color={`${(userDetails.familyContacts.length > 0 ? '#FF6347' : '#8d8c8c')}`} />
                         <View style={[styles.friendsCount, { backgroundColor: `${(userDetails.familyContacts.length > 0 ? '#FF6347' : '#ccc')}` }]}>
                             <Text style={{ color: "#fff" }}>{userDetails.familyContacts.length}</Text>

@@ -7,6 +7,7 @@ import BloodGroup from './requests/BloodGroup';
 import EmergencyService from '../services/emergencyServices';
 import { useSelector } from 'react-redux';
 import EmergencyServiceModal from './requests/EmergencyServiceModal';
+import Loader from '../components/Loading';
 
 const EmergencyRequestServices = ({ route, navigation }) => {
   const { service_type_id } = useSelector(state => state.serviceReducer);
@@ -26,14 +27,24 @@ const EmergencyRequestServices = ({ route, navigation }) => {
     // }
     if (service?.service_modal && service?.service_modal_data) {
      let modalData = JSON.parse(service?.service_modal_data)
-    //  console.log(modalData)
     //  console.log(typeof(JSON.parse(modalData)))
-      setEmergencyServiceData(modalData)
-    // setShowEmergencyServiceModal(true)
+
+      setEmergencyServiceData({
+        "service_id": service._id,
+        "service_name": service.service_name,
+        "service_name_alias" :service.service_name_alias,
+        "modalData": modalData
+      })
+    setShowEmergencyServiceModal(true)
 
     }
-    navigation.navigate('EmergencyReport', { service_id: service._id, service_title: service.service_name_alias, userDetails: route.params.userDetails });
-
+    else{
+    navigation.navigate('EmergencyReport', { 
+      "service_id": service._id,
+      "service_name": service.service_name,
+      "service_name_alias" :service.service_name_alias,
+      "userDetails": route.params.userDetails });
+    }
   }
   const renderItem = ({ item }) => {
     return (
@@ -61,7 +72,7 @@ const EmergencyRequestServices = ({ route, navigation }) => {
     <>
       <View style={styles.container}>
         <StatusBar backgroundColor='#FF6347' barStyle="light-content" />
-
+    {!services && <Loader />}
         <FlatList
           data={services?.services}
           renderItem={renderItem}

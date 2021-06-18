@@ -28,10 +28,14 @@ import Services from '../Services';
 import EmergencyRequestServices from '../EmergencyRequestServices';
 import EmergencyServicesMap from '../EmergencyServicesMap';
 import Feedback from '../Feedback';
+import EmergencyEvents from '../EmergencyEvents/EmergencyEvents';
+import FamilyFriends from '../auth/FamilyFriends';
+import ProfileScreen from '../Profile/ProfileScreen';
 
 const HomeStack = createStackNavigator();
 const NotificationStack = createStackNavigator();
 const StoryStack = createStackNavigator();
+const ProfileStack = createStackNavigator();
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -147,7 +151,7 @@ const HomeStackScreen = ({ navigation }) => {
           ),
         }}
       />
- <HomeStack.Screen
+      <HomeStack.Screen
         name="SpecialServices"
         component={SpecialServices}
         options={{
@@ -300,7 +304,7 @@ const HomeStackScreen = ({ navigation }) => {
           // headerBackTitleVisible: false
         })}
       />
-      
+
       <HomeStack.Screen
         name="EmergencyServicesMap"
         component={EmergencyServicesMap}
@@ -343,7 +347,7 @@ const HomeStackScreen = ({ navigation }) => {
           // headerBackTitleVisible: false
         })}
       />
-     
+
       <HomeStack.Screen
         name="EditDetails"
         options={{
@@ -355,16 +359,23 @@ const HomeStackScreen = ({ navigation }) => {
       <HomeStack.Screen
         name="EditfamilyDetails"
         options={{
-          title: 'Update Emergency Contact',
+          title: 'Emergency Contact',
         }}
         component={FamilyFriendsDetails}
+      />
+      <HomeStack.Screen
+        name="FamilyFriends"
+        options={{
+          title: 'Family Friends',
+        }}
+        component={FamilyFriends}
       />
       <HomeStack.Screen
         name="SplashScreen"
         options={{ headerShown: false }}
         component={SplashScreen}
       />
-       <HomeStack.Screen
+      <HomeStack.Screen
         name="Feedback"
         component={Feedback}
         options={({ route }) => ({
@@ -372,6 +383,17 @@ const HomeStackScreen = ({ navigation }) => {
           headerBackTitleVisible: false,
           tabBarVisible: false,
           title: 'Suggestion/Feedback',
+        })}
+
+      />
+      <HomeStack.Screen
+        name="EmergencyEvents"
+        component={EmergencyEvents}
+        options={({ route }) => ({
+          // userName: route.params.userName,
+          headerBackTitleVisible: false,
+          tabBarVisible: false,
+          title: 'Emergency Events',
         })}
 
       />
@@ -521,5 +543,58 @@ const ContactsStackScreen = ({ navigation }) => {
         }}
       />
     </StoryStack.Navigator>
+  );
+};
+
+const ProfileStackScreen = ({navigation}) => {
+  const {colors} = useTheme();
+
+  return (
+    <ProfileStack.Navigator
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: colors.background,
+          shadowColor: colors.background, // iOS
+          elevation: 0, // Android
+        },
+        headerTintColor: colors.text,
+      }}>
+      <ProfileStack.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{
+          title: '',
+          headerLeft: () => (
+            <View style={{marginLeft: 10}}>
+              <Icon.Button
+                name="ios-menu"
+                size={25}
+                backgroundColor={colors.background}
+                color={colors.text}
+                onPress={() => navigation.openDrawer()}
+              />
+            </View>
+          ),
+          headerRight: () => (
+            <View style={{marginRight: 10}}>
+              <MaterialCommunityIcons.Button
+                name="account-edit"
+                size={25}
+                backgroundColor={colors.background}
+                color={colors.text}
+                onPress={() => navigation.navigate('EditProfile')}
+              />
+            </View>
+          ),
+        }}
+      />
+      {/* <ProfileStack.Screen
+        name="EditProfile"
+        options={{
+          title: 'Edit Profile',
+        }}
+        component={EditProfileScreen}
+      /> */}
+    </ProfileStack.Navigator>
   );
 };

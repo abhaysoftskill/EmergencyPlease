@@ -1,6 +1,6 @@
 
 
-import React, { useState, useEffect,useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
     View,
     Text,
@@ -30,6 +30,7 @@ const EmergencyReport = ({ route, navigation }) => {
     const { translations } = useContext(LocalizationContext);
     // const userDetails = route.params.userDetails;
     const userDetails = route.params.userDetails;
+    console.log(route.params)
     const theme = useTheme();
     const { coordinates } = useSelector(state => state.currentLocationReducer);
     const [showMap, setShowMap] = useState(false);
@@ -155,7 +156,9 @@ const EmergencyReport = ({ route, navigation }) => {
                 />}
 
                 {!showMap && <ActivityIndicator animating={true} color={Colors.red800} />}
-                {confirm_message && <ConfirmRequest loading={(e) => setLoading(e)} closeOption={() => setConfirm_message(false)} data={route.params} geometry={region} />}
+                {confirm_message && <ConfirmRequest loading={(e) => setLoading(e)}
+                    closeOption={() => setConfirm_message(false)}
+                    data={route.params} geometry={region} />}
 
             </View>
             {loading && <View style={{
