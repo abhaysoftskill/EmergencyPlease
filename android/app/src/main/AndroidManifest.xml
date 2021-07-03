@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.aklogical.emergencyplease">
+  package="com.emergency.please">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -13,6 +13,11 @@
     <uses-permission android:name="com.aklogical.emergencyplease.permission.C2D_MESSAGE" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/> -->
+    <permission
+        android:name="com.emergency.please.permission.MAPS_RECEIVE"
+        android:protectionLevel="signature" />
+    <uses-permission android:name="com.emergency.please.permission.MAPS_RECEIVE" />
+
     <application
       android:name=".MainApplication"
       android:label="@string/app_name"
@@ -22,7 +27,7 @@
       android:theme="@style/AppTheme"
       android:largeHeap="true">
       <meta-data
-      android:name="com.google.android.geo.API_KEY"
+      android:name="com.google.android.maps.v2.API_KEY"
       android:value="AIzaSyDJcvYM3l-gbKi3Te2w8XZhllT71uE1204"/>
       <activity
         android:name=".MainActivity"

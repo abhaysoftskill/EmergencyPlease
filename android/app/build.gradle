@@ -133,11 +133,11 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.aklogical.emergencyplease"
+        applicationId "com.emergency.please"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 6
-        versionName "6.0"
+        versionCode 1
+        versionName "1.0"
     }
     splits {
         abi {
@@ -172,11 +172,11 @@ android {
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
-              resValue "string", "CodePushDeploymentKey", '"VISZlSYg2aek4HhfgcSrxRqYtfeeXawrrwjl9"'
+              resValue "string", "CodePushDeploymentKey", '"JbKfmtIlA3HyO8HFD6T6CIi8Vc_EWmzekFFY-"'
         }
          releaseStaging {
            
-            resValue "string", "CodePushDeploymentKey", '"miIuWpfUlOA3aUSq2gG4aDd5AiwZ_B4bivcQ_"'
+            resValue "string", "CodePushDeploymentKey", '"W3bZWQBLdQM4BjRIXuZTcA6AiddKaUPWbNvCk"'
             // Note: It's a good idea to provide matchingFallbacks for the new buildType you create to prevent build issues
             // Add the following line if not already there
             matchingFallbacks = ['release']
@@ -190,7 +190,7 @@ android {
             // minifyEnabled enableProguardInReleaseBuilds
              minifyEnabled true
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
-               resValue "string", "CodePushDeploymentKey", '"_nppRoQpsl9YBvLQ7FUXRqipcnvPLHB6Kpzb7"'
+               resValue "string", "CodePushDeploymentKey", '"K3FeNWlMKBAwAxP9dcTiY4xaw3W0HtLDjtnRb"'
         }
     }
 
