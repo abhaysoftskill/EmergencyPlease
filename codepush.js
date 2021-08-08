@@ -7,7 +7,7 @@ const CODE_PUSH_OPTIONS = {
   const withCodePush = WrappedComponent => {
     const WrappedApp = () => {
         syncWithCodePush = (status) =>{
-            console.log(status);
+         //   console.log(status);
           }
           useEffect(() => {
             CodePush.sync({installMode:CodePush.InstallMode.IMMEDIATE},syncWithCodePush(),null)

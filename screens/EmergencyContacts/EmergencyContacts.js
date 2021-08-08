@@ -4,9 +4,11 @@ import { emergencyContactsNumber } from '../../model/data';
 import EmergencyService from '../../services/emergencyServices';
 import EmerContactCard from './EmerContactCard';
 import Contacts from 'react-native-contacts';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Paragraph, Title } from 'react-native-paper';
 import PhoneContactCard from './PhoneContactCard';
+import { addContact } from '../../redux/actions/contactsActions';
+import Loader from '../../components/Loading';
 
 
 const EmergencyContacts = ({ route, navigation }) => {
@@ -17,7 +19,7 @@ const EmergencyContacts = ({ route, navigation }) => {
   const [loading, setLoading] = useState(true)
   const [searchPlaceholder, setSearchPlaceholder] = useState('Search')
   const [tab, setTab] = useState(1)
-
+  const stateDispatch = useDispatch();
   const makeCall = (e) => {
     let phoneNumber = ''
 
@@ -94,13 +96,52 @@ const EmergencyContacts = ({ route, navigation }) => {
       });
     }
   }
+  const loadContacts = () => {
+    // setLoading(true);
 
+    Contacts.getAll()
+      .then(contacts => {
+        contacts.sort((a, b) => {
+          if (a.displayName > b.displayName) {
+            return 1;
+          }
+          if (a.displayName < b.displayName) {
+            return -1;
+          }
+          return 0;
+        });
+        // setLoading(false);
+        stateDispatch(addContact(contacts))
+
+      })
+      .catch(e => {
+        console.log(e)
+        setLoading(false);
+      });
+
+
+
+    Contacts.checkPermission();
+  }
+  useEffect(async () => {
+    if (Platform.OS === "android") {
+      PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_CONTACTS, {
+        title: "Contacts",
+        message: "This app would like to view your contacts."
+      }).then(() => {
+        loadContacts();
+      });
+    } else {
+      loadContacts();
+    }
+  },[])
   useEffect(async () => {
     // if (Platform.OS === "android") {
     //   PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_CONTACTS, {
     //     title: "Contacts",
     //     message: "This app would like to view your contacts."
     //   }).then(() => {
+    //     console.log('***************88888')
     //     loadContacts();
     //   });
     // } else {
@@ -114,22 +155,23 @@ const EmergencyContacts = ({ route, navigation }) => {
       // setContacts(contactsList);
       setSearchPlaceholder(`Search ${contactsList.length} contacts`);
     };
+
     EmergencyService.emergencyContacts().then((res) => {
       setEmergencyContacts(res);
       setLoading(false);
     }, error => {
       return;
     })
-    const unsubscribe = navigation.addListener("focus", () => {
-      setServiceName('')
-    })
+    // const unsubscribe = navigation.addListener("focus", () => {
+    //   setContacts([])
+    // })
 
     // this will help to clear the state when navigate the screen
-    return unsubscribe;
+   // return unsubscribe;
   }, [navigation, contactsList])
   return (
     <View style={styles.container}>
-
+      {loading && <Loader />}
       {/* <SearchBar
           searchPlaceholder={searchPlaceholder}
           onChangeText={(e) => search(e)}
@@ -194,6 +236,7 @@ const EmergencyContacts = ({ route, navigation }) => {
       {tab == 2 && <FlatList
         data={contacts}
         renderItem={phoneRenderItem}
+        initialNumToRender={10}
         keyExtractor={item => item.recordID}
       />}
     </View>

@@ -118,7 +118,6 @@ const ResetPassword = ({ route, navigation }) => {
                 "confirm_password": data.confirm_password,
                 "reset_password_token": data.resetToken,
             }
-            console.log(updateData)
             LoginService.restPasword(updateData).then((res) => {
                 // console.log({userDetails: res[0],
                 //     userToken: res[1],})

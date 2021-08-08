@@ -35,6 +35,7 @@ const SPACING_FOR_CARD_INSET = width * 0.1 - 10;
 
 const EmergencyRequestMap = ({ route, navigation }) => {
   // Moment.locale('IST');
+  console.log('TEst')
   const theme = useTheme();
   const { coordinates } = useSelector(state => state.currentLocationReducer);
 
@@ -52,19 +53,12 @@ const EmergencyRequestMap = ({ route, navigation }) => {
     "blood_donor": "Blood Required"
   }
   useEffect(() => {
-    {
-      // region && EmergencyService.nearestEmergencyRequest(region.longitude, region.latitude, route.params.serviceName).then((res) => {
-      //   setShowMap(true);
-      //   setRequestData(res)
-      // }, error => {
-      //   console.error('onRejected function called: ' + error.message);
-      //   return;
-      // })
-
-      region && setShowMap(true);
+    if (coordinates) {
+      setRegion(coordinates)
+      setShowMap(true)
     }
+    return () => { setShowMap(false) };
   }, [region, coordinates]);
-
   let mapIndex = 0;
   let mapAnimation = new Animated.Value(0);
 
@@ -133,6 +127,7 @@ const EmergencyRequestMap = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
+      {/* <Text> {region.latitude} {region.longitude}</Text> */}
 
       {!showMap && <View style={{
         flex: 1,

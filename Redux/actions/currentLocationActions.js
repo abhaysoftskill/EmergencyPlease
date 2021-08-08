@@ -5,6 +5,7 @@ import Geolocation from 'react-native-geolocation-service';
 
 import { check, PERMISSIONS } from 'react-native-permissions';
 import { PermissionsAndroid, Platform } from 'react-native';
+import { useRef } from 'react';
 
 
 // Define action types
@@ -16,8 +17,40 @@ const longitudeDelta = 0.02;
 
 
 export const readCurrentLocation = () => {
+    let watchID;
     try {
         return dispatch => {
+
+            const subscribeLocationLocation = () => {
+                watchID= Geolocation.watchPosition(
+                    (position) => {
+                        //Will give you the location on location change
+                        // console.log('***************')
+                        // console.log(position)
+                        // setLocationStatus('You are Here');
+                        let regionCord = {
+                            latitude: parseFloat(position.coords.latitude),
+                            longitude: parseFloat(position.coords.longitude),
+                            latitudeDelta: latitudeDelta,
+                            longitudeDelta: longitudeDelta
+                        };
+                        // return regionCord
+                        dispatch({
+                            type: GET_CURRENT_LOCATION,
+                            payload: regionCord
+                        });
+                        // setRegion(regionCord);
+                    },
+                    (error) => {
+                        setLocationStatus(error.message);
+                    },
+                    {
+                        enableHighAccuracy: false,
+                        maximumAge: 1000,
+                        // distanceFilter:200,
+                    },
+                );
+            };
             const getOneTimeLocation = async () => {
                 const position = await new Promise((resolve, reject) => {
 
@@ -52,8 +85,9 @@ export const readCurrentLocation = () => {
                         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
                             //To Check, If Permission is granted
                             const coordinates = await getOneTimeLocation()
+                            subscribeLocationLocation();
                             return coordinates;
-                            // subscribeLocationLocation();
+
                         } else {
                             // setLocationStatus('Permission Denied');
                         }
@@ -85,29 +119,7 @@ export const readCurrentLocation = () => {
             };
 
 
-            // const subscribeLocationLocation = () => {
-            //     watchID = Geolocation.watchPosition(
-            //         (position) => {
-            //             //Will give you the location on location change
-
-            //             setLocationStatus('You are Here');
-            //             let regionCord = {
-            //                 latitude: parseFloat(position.coords.latitude),
-            //                 longitude: parseFloat(position.coords.longitude),
-            //                 latitudeDelta: latitudeDelta,
-            //                 longitudeDelta: longitudeDelta
-            //             };
-            //             setRegion(regionCord);
-            //         },
-            //         (error) => {
-            //             setLocationStatus(error.message);
-            //         },
-            //         {
-            //             enableHighAccuracy: false,
-            //             maximumAge: 1000
-            //         },
-            //     );
-            // };
+          
 
         };
     } catch (error) {

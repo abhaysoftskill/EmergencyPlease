@@ -12,7 +12,6 @@ const DateCalendar = (props) => {
     const [selectedDate, setSelectedDate] = useState('');
     const [calenderVisible, setCalenderVisible] = useState(false);
     const [date, setDate] = React.useState(new Date());
-    console.log(date)
     let minDate = Moment.utc(new Date(), "DD-MM-YYYY").subtract(80, 'years').format()
     const onDayPress = day => {
         setSelected(day.dateString)

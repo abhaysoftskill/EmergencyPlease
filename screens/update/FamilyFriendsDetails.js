@@ -101,7 +101,6 @@ const FamilyFriendsDetails = ({ route, navigation }) => {
             friends: friendsContactDetails,
             offices: officesContactDetails
         }
-        console.log(updatedContacts)
         EmergencyService.updateEmergencyContactDetails({contact:updatedContacts}).then((res) => {
             setTimeout(async () => {
                 setLoading(false);

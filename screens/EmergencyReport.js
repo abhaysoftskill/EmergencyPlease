@@ -30,18 +30,18 @@ const EmergencyReport = ({ route, navigation }) => {
     const { translations } = useContext(LocalizationContext);
     // const userDetails = route.params.userDetails;
     const userDetails = route.params.userDetails;
-    console.log(route.params)
     const theme = useTheme();
     const { coordinates } = useSelector(state => state.currentLocationReducer);
     const [showMap, setShowMap] = useState(false);
     const [confirm_message, setConfirm_message] = useState(false);
     const [region, setRegion] = useState(coordinates);
+    const [updateRegion, setUpdateRegion] = useState({});
     const [loading, setLoading] = useState(false);
     // const [coordinates, setCoordinates] = useState();
     const onRegionChange = updateRegion => {
         if (updateRegion.latitude.toFixed(6) === region.latitude.toFixed(6)
             && updateRegion.longitude.toFixed(6) === region.longitude.toFixed(6)) { return; }
-        setRegion(updateRegion)
+        setUpdateRegion(updateRegion)
     }
 
 
@@ -52,6 +52,7 @@ const EmergencyReport = ({ route, navigation }) => {
         // }, 1000);
         // return () => clearInterval(interval);
         if (coordinates) {
+            setRegion(coordinates)
             setShowMap(true)
         }
         return () => { setShowMap(false) };
@@ -98,37 +99,63 @@ const EmergencyReport = ({ route, navigation }) => {
                 })
         }
     }
-
+let updateRegionLength = Object.keys(updateRegion).length ;
     return (
         <View style={styles.cardsWrapper} >
+            {/* <Text>{JSON.stringify(updateRegion)}</Text> */}
             <View style={styles.mapContainer}>
                 {showMap && <MapView
                     provider={PROVIDER_GOOGLE} // remove if not using Google Maps
                     style={styles.map}
-                    region={region}
+                    region={updateRegionLength > 0 ? updateRegion : region}
                     onRegionChangeComplete={onRegionChange}
                     showsUserLocation={true}
                     showsMyLocationButton={true}
                 >
+                     <MapView.Circle
+                        center={{
+                            latitude:  coordinates.latitude,
+                            longitude: coordinates.longitude,
+                        }}
+                        radius={5000}
+                        strokeWidth={1}
+                        strokeColor={'#088de1'}
+                        fillColor={'rgba(135,205,248,0.5)'}
+                    />
+                     
                     <MapView.Circle
                         center={{
-                            latitude: coordinates.latitude,
-                            longitude: coordinates.longitude,
+                            latitude: updateRegionLength > 0? updateRegion.latitude : coordinates.latitude,
+                            longitude: updateRegionLength > 0? updateRegion.longitude : coordinates.longitude,
                         }}
                         radius={5000}
                         strokeWidth={1}
                         strokeColor={'red'}
                         fillColor={'rgba(230,192,193,0.5)'}
                     />
+                     <MapView.Marker coordinate={{
+                     latitude: coordinates.latitude,
+                     longitude: coordinates.longitude,
+                }}>
+                    <Animated.View >
+                        <Animated.Image
+                            source={require('../assets/current_map_marker.png')}
+                            style={[{width:30, height:30}, scaleStyle]}
+                            resizeMode="cover"
+                        />
+                        <Text style={styles.markerText}> {translations.ME}</Text>
+                    </Animated.View>
+                </MapView.Marker>
                 </MapView>}
-                {showMap && <Animated.View style={[styles.markerWrap]}>
+                {Object.keys(updateRegion).length > 0  && <Animated.View style={[styles.markerWrap]}>
                     <Animated.Image
                         source={require('../assets/map_marker.png')}
                         style={[styles.marker, scaleStyle]}
                         resizeMode="cover"
                     />
-                    <Text style={styles.markerText}> {translations.YOUAREHERE}</Text>
+                    <Text style={styles.markerText}> {translations.HELPLOCATION}</Text>
                 </Animated.View>}
+               
                 {showMap && <SafeAreaView style={styles.footer}>
                     <Button icon="location-enter" mode="contained" onPress={() => { setLoading(true), confirmLocation() }} color='#05375a' size=''
                     >
@@ -138,12 +165,12 @@ const EmergencyReport = ({ route, navigation }) => {
                     icon={require('../assets/current_location.png')}
                     color={Colors.gray500}
                     size={30}
-                    onPress={() => setRegion({
+                    onPress={() =>{ setRegion({
                         latitude: coordinates.latitude,
                         longitude: coordinates.longitude,
                         latitudeDelta: latitudeDelta,
                         longitudeDelta: longitudeDelta,
-                    })}
+                    }); setUpdateRegion({})}}
                     style={[
                         {
                             position: 'absolute',
@@ -158,7 +185,7 @@ const EmergencyReport = ({ route, navigation }) => {
                 {!showMap && <ActivityIndicator animating={true} color={Colors.red800} />}
                 {confirm_message && <ConfirmRequest loading={(e) => setLoading(e)}
                     closeOption={() => setConfirm_message(false)}
-                    data={route.params} geometry={region} />}
+                    data={route.params} geometry={updateRegion || region} />}
 
             </View>
             {loading && <View style={{

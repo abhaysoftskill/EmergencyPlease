@@ -25,6 +25,7 @@ const EmergencyRequestServices = ({ route, navigation }) => {
     // else{
     //   setServiceName(service_name);
     // }
+    
     if (service?.service_modal && service?.service_modal_data) {
      let modalData = JSON.parse(service?.service_modal_data)
     //  console.log(typeof(JSON.parse(modalData)))

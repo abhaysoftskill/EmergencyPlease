@@ -32,7 +32,6 @@ const EmergencyServices = ({ route, navigation }) => {
     // setShowEmergencyServiceModal(true)
 
     }
-    console.log(service)
    
  
     navigation.navigate('EmergencyServicesMap', {serviceData:service});

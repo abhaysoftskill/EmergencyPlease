@@ -73,7 +73,7 @@ const EmergencyDetails = ({ route, navigation }) => {
                         text: 'Navigate to map',
                         onPress: async () => {
                             try {
-                                setChangeUserCount(false)
+                                // setChangeUserCount(false)
                                 return;
                             } catch (e) {
                                 console.log(e);

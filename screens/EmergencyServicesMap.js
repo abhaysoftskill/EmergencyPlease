@@ -61,7 +61,7 @@ const EmergencyServicesMap = ({ route, navigation }) => {
     Linking.openURL(phoneNumber);
   };
   useEffect(() => {
-    {
+    
       region && EmergencyService.nearserviceproviderbyservicetype(region.longitude, region.latitude, route.params.serviceData._id).then((res) => {
         setRequestData(res);
         if(res.providers.length == 0){
@@ -87,8 +87,8 @@ const EmergencyServicesMap = ({ route, navigation }) => {
         return;
       })
 
-      // region && setShowMap(true);
-    }
+      return () => { setShowMap(false) };
+    
   }, [region, coordinates]);
 
   let mapIndex = 0;
@@ -159,7 +159,7 @@ const EmergencyServicesMap = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-
+{/* <Text> {region.latitude} {region.longitude}</Text> */}
       {!showMap && <View style={{
         flex: 1,
         justifyContent: 'center',
@@ -204,7 +204,6 @@ const EmergencyServicesMap = ({ route, navigation }) => {
         />
 
         {requestData && requestData.providers.map((marker, index) => {
-          console.log(index)
           const scaleStyle = {
             transform: [
               {

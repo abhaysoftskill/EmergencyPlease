@@ -40,29 +40,29 @@ const Services = ({ navigation }) => {
   //   strings.setLanguage('fr')
 
   // }
-  const loadContacts = () => {
-    Contacts.getAll()
-      .then(contacts => {
-        contacts.sort((a, b) => {
-          if (a.displayName > b.displayName) {
-            return 1;
-          }
-          if (a.displayName < b.displayName) {
-            return -1;
-          }
-          return 0;
-        });
-        stateDispatch(addContact(contacts))
+  // const loadContacts = () => {
+  //   Contacts.getAll()
+  //     .then(contacts => {
+  //       contacts.sort((a, b) => {
+  //         if (a.displayName > b.displayName) {
+  //           return 1;
+  //         }
+  //         if (a.displayName < b.displayName) {
+  //           return -1;
+  //         }
+  //         return 0;
+  //       });
+  //       stateDispatch(addContact(contacts))
 
-      })
-      .catch(e => {
-        // setLoading(false);
-      });
+  //     })
+  //     .catch(e => {
+  //       // setLoading(false);
+  //     });
 
 
 
-    Contacts.checkPermission();
-  }
+  //   Contacts.checkPermission();
+  // }
   useEffect(() => {
     //  strings.setLanguage('en')
     if (coordinates?.length == 0) {
@@ -72,26 +72,26 @@ const Services = ({ navigation }) => {
       requestData()
     }
 
-    if (Platform.OS === "android") {
-      // PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_CONTACTS, {
-      //   title: "Contacts",
-      //   message: "This app would like to view your contacts."
-      // }).then(() => {
-      //   loadContacts();
-      // });
-      PermissionsAndroid.requestMultiple(
-        [ PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        PermissionsAndroid.PERMISSIONS.READ_CONTACTS
-        ]).then(() => {
-          const coordinates  = useSelector(state => state.currentLocationReducer);
-          loadContacts();
-          return { coordinates }
+    // if (Platform.OS === "android") {
+    //   // PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_CONTACTS, {
+    //   //   title: "Contacts",
+    //   //   message: "This app would like to view your contacts."
+    //   // }).then(() => {
+    //   //   loadContacts();
+    //   // });
+    //   PermissionsAndroid.requestMultiple(
+    //     [ PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+    //     PermissionsAndroid.PERMISSIONS.READ_CONTACTS
+    //     ]).then(() => {
+    //       const coordinates  = useSelector(state => state.currentLocationReducer);
+    //       loadContacts();
+    //       return { coordinates }
 
-        });
-    } else {
-      loadContacts();
-    }
-    // return () =>  RNLocalize.removeEventListener('change', handleLocalizationChange());
+    //     });
+    // } else {
+    //   loadContacts();
+    // }
+    // // return () =>  RNLocalize.removeEventListener('change', handleLocalizationChange());
 
   }, [coordinates])
 

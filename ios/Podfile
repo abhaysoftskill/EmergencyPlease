@@ -14,6 +14,8 @@ target 'EmergencyPlease' do
 
   pod 'react-native-restart', :path => '../node_modules/react-native-restart'
 
+  pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-community/async-storage'
+
   target 'EmergencyPleaseTests' do
     inherit! :complete
     # Pods for testing

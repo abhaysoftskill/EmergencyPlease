@@ -35,7 +35,6 @@ const ConfirmRequest = (props) => {
   const submitRequest = () => {
     setLoading(true);
     props.loading(true)
-    console.log(props.data)
     let updateData = {
       "service_id": props.data.service_id,
       "requestDetails": {

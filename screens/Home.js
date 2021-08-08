@@ -87,7 +87,6 @@ const Home = ({ route, navigation }) => {
             stateDispatch(readCurrentLocation())
         }
         else if (coordinates) {
-            console.log(coordinates)
             requestData()
         }
         return () => setUserDetails([]);
@@ -111,8 +110,10 @@ const Home = ({ route, navigation }) => {
                 let userDetailsData = await AsyncStorage.getItem('userDetails');
 
                 let data = JSON.parse(userDetailsData);
-                setEmailVerifyModalVisible(!data.email_verified)
-
+            
+                if (data.email != '') {
+                    setEmailVerifyModalVisible(!data.email_verified)
+                }
                 setUserDetails(data);
                 // if (data.userGender == "" || data.bloodGroup == "") {
                 //     navigation.navigate('EditDetails', { userDetails: data })
@@ -280,10 +281,10 @@ const Home = ({ route, navigation }) => {
                 }>
                 {/* {!loading && closeAlert && <RequestStatus myRequestData={myRequestData} CloseAlert={() => setCloseAlert(false)} />} */}
 
-              
+
                 <View style={styles.optionContainer}>
-                  
-                   {!RequestDataCount && loading && <Loader />}
+
+                    {!RequestDataCount && loading && <Loader />}
                     {!loading && <View style={{
                         alignContent: 'center',
                         padding: 10, flexDirection: "row", justifyContent: 'space-between'
@@ -349,7 +350,7 @@ const Home = ({ route, navigation }) => {
 
 
                     </View>}
-                    {!loading && false &&  <View
+                    {!loading && false && <View
                         style={{
                             flexDirection: "row",
                             justifyContent: 'space-between', marginTop: 10,
@@ -378,7 +379,7 @@ const Home = ({ route, navigation }) => {
                             </View>
                         </View>
 
-                        
+
                     </View>}
 
                     {/* <View style={{ flex: 1, paddingHorizontal: 5, borderWidth:1 }}> */}
@@ -442,7 +443,7 @@ const Home = ({ route, navigation }) => {
                                 </View>
                             </View>
                         </TouchableOpacity>}
-                         {!loading && <TouchableOpacity
+                        {!loading && <TouchableOpacity
                             onPress={() => navigation.navigate('MyRequests',
                                 {
                                     userDetails: userDetails,
@@ -465,10 +466,10 @@ const Home = ({ route, navigation }) => {
                                     <Paragraph style={{ color: '#fff', fontSize: 11 }}>Get your's Requests</Paragraph>
 
                                 </View>
-                                
+
                             </View>
                         </TouchableOpacity>}
-                       
+
                         {!loading && <TouchableOpacity
                             onPress={() => navigation.navigate('EmergencyEvents',
                                 {
@@ -489,18 +490,18 @@ const Home = ({ route, navigation }) => {
                                     </View>
                                 </View>
                                 <View>
-                                    <Paragraph style={{ color: '#fff', fontSize: 11, textAlign:'center' }}>Know your nearest Help Event, like Blood Donation, Fire Safty & more....</Paragraph>
+                                    <Paragraph style={{ color: '#fff', fontSize: 11, textAlign: 'center' }}>Know your nearest Help Event, like Blood Donation, Fire Safty & more....</Paragraph>
 
                                 </View>
-                                
+
                             </View>
                         </TouchableOpacity>}
-                       
 
-                    
+
+
                     </View>
 
-                 
+
 
                     {/* </View> */}
 
@@ -542,8 +543,8 @@ export default Home;
 const styles = StyleSheet.create({
     requestCount: { fontSize: 30 },
     containter: {
-        width: Dimensions.get("window").width , //for full screen
-        height: Dimensions.get("window").height -140 //for full screen
+        width: Dimensions.get("window").width, //for full screen
+        height: Dimensions.get("window").height - 140 //for full screen
     },
     fixed: {
         // position: "absolute",

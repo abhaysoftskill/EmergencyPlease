@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
     View,
     Text,
@@ -25,9 +25,12 @@ import DatePicker from 'react-native-datepicker';
 import Moment from 'moment';
 
 import DateTimePicker from '@react-native-community/datetimepicker';
+import Loader from '../../components/Loading';
+import { AuthContext } from '../../components/context';
 
 const Welcome = ({ route, navigation }) => {
     let dateFormat = require("dateformat");
+    const { signIn } = useContext(AuthContext);
 
 const [gender, setGender] = React.useState('male');
     // const [dob, setDOB] = React.useState(dateFormat(new Date(), "dd-mm-yyyy"));
@@ -45,6 +48,8 @@ const [gender, setGender] = React.useState('male');
     });
     const [mode, setMode] = useState('date');
     const [show, setShow] = useState(false);
+    const [loading, setLoading] = useState(false)
+
     useEffect(() => {
         setData({
              ...route.params.userDetails,
@@ -53,9 +58,29 @@ const [gender, setGender] = React.useState('male');
             bloodGroup: bloodGroup,
             bloodGroupType: bloodGroupType
         })
-        console.log('**************************')
-        console.log(data)
+       
     }, [dob, gender, bloodGroup, bloodGroupType])
+
+    const loginPhonenumber = () => {
+        setLoading(true)
+
+        LoginService.loginviaotppassword({
+            "phonenumber": data.phonenumber,
+        }).then((res) => {
+            // phonenumberVerified();
+            setLoading(false)
+            signIn({
+                userDetails: res.user,
+                userToken: res.token
+            })
+        }, error => {
+            setLoading(false)
+            Alert.alert('Login Fail!', error.message, [
+                { text: 'Retry' }
+            ]);
+            return;
+        })
+    }
     const updateDetails = () => {
         const updateData = {
             gender: data.gender,
@@ -65,12 +90,13 @@ const [gender, setGender] = React.useState('male');
         }
         LoginService.genderdetails(updateData).then((res) => {
             setTimeout(async () => {
-                Alert.alert(`Profile updated!'`, 'Re-Login with your credentials', [
+                Alert.alert(`Profile updated successfully!'`, 'Welcome to Emergency Please.', [
                     {
-                        text: 'Ok',
+                        text: 'Thank You',
                         onPress: async () => {
                             try {
-                                navigation.navigate('SignIn', { userDetails: data })
+                                loginPhonenumber()
+                                // navigation.navigate('SignIn', { userDetails: data })
                             } catch (e) {
                                 console.log(e);
                             }
@@ -90,8 +116,6 @@ const [gender, setGender] = React.useState('male');
     }
 
     const onChange = (event, selectedDate) => {
-        console.log(event)
-        console.log(selectedDate)
         const currentDate = selectedDate || date;
         // setShow(Platform.OS === 'android');
         setShow(false);
@@ -112,6 +136,7 @@ const [gender, setGender] = React.useState('male');
     return (
         <View style={styles.container}>
             <StatusBar backgroundColor='#FF6347' barStyle="light-content" />
+           {loading && <Loader />}
             <View style={styles.header}>
                 <Text style={styles.text_header}>Welcome!</Text>
                 <Text style={styles.text_header}>{data.firstname + " " + data.lastname}</Text>

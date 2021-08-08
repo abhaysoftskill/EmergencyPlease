@@ -3,11 +3,11 @@ import {
     View,
     Text,
     TouchableOpacity,
-    TextInput,
     Platform,
     StyleSheet,
     StatusBar,
     Alert,
+    TextInput,
     Keyboard,
     Image,
     PermissionsAndroid
@@ -17,7 +17,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
 
-import { useTheme, Button } from 'react-native-paper';
+import { useTheme, Button, Title, Paragraph } from 'react-native-paper';
 
 import { AuthContext } from '../../components/context';
 
@@ -25,18 +25,19 @@ import { AuthContext } from '../../components/context';
 import LoginService from '../../services/loginServices';
 import OTPVerification from './OTPVerification';
 import { LocalizationContext } from '../../translations/LocalizationContext';
+import Loader from '../../components/Loading';
 
 const SignIn = ({ navigation }) => {
     if (Platform.OS === "android") {
         PermissionsAndroid.requestMultiple(
-          [ PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-          PermissionsAndroid.PERMISSIONS.READ_CONTACTS
-          ]).then(() => {
-            // loadContacts();
-          });
-      } else {
+            [PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+            PermissionsAndroid.PERMISSIONS.READ_CONTACTS
+            ]).then(() => {
+                // loadContacts();
+            });
+    } else {
         // loadContacts();
-      }
+    }
     const [data, setData] = useState({
         username: '',
         password: '',
@@ -141,7 +142,6 @@ const SignIn = ({ navigation }) => {
                     navigation.navigate('SignUpScreen', { phonenumber: userName })
                 }
                 else {
-
                     setLoading(false)
                     setUserDetails(res)
                     setotpVerification(true)
@@ -149,7 +149,7 @@ const SignIn = ({ navigation }) => {
 
             }, error => {
                 setLoading(false)
-                console.error('onRejected function called: ' + error.message);
+                // console.error('onRejected function called: ' + error.message);
             })
 
         }
@@ -190,19 +190,19 @@ const SignIn = ({ navigation }) => {
 
 
 
-                {loginOption !== 0 && <Text style={[styles.text_footer, {
+                <Text style={[styles.text_footer, {
                     color: colors.text, marginBottom: 30
                 }]}>
-                    {loginOption != 0 && loginOption == 1 ? `${translations.ENTEREMAILID}` : loginOption == 2 ? `${translations.ENTERPHONENUMBER}` : null}
-                </Text>}
+                    {translations.ENTERPHONENUMBER}
+                </Text>
 
-                {loginOption !== 0 && <View style={styles.action}>
+                <View style={styles.action}>
                     <FontAwesome
-                        name={loginOption == 1 ? "phone" : "envelope"}
+                        name={"phone"}
                         color={colors.text}
                         size={20}
                     />
-                    {loginOption != 0 && loginOption == 1 && <TextInput
+                    <TextInput
                         placeholder={`${translations.ENTERPHONENUMBER}`}
                         placeholderTextColor="#666666"
                         style={[styles.textInput, {
@@ -213,8 +213,8 @@ const SignIn = ({ navigation }) => {
                         keyboardType={'phone-pad'}
                         onChangeText={(val) => textInputChange(val)}
                         onEndEditing={(e) => handleValidUser(e.nativeEvent.text)}
-                    />}
-                    {loginOption != 0 && loginOption == 2 && <TextInput
+                    />
+                    {/* {loginOption != 0 && loginOption == 2 && <TextInput
                         placeholder={`${translations.ENTEREMAILID}`}
                         placeholderTextColor="#666666"
                         keyboardType={'email-address'}
@@ -224,7 +224,7 @@ const SignIn = ({ navigation }) => {
                         autoCapitalize="none"
                         onChangeText={(val) => textInputChange(val)}
                         onEndEditing={(e) => handleValidUser(e.nativeEvent.text)}
-                    />}
+                    />} */}
                     {data.check_phonenumberInputChange || data.check_emailInputChange ?
                         <Animatable.View
                             animation="bounceIn"
@@ -237,7 +237,7 @@ const SignIn = ({ navigation }) => {
                         </Animatable.View>
                         : null}
                 </View>
-                }
+
                 {data.isValidUser ? null :
                     <Animatable.View animation="fadeInLeft" duration={500}>
                         <Text style={styles.errorMsg}>Username must be Phone Number or Email ID.</Text>
@@ -245,27 +245,8 @@ const SignIn = ({ navigation }) => {
                 }
 
 
-                {loading && <View style={{
-                    flex: 1,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    marginTop: 20,
-                    position: 'absolute',
-                    backgroundColor: 'rgba(255,255,255,0.9)',
-                    bottom: 100,
-                    height: '100%',
-                    left: 0,
-                    right: 0,
-                    zIndex: 99
-                }}>
-                    <Image
-                        source={require('../../assets/loading.png')}
-                        // style={{ width: 200, height: 100 }}
-                        resizeMode="cover"
-                    />
-                    <Text>{translations.PLEASEWAIT}....</Text>
-                </View>}
-                {!loading && loginOption !== 0 && <View style={styles.button}>
+                {loading && <Loader />}
+                {!loading && <View style={styles.button}>
                     <TouchableOpacity
                         style={styles.signIn}
                         onPress={() => { loginHandle(data.username, data.password) }}
@@ -284,73 +265,7 @@ const SignIn = ({ navigation }) => {
 
 
                 </View>}
-                <View
-                    style={{
-                        marginTop: 50,
-                        flexDirection: "row", flexWrap: "wrap",
-                        justifyContent: 'center'
-                    }}
-                >
-                    <TouchableOpacity
-                        onPress={() => {
-                            setLoginOption(1); setData({
-                                ...data,
-                                username: '',
-                                check_phonenumberInputChange: false,
-                                check_emailInputChange: false
-                            })
-                        }}
-                    >
-                        <View
-                            style={[styles.box, {
-                                margin: 5, borderColor: loginOption == 1 ? inactive : activePhone,
-                                borderBottomWidth: 5,
-                                borderRadius: 10, borderWidth: 1, width: 150, height: 150, alignItems: 'center', justifyContent: 'center'
-                            }]}
-                        >
-                            <FontAwesome
-                                name="phone"
-                                color={loginOption == 1 ? inactive : activePhone}
-                                size={30}
-                                style={{ marginBottom: 10, marginTop: 10 }}
-                            />
-                            <Text style={[{
-                                flexShrink: 1,
-                                color: loginOption == 1 ? inactive : activePhone, marginBottom: 30, fontSize: 15, textAlign: 'center'
-                            }]}>{translations.USEPHONENUMBER}</Text>
-                        </View>
 
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        onPress={() => {
-                            setLoginOption(2); setData({
-                                ...data,
-                                username: '',
-                                check_emailInputChange: false,
-                                check_phonenumberInputChange: false
-                            })
-                        }}
-                    >
-                        <View
-                            style={[styles.box, {
-                                margin: 5, borderBottomWidth: 5,
-                                borderColor: loginOption == 2 ? inactive : activeEmail, borderRadius: 10, borderWidth: 1, width: 150, height: 150, alignItems: 'center', justifyContent: 'center'
-                            }]}
-                        >
-                            <FontAwesome
-                                name="envelope"
-                                color={loginOption == 2 ? inactive : activeEmail}
-                                size={30}
-                                style={{ marginBottom: 10, marginTop: 10 }}
-                            />
-                            <Text style={[{
-                                flexShrink: 1,
-                                color: loginOption == 2 ? inactive : activeEmail, marginBottom: 30, fontSize: 15, textAlign: 'center'
-                            }]}>{translations.USEEMAILID}</Text>
-                        </View>
-
-                    </TouchableOpacity>
-                </View>
                 <View style={styles.banner}>
                     <Image
                         source={require('../../assets/banners/banner1.png')}
@@ -381,9 +296,9 @@ const styles = StyleSheet.create({
     },
 
     box: {
-        width: 50,
+        // width: 50,
         alignContent: "space-around",
-        height: 50,
+        // height: 50,
     },
     header: {
         flex: 1,
@@ -441,6 +356,14 @@ const styles = StyleSheet.create({
     button: {
         alignItems: 'center',
         marginTop: 20
+    },
+    box: {
+        // width: 50,
+        alignContent: "space-around",
+        // height: 50,
+        margin: 2,
+        borderRadius:90
+
     },
     signIn: {
         width: '100%',

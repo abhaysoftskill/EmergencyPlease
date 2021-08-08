@@ -107,14 +107,15 @@ export function DrawerContent({ props, navigation }) {
                         <View style={{ marginLeft: 15, flexDirection: 'column' }}>
                             <Title style={styles.title}>{userDetails.firstname + " " + userDetails.lastname}</Title>
                             <Caption style={styles.caption}>({userDetails.phonenumber}) {' '}
-                                <Text style={[userDetails.mobileverify ? styles.verifiedCaption : styles.notVerifiedCaption]}>
-                                    ({userDetails.mobileverify ? 'Verified' : 'Not Verified'})</Text></Caption>
+                                <Text style={[userDetails.phonenumber ? styles.verifiedCaption : styles.notVerifiedCaption]}>
+                                    ({userDetails.phonenumber ? 'Verified' : 'Not Verified'})</Text></Caption>
 
                         </View>
                     </View>
                     <View>
-                        <Caption style={{ fontSize: 14 }}>{userDetails.email}<Text style={[userDetails.email_verified ? styles.verifiedCaption : styles.notVerifiedCaption]}>
-                            {' '} ({userDetails.email_verified ? 'Verified' : 'Not Verified'})</Text></Caption>
+                        {userDetails.email ? <Caption style={{ fontSize: 14 }}>{userDetails.email}<Text style={[userDetails.email_verified ? styles.verifiedCaption : styles.notVerifiedCaption]}>
+                            {' '} ({userDetails.email_verified ? 'Verified' : 'Not Verified'})</Text></Caption> : <Caption style={{ fontSize: 14 }}>{userDetails.email}<Text style={[userDetails.email_verified ? styles.verifiedCaption : styles.notVerifiedCaption]}>
+                            {'Emai ID not registered.'}</Text></Caption> }
                     </View>
 
                 </View>

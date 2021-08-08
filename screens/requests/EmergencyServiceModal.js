@@ -6,7 +6,6 @@ import ModalInputs from './ModalInputs';
 import { data } from '../../model/data';
 
 const EmergencyServiceModal = (props) => {
-  console.log(props.data)
   const navigation = useNavigation();
   const [visible, setVisible] = useState(true);
 

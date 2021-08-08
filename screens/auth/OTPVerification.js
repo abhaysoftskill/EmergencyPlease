@@ -61,7 +61,7 @@ const OTPVerification = (props) => {
       reqtype: 'login'
     }
     LoginService.otprequest(updateData).then((res) => {
-      console.log(res)
+      // console.log(res)
     }, error => {
       setLoading(false)
       return;
